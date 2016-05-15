@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import Firebase
 
-class FirstViewController: UIViewController {
+class RecentChatViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

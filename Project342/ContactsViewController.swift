@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SecondViewController: UIViewController {
+class ContactsViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
