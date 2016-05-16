@@ -9,6 +9,7 @@ target 'Project342' do
 
   # Pods for Project342
   pod 'Firebase', '>= 2.5.1'
+  pod 'FBSDKLoginKit', '>= 4.1'
 
   target 'Project342Tests' do
     inherit! :search_paths

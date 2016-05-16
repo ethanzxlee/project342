@@ -1,12 +1,26 @@
 PODS:
+  - Bolts (1.7.0):
+    - Bolts/AppLinks (= 1.7.0)
+    - Bolts/Tasks (= 1.7.0)
+  - Bolts/AppLinks (1.7.0):
+    - Bolts/Tasks
+  - Bolts/Tasks (1.7.0)
+  - FBSDKCoreKit (4.11.0):
+    - Bolts (~> 1.7)
+  - FBSDKLoginKit (4.11.0):
+    - FBSDKCoreKit
   - Firebase (2.5.1)
 
 DEPENDENCIES:
+  - FBSDKLoginKit (>= 4.1)
   - Firebase (>= 2.5.1)
 
 SPEC CHECKSUMS:
+  Bolts: a0058fa3b331c5a1e4402d534f2dae36dbff31e4
+  FBSDKCoreKit: 686ac982723a14ec9ddb85e2f81235d7706c891b
+  FBSDKLoginKit: bade9fc78277764149ccc5bfaadbf13c83175c6a
   Firebase: 3565ea88b830f28f2c77ecc524622bc71a20d085
 
-PODFILE CHECKSUM: c1a8464dbf951c86af30fa7c8bdf67d3e9dd1994
+PODFILE CHECKSUM: 2a31168c0728b52b0a66169d905a49c32c983528
 
 COCOAPODS: 1.0.0

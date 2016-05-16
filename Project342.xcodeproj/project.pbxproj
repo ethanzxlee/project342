@@ -23,6 +23,15 @@
 		A1A4DA041CE87390006AA3CF /* ChatRoomSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA031CE87390006AA3CF /* ChatRoomSettingsViewController.swift */; };
 		A1A4DA061CE873CD006AA3CF /* AddContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA051CE873CD006AA3CF /* AddContactsViewController.swift */; };
 		A1A4DA081CE879A1006AA3CF /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA071CE879A1006AA3CF /* LoginViewController.swift */; };
+		A1A4DA4A1CE97974006AA3CF /* Project342.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA481CE97974006AA3CF /* Project342.xcdatamodeld */; };
+		A1A4DA561CE97AE5006AA3CF /* Contact+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA541CE97AE5006AA3CF /* Contact+CoreDataProperties.swift */; };
+		A1A4DA571CE97AE5006AA3CF /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA551CE97AE5006AA3CF /* Contact.swift */; };
+		A1A4DA5E1CE98D06006AA3CF /* Conversation+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA581CE98D06006AA3CF /* Conversation+CoreDataProperties.swift */; };
+		A1A4DA5F1CE98D06006AA3CF /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA591CE98D06006AA3CF /* Conversation.swift */; };
+		A1A4DA601CE98D06006AA3CF /* Attachment+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA5A1CE98D06006AA3CF /* Attachment+CoreDataProperties.swift */; };
+		A1A4DA611CE98D06006AA3CF /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA5B1CE98D06006AA3CF /* Attachment.swift */; };
+		A1A4DA621CE98D06006AA3CF /* Message+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA5C1CE98D06006AA3CF /* Message+CoreDataProperties.swift */; };
+		A1A4DA631CE98D06006AA3CF /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA5D1CE98D06006AA3CF /* Message.swift */; };
 		DA1C40630E55B30B7B798DCC /* Pods_Project342.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BE727CD3B3F5D3CF1E85860 /* Pods_Project342.framework */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +79,15 @@
 		A1A4DA031CE87390006AA3CF /* ChatRoomSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatRoomSettingsViewController.swift; sourceTree = "<group>"; };
 		A1A4DA051CE873CD006AA3CF /* AddContactsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddContactsViewController.swift; sourceTree = "<group>"; };
 		A1A4DA071CE879A1006AA3CF /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		A1A4DA491CE97974006AA3CF /* Project342.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project342.xcdatamodel; sourceTree = "<group>"; };
+		A1A4DA541CE97AE5006AA3CF /* Contact+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Contact+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A1A4DA551CE97AE5006AA3CF /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
+		A1A4DA581CE98D06006AA3CF /* Conversation+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Conversation+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A1A4DA591CE98D06006AA3CF /* Conversation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
+		A1A4DA5A1CE98D06006AA3CF /* Attachment+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Attachment+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A1A4DA5B1CE98D06006AA3CF /* Attachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
+		A1A4DA5C1CE98D06006AA3CF /* Message+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Message+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A1A4DA5D1CE98D06006AA3CF /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		AA9C9396558ADA8F33E1D3DD /* Pods-Project342.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342.release.xcconfig"; path = "Pods/Target Support Files/Pods-Project342/Pods-Project342.release.xcconfig"; sourceTree = "<group>"; };
 		AC819E102F18403E9DE93F75 /* Pods-Project342.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Project342/Pods-Project342.debug.xcconfig"; sourceTree = "<group>"; };
 		ED9AD4F5E4D2EE230EAC45B7 /* Pods-Project342Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Project342Tests/Pods-Project342Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -145,7 +163,9 @@
 				A1A4D9CA1CE86E74006AA3CF /* Main.storyboard */,
 				A1A4D9CF1CE86E74006AA3CF /* LaunchScreen.storyboard */,
 				A1A4D9D21CE86E74006AA3CF /* Info.plist */,
+				A1A4DA531CE97ABB006AA3CF /* CoreData */,
 				A1A4D9FA1CE871A9006AA3CF /* ViewController */,
+				A1A4DA481CE97974006AA3CF /* Project342.xcdatamodeld */,
 			);
 			path = Project342;
 			sourceTree = "<group>";
@@ -182,6 +202,21 @@
 				A1A4DA071CE879A1006AA3CF /* LoginViewController.swift */,
 			);
 			name = ViewController;
+			sourceTree = "<group>";
+		};
+		A1A4DA531CE97ABB006AA3CF /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				A1A4DA581CE98D06006AA3CF /* Conversation+CoreDataProperties.swift */,
+				A1A4DA591CE98D06006AA3CF /* Conversation.swift */,
+				A1A4DA5A1CE98D06006AA3CF /* Attachment+CoreDataProperties.swift */,
+				A1A4DA5B1CE98D06006AA3CF /* Attachment.swift */,
+				A1A4DA5C1CE98D06006AA3CF /* Message+CoreDataProperties.swift */,
+				A1A4DA5D1CE98D06006AA3CF /* Message.swift */,
+				A1A4DA541CE97AE5006AA3CF /* Contact+CoreDataProperties.swift */,
+				A1A4DA551CE97AE5006AA3CF /* Contact.swift */,
+			);
+			name = CoreData;
 			sourceTree = "<group>";
 		};
 		B66EC6B818540EAD0125964A /* Frameworks */ = {
@@ -469,13 +504,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1A4DA571CE97AE5006AA3CF /* Contact.swift in Sources */,
+				A1A4DA561CE97AE5006AA3CF /* Contact+CoreDataProperties.swift in Sources */,
+				A1A4DA601CE98D06006AA3CF /* Attachment+CoreDataProperties.swift in Sources */,
+				A1A4DA4A1CE97974006AA3CF /* Project342.xcdatamodeld in Sources */,
+				A1A4DA5F1CE98D06006AA3CF /* Conversation.swift in Sources */,
 				A1A4DA061CE873CD006AA3CF /* AddContactsViewController.swift in Sources */,
+				A1A4DA611CE98D06006AA3CF /* Attachment.swift in Sources */,
+				A1A4DA631CE98D06006AA3CF /* Message.swift in Sources */,
 				A1A4D9FC1CE8724E006AA3CF /* UserSettingsViewController.swift in Sources */,
 				A1A4D9C91CE86E74006AA3CF /* ContactsViewController.swift in Sources */,
 				A1A4D9FE1CE872A4006AA3CF /* ChatRoomViewController.swift in Sources */,
 				A1A4DA001CE87351006AA3CF /* AttachmentViewerViewController.swift in Sources */,
+				A1A4DA5E1CE98D06006AA3CF /* Conversation+CoreDataProperties.swift in Sources */,
 				A1A4DA041CE87390006AA3CF /* ChatRoomSettingsViewController.swift in Sources */,
 				A1A4DA021CE87363006AA3CF /* SecretMessageViewController.swift in Sources */,
+				A1A4DA621CE98D06006AA3CF /* Message+CoreDataProperties.swift in Sources */,
 				A1A4D9C51CE86E74006AA3CF /* AppDelegate.swift in Sources */,
 				A1A4DA081CE879A1006AA3CF /* LoginViewController.swift in Sources */,
 				A1A4D9C71CE86E74006AA3CF /* RecentChatViewController.swift in Sources */,
@@ -738,6 +782,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		A1A4DA481CE97974006AA3CF /* Project342.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				A1A4DA491CE97974006AA3CF /* Project342.xcdatamodel */,
+			);
+			currentVersion = A1A4DA491CE97974006AA3CF /* Project342.xcdatamodel */;
+			path = Project342.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = A1A4D9B91CE86E74006AA3CF /* Project object */;
 }
