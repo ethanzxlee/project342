@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		160FD4C2D78454226B6B3F93 /* Pods_Project342Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30B298289EF40F7674660A23 /* Pods_Project342Tests.framework */; };
 		318DC7BD670D22321BC888BB /* Pods_Project342UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F73ADE18FAC502123383AC /* Pods_Project342UITests.framework */; };
+		A1083D251CEB34C600FFE32A /* ContactListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1083D241CEB34C600FFE32A /* ContactListTableViewCell.swift */; };
+		A1083D271CEB361600FFE32A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1083D261CEB361600FFE32A /* Assets.xcassets */; };
 		A1A4D9C51CE86E74006AA3CF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4D9C41CE86E74006AA3CF /* AppDelegate.swift */; };
 		A1A4D9C71CE86E74006AA3CF /* RecentChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4D9C61CE86E74006AA3CF /* RecentChatViewController.swift */; };
 		A1A4D9C91CE86E74006AA3CF /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4D9C81CE86E74006AA3CF /* ContactsViewController.swift */; };
@@ -59,6 +61,8 @@
 		5BE727CD3B3F5D3CF1E85860 /* Pods_Project342.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Project342.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C5ED0A635A1C317D61FA3B9 /* Pods-Project342UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342UITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Project342UITests/Pods-Project342UITests.release.xcconfig"; sourceTree = "<group>"; };
 		A0F73ADE18FAC502123383AC /* Pods_Project342UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Project342UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1083D241CEB34C600FFE32A /* ContactListTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactListTableViewCell.swift; sourceTree = "<group>"; };
+		A1083D261CEB361600FFE32A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1A4D9C11CE86E74006AA3CF /* Project342.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Project342.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1A4D9C41CE86E74006AA3CF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1A4D9C61CE86E74006AA3CF /* RecentChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentChatViewController.swift; sourceTree = "<group>"; };
@@ -134,6 +138,14 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		A1083D231CEB347F00FFE32A /* View */ = {
+			isa = PBXGroup;
+			children = (
+				A1083D241CEB34C600FFE32A /* ContactListTableViewCell.swift */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
 		A1A4D9B81CE86E74006AA3CF = {
 			isa = PBXGroup;
 			children = (
@@ -163,7 +175,9 @@
 				A1A4D9CA1CE86E74006AA3CF /* Main.storyboard */,
 				A1A4D9CF1CE86E74006AA3CF /* LaunchScreen.storyboard */,
 				A1A4D9D21CE86E74006AA3CF /* Info.plist */,
+				A1083D261CEB361600FFE32A /* Assets.xcassets */,
 				A1A4DA531CE97ABB006AA3CF /* CoreData */,
+				A1083D231CEB347F00FFE32A /* View */,
 				A1A4D9FA1CE871A9006AA3CF /* ViewController */,
 				A1A4DA481CE97974006AA3CF /* Project342.xcdatamodeld */,
 			);
@@ -356,6 +370,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1A4D9D11CE86E74006AA3CF /* LaunchScreen.storyboard in Resources */,
+				A1083D271CEB361600FFE32A /* Assets.xcassets in Resources */,
 				A1A4D9CC1CE86E74006AA3CF /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -516,6 +531,7 @@
 				A1A4D9C91CE86E74006AA3CF /* ContactsViewController.swift in Sources */,
 				A1A4D9FE1CE872A4006AA3CF /* ChatRoomViewController.swift in Sources */,
 				A1A4DA001CE87351006AA3CF /* AttachmentViewerViewController.swift in Sources */,
+				A1083D251CEB34C600FFE32A /* ContactListTableViewCell.swift in Sources */,
 				A1A4DA5E1CE98D06006AA3CF /* Conversation+CoreDataProperties.swift in Sources */,
 				A1A4DA041CE87390006AA3CF /* ChatRoomSettingsViewController.swift in Sources */,
 				A1A4DA021CE87363006AA3CF /* SecretMessageViewController.swift in Sources */,
