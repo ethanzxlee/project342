@@ -11,7 +11,7 @@ import CoreData
 
 class ContactsViewController: UITableViewController {
 
-    var contacts = [Contact]()
+    var contacts = [String: [Contact]]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,10 +32,31 @@ class ContactsViewController: UITableViewController {
 //                print(error)
 //            }
             
+            // TODO: Will be moved into the AppModel
             let fetchContactRequest = NSFetchRequest(entityName: String(Contact))
             do {
-                if let contacts = try coreDataContext.executeFetchRequest(fetchContactRequest) as? [Contact] {
-                    self.contacts = contacts
+                if var contacts = try coreDataContext.executeFetchRequest(fetchContactRequest) as? [Contact] {
+                    // Sort all the contacts by their first name
+                    // TODO: IDEA? this preference can be override in our app settings page
+                    contacts = contacts.sort({ (a, b) -> Bool in
+                        a.firstName!.localizedCompare(b.firstName!) == .OrderedAscending
+                    })
+                    
+                    
+                    // Regroup the contacts into a dictionary according to their first names' first character
+                    for contact in contacts {
+                        // Convert the first character so that the grouping is case-insensitive
+                        let firstCharacter = String(contact.firstName![contact.firstName!.startIndex]).uppercaseString
+                        
+                        // Init the group if it doesn't exist
+                        if (self.contacts[firstCharacter] == nil) {
+                            self.contacts[firstCharacter] = [Contact]()
+                        }
+                        
+                        // Append the contact into the group
+                        self.contacts[firstCharacter]?.append(contact)
+                    }
+                    
                 }
             }
             catch {
@@ -47,29 +68,38 @@ class ContactsViewController: UITableViewController {
     
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
+        return self.contacts.count
     }
     
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return contacts.count
+        let keyFromIndex = self.contacts.sortedKeys[section]
+        return self.contacts[keyFromIndex]!.count
     }
+    
 
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return self.contacts.sortedKeys[section]
+    }
+    
+    
+    override func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
+        return self.contacts.sortedKeys
+    }
+    
+    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        switch indexPath.section {
-        case 0:
-            guard let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactListTableViewCell)) as? ContactListTableViewCell else {
+        guard let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactListTableViewCell)) as? ContactListTableViewCell else {
                 print("Failed to dequeue \(String(ContactListTableViewCell))")
                 return UITableViewCell()
             }
-            
-            cell.contactNameLabel.text = "\(contacts[indexPath.row].firstName!) \(contacts[indexPath.row].lastName!)"
-            cell.contactUserIdLabel.text = "@\(contacts[indexPath.row].userId!)"
+        
+            let keyFromIndex = self.contacts.sortedKeys[indexPath.section]
+        
+            cell.contactNameLabel.text = "\(contacts[keyFromIndex]![indexPath.row].firstName!) \(contacts[keyFromIndex]![indexPath.row].lastName!)"
+            cell.contactUserIdLabel.text = "\(contacts[keyFromIndex]![indexPath.row].userId!)"
             
             return cell
-        default:
-            return UITableViewCell()
-        }
     }
 
 
