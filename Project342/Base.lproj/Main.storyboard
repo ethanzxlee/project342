@@ -19,7 +19,7 @@
                         <barButtonItem key="rightBarButtonItem" systemItem="compose" id="NTW-or-bHy"/>
                     </navigationItem>
                     <connections>
-                        <segue destination="iAg-cx-Yx1" kind="show" id="rzW-Ys-4ft"/>
+                        <segue destination="XDB-7g-CFM" kind="showDetail" identifier="ShowChatRoomViewController" action="showViewController:sender:" id="rzW-Ys-4ft"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
@@ -35,15 +35,16 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </tableView>
+                    <navigationItem key="navigationItem" id="4XH-n4-lbt"/>
                     <connections>
-                        <segue destination="WbM-ww-BFi" kind="show" id="YqH-qb-7dK"/>
-                        <segue destination="A9T-6h-JA2" kind="show" id="IHh-48-hqk"/>
-                        <segue destination="6cw-7O-20E" kind="show" id="HdW-WG-NvO"/>
+                        <segue destination="WbM-ww-BFi" kind="show" identifier="ShowSecretMessageViewController" id="YqH-qb-7dK"/>
+                        <segue destination="A9T-6h-JA2" kind="show" identifier="ShowAttachementViewerViewController" id="IHh-48-hqk"/>
+                        <segue destination="6cw-7O-20E" kind="show" identifier="ShowChatRoomSettingsViewController" id="HdW-WG-NvO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mo6-cf-Wob" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2366" y="-320"/>
+            <point key="canvasLocation" x="3178" y="-320"/>
         </scene>
         <!--Attachment Viewer View Controller-->
         <scene sceneID="Ild-sk-2P0">
@@ -61,7 +62,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LUr-OD-kMZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3136" y="-1000"/>
+            <point key="canvasLocation" x="3948" y="-1036"/>
         </scene>
         <!--Add Contacts View Controller-->
         <scene sceneID="zDV-Cc-c7o">
@@ -97,7 +98,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4C5-y3-Nkd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3136" y="-1682"/>
+            <point key="canvasLocation" x="3948" y="-1740"/>
         </scene>
         <!--Chat Room Settings View Controller-->
         <scene sceneID="Obs-wb-4hx">
@@ -111,7 +112,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6XV-27-51V" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3136" y="-320"/>
+            <point key="canvasLocation" x="3948" y="-320"/>
         </scene>
         <!--Contacts-->
         <scene sceneID="wg7-f3-ORb">
@@ -182,6 +183,7 @@
                                     <outlet property="contactNameLabel" destination="K09-PN-bHf" id="24t-pV-K90"/>
                                     <outlet property="contactProfileImageView" destination="DKA-G7-Um7" id="U5S-n7-vPK"/>
                                     <outlet property="contactUserIdLabel" destination="BU2-xk-CSS" id="dHF-Mo-AKG"/>
+                                    <segue destination="XDB-7g-CFM" kind="showDetail" identifier="ShowChatRoomViewController" id="iKj-QS-1Fi"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -193,9 +195,6 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <connections>
-                        <segue destination="iAg-cx-Yx1" kind="show" id="k1c-uk-mqJ"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Nw-L8-lE0" sceneMemberID="firstResponder"/>
             </objects>
@@ -314,11 +313,29 @@
             </objects>
             <point key="canvasLocation" x="750" y="1030"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="hth-tG-D5V">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="XDB-7g-CFM" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="WdM-MS-pTa">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="iAg-cx-Yx1" kind="relationship" relationship="rootViewController" id="jyH-3q-Try"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Sub-kd-x5P" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2366" y="-320"/>
+        </scene>
     </scenes>
     <resources>
         <image name="default-avatar" width="600" height="600"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="k1c-uk-mqJ"/>
+        <segue reference="rzW-Ys-4ft"/>
     </inferredMetricsTieBreakers>
 </document>
