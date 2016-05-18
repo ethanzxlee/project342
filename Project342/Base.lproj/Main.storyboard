@@ -13,9 +13,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <searchBar key="tableHeaderView" contentMode="redraw" id="CSf-4n-9Ak">
+                            <rect key="frame" x="0.0" y="64" width="600" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            <textInputTraits key="textInputTraits"/>
+                        </searchBar>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="recentContactReuseCell" textLabel="Dnv-HG-FgL" imageView="4PP-sb-jbn" style="IBUITableViewCellStyleDefault" id="IdF-pD-ny6">
-                                <rect key="frame" x="0.0" y="92" width="600" height="44"/>
+                                <rect key="frame" x="0.0" y="136" width="600" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="IdF-pD-ny6" id="cox-Kc-xKK">
                                     <rect key="frame" x="0.0" y="0.0" width="567" height="43.5"/>
@@ -38,10 +43,9 @@
                         </prototypes>
                         <sections/>
                     </tableView>
-                    <navigationItem key="navigationItem" id="H0j-T3-g0U">
-                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="NTW-or-bHy"/>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="H0j-T3-g0U"/>
                     <connections>
+                        <outlet property="searchBar" destination="CSf-4n-9Ak" id="4iV-4u-jyA"/>
                         <segue destination="iAg-cx-Yx1" kind="show" id="rzW-Ys-4ft"/>
                     </connections>
                 </viewController>

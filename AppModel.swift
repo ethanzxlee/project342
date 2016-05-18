@@ -75,12 +75,37 @@ class AppModel:NSManagedObjectModel{
         return name
     }
     
+    // Delete particular conversation
     func deleteConversation(conversation: Conversation){
         do{
             managedContext.deleteObject(conversation)
             try managedContext.save()
         }catch{}
         
+    }
+    
+    // Delete all conversations
+    func deleteAllConversations(){
+        do{
+            let conversationList = self.getConversationList()
+            for conversation in conversationList{
+                managedContext.deleteObject(conversation)
+            }
+            try managedContext.save()
+        }catch{}
+        
+    }
+    
+    // Do predicate search
+    // FIXME: temporary use the members name not group name
+    func searchResult(str: String)->[Conversation]{
+//        let predicate = NSPredicate(format: "(lastName CONTAIN %@) OR (firstName CONTAIN %@) OR (userID CONTAIN %@) OR (lastName CONTAIN %@) OR (firstName CONTAIN %@) OR (userID CONTAIN %@) OR (lastName CONTAIN %@) OR (firstName CONTAIN %@) OR (userID CONTAIN %@)", str, str, str, str.lowercaseString, str.lowercaseString, str.lowercaseString, str.uppercaseString, str.uppercaseString, str.uppercaseString)
+//        
+//        var resultArray = [Conversation]()
+//        do{
+//            let fecthRequest = NSFetchRequest(entityName: "Conversation")
+//        }
+        return []
     }
     
     
