@@ -126,6 +126,7 @@
                     </navigationItem>
                     <connections>
                         <segue destination="wMX-2M-vNv" kind="show" id="1fC-BI-Uy6"/>
+                        <segue destination="iAg-cx-Yx1" kind="show" id="k1c-uk-mqJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Nw-L8-lE0" sceneMemberID="firstResponder"/>
@@ -160,10 +161,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <connections>
+                        <segue destination="49e-Tb-3d3" kind="showDetail" id="a3C-ua-zZv"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="f7R-vk-SaH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="750" y="1729"/>
+            <point key="canvasLocation" x="-726" y="1030"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
@@ -179,12 +183,11 @@
                         <segue destination="QGA-eG-3jc" kind="relationship" relationship="viewControllers" id="u7Y-xg-7CH"/>
                         <segue destination="SAe-Eq-vDv" kind="relationship" relationship="viewControllers" id="lzU-1b-eKA"/>
                         <segue destination="Ekp-Zq-G7a" kind="relationship" relationship="viewControllers" id="NLR-cY-Edg"/>
-                        <segue destination="oOt-Of-R2j" kind="showDetail" id="0Cp-kK-x3j"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-40" y="1729"/>
+            <point key="canvasLocation" x="4" y="1030"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="0wv-Fw-5Eh">
@@ -244,4 +247,7 @@
             <point key="canvasLocation" x="750" y="1030"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="k1c-uk-mqJ"/>
+    </inferredMetricsTieBreakers>
 </document>
