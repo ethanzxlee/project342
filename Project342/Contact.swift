@@ -8,10 +8,8 @@
 
 import Foundation
 import CoreData
-
+import UIKit
 
 class Contact: NSManagedObject {
-
-// Insert code here to add functionality to your managed object subclass
 
 }

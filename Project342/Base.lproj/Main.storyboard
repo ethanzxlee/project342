@@ -13,6 +13,30 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="recentContactReuseCell" textLabel="Dnv-HG-FgL" imageView="4PP-sb-jbn" style="IBUITableViewCellStyleDefault" id="IdF-pD-ny6">
+                                <rect key="frame" x="0.0" y="92" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="IdF-pD-ny6" id="cox-Kc-xKK">
+                                    <rect key="frame" x="0.0" y="0.0" width="567" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Dnv-HG-FgL">
+                                            <rect key="frame" x="74" y="0.0" width="491" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" image="defaultPicture" id="4PP-sb-jbn">
+                                            <rect key="frame" x="15" y="0.0" width="44" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </imageView>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <sections/>
                     </tableView>
                     <navigationItem key="navigationItem" id="H0j-T3-g0U">
                         <barButtonItem key="rightBarButtonItem" systemItem="compose" id="NTW-or-bHy"/>
@@ -247,7 +271,10 @@
             <point key="canvasLocation" x="750" y="1030"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="defaultPicture" width="96" height="96"/>
+    </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="k1c-uk-mqJ"/>
+        <segue reference="rzW-Ys-4ft"/>
     </inferredMetricsTieBreakers>
 </document>
