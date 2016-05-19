@@ -14,7 +14,8 @@ class RecentChatViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        let c = CipherModel()
+        c.syncContacts()
     }
 
     override func didReceiveMemoryWarning() {
