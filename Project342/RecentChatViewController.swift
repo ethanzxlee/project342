@@ -31,14 +31,14 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     // members for creation of new char
     // get from CreateNewChat
     var contactsForNewConversation: [Contact]?
-    var searchBegin = false
+    var searchActive = false
     
     let appModel = AppModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         //Load inital data for try
-        //willDeleteAfterFinish()
+        willDeleteAfterFinish()
         
         // Add edit button to navigation bar
         self.navigationItem.leftBarButtonItem = editButtonItem()
@@ -68,8 +68,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
          Show UISearchController when tableView swipe down
          http://stackoverflow.com/questions/32923091/show-uisearchcontroller-when-tableview-swipe-down
          */
-        self.tableView.contentOffset = CGPointMake(0.0, 44.0)
-        
+        self.tableView.contentOffset = CGPointMake(0.0, self.searchBar.frame.size.height)
     }
 
     override func didReceiveMemoryWarning() {
@@ -84,7 +83,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if self.searchBegin{
+        if self.searchActive{
             return filteredConversationList.count
         }
         return conversationList.count
@@ -95,7 +94,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         
         let cell = tableView.dequeueReusableCellWithIdentifier("recentContactReuseCell", forIndexPath: indexPath)
         var conversation : Conversation?
-        if searchBegin{
+        if searchActive{
             conversation = self.filteredConversationList[indexPath.row]
         }else{
             conversation = self.conversationList[indexPath.row]
@@ -106,6 +105,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
          Image Resizing Techniques
          http://nshipster.com/image-resizing/
         */
+        
         // FIXME: temporay set user name
         let members = conversation!.members?.allObjects as! [Contact]
         
@@ -132,8 +132,8 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         cell.imageView?.layer.cornerRadius = scaledImage.size.width/2
         cell.imageView?.layer.masksToBounds = true
         cell.imageView?.contentMode = .ScaleAspectFit
-        cell.textLabel?.text = appModel.getConversationName(members)
-     
+        cell.textLabel?.text = conversation?.conversationName!
+        
         return cell
      }
 
@@ -265,37 +265,52 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     
     // MARK: - Search Bar
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-        searchBegin = true
+        searchActive = true
     }
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
-        searchBegin = false
+        searchActive = false
     }
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-        searchBegin = false
+        searchActive = true
         let searchText = self.searchBar.text
         if searchText == "" {
-            searchBegin = true
+            searchActive = true
         }else{
             filteredConversationList = self.appModel.searchResult(searchText!)
         }
         self.tableView.reloadData()
     }
     
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        searchActive = true
+        if searchText == "" {
+            searchActive = true
+        }else{
+            filteredConversationList = self.appModel.searchResult(searchText)
+        }
+        self.tableView.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        searchActive = false
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+        self.tableView.contentOffset = CGPointMake(0.0, -self.searchBar.frame.size.height/2)
+        self.tableView.reloadData()
+    }
+    
     func searchBar(searchBar: UISearchBar, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+        searchActive = true
         filteredConversationList = self.appModel.searchResult(text)
+        self.tableView.reloadData()
         return true
     }
     
+    
     // MARK: Segue
     @IBAction func getBackFromCreateNewChat(sender: UIStoryboardSegue){
-        print("1")
-        print(sender.identifier)
-        print(sender.accessibilityValue)
-        print("2")
-        hello()
-        
         // FIXME: segue perform to ChatRoom
         if contactsForNewConversation?.count > 0 {
             self.appModel.createNewConversation(contactsForNewConversation!)
@@ -309,9 +324,9 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         
         if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
             let context = appDelegate.managedObjectContext
-            for a in 0...20{
+            for a in 0...6{
                 if let contact = NSEntityDescription.insertNewObjectForEntityForName("Contact", inManagedObjectContext: context) as? Contact {
-                    contact.firstName = "qasw \(a)"
+                    contact.firstName = "kkkk \(a)"
                     contact.lastName = "hello"
                     contact.imagePath = "defaultPicture.png"
                     // Try to save
@@ -326,31 +341,23 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         }
         
         let contactList = appModel.getContactList()
-        for eachContact in contactList{
-            var contactArry = [Contact]()
-            contactArry.append(eachContact)
-            contactArry.append(contactList[15])
-            if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
-                let context = appDelegate.managedObjectContext
-            if let msg = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as? Message {
-                
-                    // Try to save
-                    do {
-                        try context.save()
-                    }
-                    catch {
-                        
-                    }
-                }
-            }
+        for a in 0...6{
+                       var contactArry = [Contact]()
+            contactArry.append(contactList[a])
 
-            let success = appModel.createNewConversation(contactArry)
+            let success = self.appModel.createNewConversation(contactArry)
             print(success)
         }
-    }
-    
-    func hello(){
-        print("hello")
+        
+//        if let msg = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedContext) as? Message {
+//            msg.content = "whatever"
+//            msg.sentDate = NSDate()
+//            msg.conversation = conversation
+//            var msgArray = [Message]()
+//            msgArray.append(msg)
+//            conversation.messages = NSSet(array: msgArray)
+//        }
+
     }
 
 

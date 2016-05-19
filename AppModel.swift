@@ -75,12 +75,12 @@ class AppModel:NSManagedObjectModel{
                 memberConversationList.append(conversation)
                 eachMember.conversations = NSSet(array: memberConversationList)
             }
-            
             /**
              Add the members into conversation list
              */
             conversation.members = NSSet(array: members)
-            
+            conversation.conversationName = self.getConversationName(members)
+
             do{
                 try managedContext.save()
             }catch{
@@ -117,25 +117,41 @@ class AppModel:NSManagedObjectModel{
     
     // Delete all conversations
     func deleteAllConversations(){
-        do{
-            let conversationList = self.getAllConversationList()
-            for conversation in conversationList{
-                managedContext.deleteObject(conversation)
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+            dispatch_async(dispatch_get_main_queue()) {
+                do{
+                    let conversationList = self.getAllConversationList()
+                    for conversation in conversationList{
+                        self.managedContext.deleteObject(conversation)
+                    }
+                    try self.managedContext.save()
+                }catch{}
             }
-            try managedContext.save()
-        }catch{}
-        
+        }
     }
     
     // Do predicate search
-    // FIXME: temporary use the members name not group name
     func searchResult(str: String)->[Conversation]{
-//        let predicate = NSPredicate(format: "(lastName CONTAIN %@) OR (firstName CONTAIN %@) OR (userID CONTAIN %@) OR (lastName CONTAIN %@) OR (firstName CONTAIN %@) OR (userID CONTAIN %@) OR (lastName CONTAIN %@) OR (firstName CONTAIN %@) OR (userID CONTAIN %@)", str, str, str, str.lowercaseString, str.lowercaseString, str.lowercaseString, str.uppercaseString, str.uppercaseString, str.uppercaseString)
-//        
-//        var resultArray = [Conversation]()
-//        do{
-//            let fecthRequest = NSFetchRequest(entityName: "Conversation")
-//        }
+        // Change the target and searchTerm to lowercaseString to enable get insensitice result
+        // Any used for NSArray or NSSet
+        let predicate = NSPredicate(format:
+            "(conversationName.lowercaseString CONTAINS %@) OR " +      // Get the string contain @ in conversationName
+            "(ANY members.firstName.lowercaseString CONTAINS %@) OR " + // Get the string contain @ in firstName
+            "(ANY members.lastName.lowercaseString CONTAINS %@) OR " +  // Get the string contain @ in lastName
+            "(ANY members.firstName.lowercaseString IN %@) OR " +       // Get the string that members.firstName contain inside the @
+            "(ANY messages.content.lowercaseString CONTAINS %@) OR " +
+            "(ANY messages.content.lowercaseString IN %@)",
+            str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString)
+        
+        var resultArray = [Conversation]()
+        do{
+            // Get the conversation list from Core Data and filter it using the name
+            let fetchRequest = NSFetchRequest(entityName: "Conversation")
+            // Sorted by conversationName, members.lastName, members.firstName
+            let conversationList = try managedContext.executeFetchRequest(fetchRequest) as NSArray
+            resultArray = conversationList.filteredArrayUsingPredicate(predicate) as! [Conversation]
+            return resultArray
+        }catch{}
         return []
     }
     
@@ -160,8 +176,8 @@ class AppModel:NSManagedObjectModel{
         let msg1 = ((conversation1.messages?.allObjects) as! [Message])
         let msg2 = ((conversation2.messages?.allObjects) as! [Message])
         if msg1.count > 0 && msg2.count > 0{
-            let date1 = msg1[msg1.endIndex].sentDate
-            let date2 = msg2[msg2.endIndex].sentDate
+            let date1 = msg1[msg1.endIndex-1].sentDate
+            let date2 = msg2[msg2.endIndex-1].sentDate
             
             return date1?.compare(date2!) == NSComparisonResult.OrderedDescending
         }

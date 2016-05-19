@@ -2,7 +2,7 @@
 //  Message+CoreDataProperties.swift
 //  Project342
 //
-//  Created by Zhe Xian Lee on 16/05/2016.
+//  Created by Fagan Ooi on 19/05/2016.
 //  Copyright © 2016 UOW. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
