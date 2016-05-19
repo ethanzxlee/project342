@@ -20,7 +20,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     var numberOfLoading = 1
     let defaultLimit = 20
     
-    var currentPage = 1
+    var nextPage = 0
     
     // Recently conversation list
     var conversationList = [Conversation]()
@@ -38,7 +38,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         //Load inital data for try
-        willDeleteAfterFinish()
+        //willDeleteAfterFinish()
         
         // Add edit button to navigation bar
         self.navigationItem.leftBarButtonItem = editButtonItem()
@@ -57,12 +57,19 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         
         searchBar.delegate = self
         
+        
+        refreshControl = UIRefreshControl()
+        refreshControl?.attributedTitle = NSAttributedString(string: "Refresh")
+        refreshControl?.addTarget(self, action: #selector(RecentChatViewController.refreshToGetNewFunction(_:)), forControlEvents: .ValueChanged)
+        self.tableView.contentOffset = CGPointMake(0, -(self.refreshControl?.frame.size.height)!)
+        
         /**
          Aaoli from stackoverflow.com
          Show UISearchController when tableView swipe down
          http://stackoverflow.com/questions/32923091/show-uisearchcontroller-when-tableview-swipe-down
          */
         self.tableView.contentOffset = CGPointMake(0.0, 44.0)
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -148,17 +155,72 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
          }
      }
     
+    /**
+     Beslan Tularov from stakeoverflow.com
+     load more for UITableView in swift
+     http://stackoverflow.com/questions/27079253/load-more-for-uitableview-in-swift
+     */
+    // Function for Swipe-up to load more information
+    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        //if the row reach max, it will remain at the max number of conversation in core data else it will load the data
+        if conversationList.count == appModel.getConversationMaxRange() {
+            nextPage = conversationList.count
+        }else{
+            nextPage = conversationList.count - 3
+        }
+        if indexPath.row == nextPage{
+            loadingConservationFromCoreData()
+        }
+        
+    }
+    
+    /**
+     vacawama from stakeoverflow.com
+     Load More After Coming to Bottom of UITableView
+     http://stackoverflow.com/questions/32425466/load-more-after-coming-to-bottom-of-uitableview
+     */
+    // Load data from Core Data and save the time in interface
+    // Thus, acitvity indicator is no needed
+    func loadingConservationFromCoreData(){
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+                dispatch_async(dispatch_get_main_queue()) {
+                
+                self.nextPage = self.conversationList.count - 3
+                // this runs on the main queue
+                self.conversationList.removeAll(keepCapacity: true)
+                self.conversationList = self.appModel.getConversationList(self.numberOfLoading * self.defaultLimit)
+                if self.conversationList.count == self.appModel.getConversationMaxRange() {
+                    self.nextPage = self.conversationList.count
+                }
+                self.numberOfLoading += 1
+                self.tableView.reloadData()
+            }
+        }
+    }
+
+    // Change the right bar button when it is in editing mode or normal mode
     override func setEditing(editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         if editing{
             
             let deleteAllButton = UIBarButtonItem(title: "Delete All", style: .Done, target: self, action: #selector(RecentChatViewController.deleteAllConversations))
             self.navigationItem.rightBarButtonItem = deleteAllButton
+            self.refreshControl?.endRefreshing()
         }else{
             let composeButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: #selector(RecentChatViewController.createNewConversation))
             self.navigationItem.rightBarButtonItem = composeButton
+            self.refreshControl?.endRefreshing()
         }
     }
+    
+    
+    // Function for Pull to refresh
+    func refreshToGetNewFunction(sender:AnyObject) {
+        self.conversationList = self.appModel.getConversationList(numberOfLoading*defaultLimit)
+        self.tableView.reloadData()
+        self.refreshControl?.endRefreshing()
+    }
+    
     
     
     /*
@@ -247,9 +309,9 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         
         if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
             let context = appDelegate.managedObjectContext
-            for a in 0...5{
+            for a in 0...20{
                 if let contact = NSEntityDescription.insertNewObjectForEntityForName("Contact", inManagedObjectContext: context) as? Contact {
-                    contact.firstName = "name \(a)"
+                    contact.firstName = "qasw \(a)"
                     contact.lastName = "hello"
                     contact.imagePath = "defaultPicture.png"
                     // Try to save
@@ -267,7 +329,21 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         for eachContact in contactList{
             var contactArry = [Contact]()
             contactArry.append(eachContact)
-            contactArry.append(contactList[3])
+            contactArry.append(contactList[15])
+            if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
+                let context = appDelegate.managedObjectContext
+            if let msg = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as? Message {
+                
+                    // Try to save
+                    do {
+                        try context.save()
+                    }
+                    catch {
+                        
+                    }
+                }
+            }
+
             let success = appModel.createNewConversation(contactArry)
             print(success)
         }

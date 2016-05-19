@@ -14,8 +14,19 @@ class AppModel:NSManagedObjectModel{
     
     
     // MARK: -Conversation
+    // Get the max range of conversation in Core Data
+    func getConversationMaxRange()->Int{
+        let getConversationRequest = NSFetchRequest(entityName: "Conversation")
+        do{
+            if let getConversationList = try managedContext.executeFetchRequest(getConversationRequest) as? [Conversation]{
+                return getConversationList.count
+            }
+        }catch{}
+        return 0
+    }
+    
     /**
-     Get a list of conversation for display in 'Recently Contact' tab
+     Get a list of conversation for display in 'Recently Contact' tab with limit
      */
     func getConversationList(limit: Int)->[Conversation]{
         
@@ -23,11 +34,30 @@ class AppModel:NSManagedObjectModel{
         do{
             getConversationRequest.fetchLimit = limit
             if let getConversationList = try managedContext.executeFetchRequest(getConversationRequest) as? [Conversation]{
-                return getConversationList
+                if getConversationList.count > 1 {
+                    let sortResult = getConversationList.sort(sortBasedOnLastMessage)
+                    return sortResult
+                }
+                
             }
         }catch{}
         return []
     }
+    
+    func getAllConversationList()->[Conversation]{
+        
+        let getConversationRequest = NSFetchRequest(entityName: "Conversation")
+        do{
+            if let getConversationList = try managedContext.executeFetchRequest(getConversationRequest) as? [Conversation]{
+                if getConversationList.count > 1 {
+                    let sortResult = getConversationList.sort(sortBasedOnLastMessage)
+                    return sortResult
+                }
+            }
+        }catch{}
+        return []
+    }
+
     
     /**
      Create new conversation
@@ -88,7 +118,7 @@ class AppModel:NSManagedObjectModel{
     // Delete all conversations
     func deleteAllConversations(){
         do{
-            let conversationList = self.getConversationList()
+            let conversationList = self.getAllConversationList()
             for conversation in conversationList{
                 managedContext.deleteObject(conversation)
             }
@@ -123,6 +153,26 @@ class AppModel:NSManagedObjectModel{
             }
         }catch{}
         return []
+    }
+    
+    // MARK: - Comparison
+    func sortBasedOnLastMessage(conversation1: Conversation, conversation2: Conversation)-> Bool{
+        let msg1 = ((conversation1.messages?.allObjects) as! [Message])
+        let msg2 = ((conversation2.messages?.allObjects) as! [Message])
+        if msg1.count > 0 && msg2.count > 0{
+            let date1 = msg1[msg1.endIndex].sentDate
+            let date2 = msg2[msg2.endIndex].sentDate
+            
+            return date1?.compare(date2!) == NSComparisonResult.OrderedDescending
+        }
+        
+        // Mean first conversation gt message
+        // Meanwhile 2nd conversation dont hv message
+        // Thus, first display first
+        if msg1.count > 0 && msg2.count == 0{
+            return true
+        }
+        return false
     }
 
 
