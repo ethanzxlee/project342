@@ -26,7 +26,15 @@ class CreateNewChatViewController: UIViewController, UITableViewDelegate, UITabl
         super.viewDidLoad()
 
         contactList = appModel.getContactList()
-        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "contactForCreateNewChat")
+        
+        /**
+         Seemu Apps
+         XCode Swift - Custom UITableView Cell Tutorial
+         https://www.youtube.com/watch?v=adP2dG_C1XU
+         */
+        // Register the custom cell
+        let nib = UINib(nibName: "customTableCell", bundle: nil)
+        self.tableView.registerNib(nib, forCellReuseIdentifier: "createNewChatCell")
     }
 
     override func didReceiveMemoryWarning() {
@@ -55,7 +63,52 @@ class CreateNewChatViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = self.tableView.dequeueReusableCellWithIdentifier("contactForCreateNewChat")! as UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("createNewChatCell", forIndexPath: indexPath)
+        let cell2:TableViewCellCreateNewChat = cell as! TableViewCellCreateNewChat
+
+        /**
+         NSHipster.com
+         Image Resizing Techniques
+         http://nshipster.com/image-resizing/
+         */
+        // FIXME: temporay set user name
+        let contact = contactList[indexPath.row]
+        
+        // FIXME: get the image from Directory
+        let image = UIImage(named: contact.imagePath!)!
+        
+        let size = CGSize(width: 50, height: 50)
+        let hasAlpha = false
+        let scale:CGFloat = 0.0
+        
+        UIGraphicsBeginImageContextWithOptions(size, hasAlpha, scale)
+        image.drawInRect(CGRect(origin: CGPointZero, size: size))
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        cell2.profilePic.image = scaledImage
+        
+        /**
+         Adi Nugroho
+         Circular UIImageView in UITableView Cell
+         https://medium.com/@adinugroho/circular-uiimageview-in-uitableview-cell-e1a7e1b6fe63#.2g5l01siu
+         Used for: Solve the problem of round image delay
+         */
+        cell2.profilePic.layer.cornerRadius = scaledImage.size.width/2
+        cell2.profilePic.layer.masksToBounds = true
+        cell2.contentMode = .ScaleAspectFit
+        cell2.name.text = "\(contact.firstName!) \(contact.lastName!)"
+        
+        cell2.circularIndicator.layer.borderColor = UIColor.grayColor().CGColor
+        cell2.circularIndicator.layer.cornerRadius = cell2.circularIndicator.frame.width/2
+        cell2.circularIndicator.layer.borderWidth = 1.0
+        cell2.circularIndicator.layer.masksToBounds = true
+        return cell2
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let cell = tableView.dequeueReusableCellWithIdentifier("createNewChatCell", forIndexPath: indexPath)
+        let cell2:TableViewCellCreateNewChat = cell as! TableViewCellCreateNewChat
         
         /**
          NSHipster.com
@@ -77,7 +130,7 @@ class CreateNewChatViewController: UIViewController, UITableViewDelegate, UITabl
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        cell.imageView?.image = scaledImage
+        cell2.profilePic.image = scaledImage
         
         /**
          Adi Nugroho
@@ -85,15 +138,16 @@ class CreateNewChatViewController: UIViewController, UITableViewDelegate, UITabl
          https://medium.com/@adinugroho/circular-uiimageview-in-uitableview-cell-e1a7e1b6fe63#.2g5l01siu
          Used for: Solve the problem of round image delay
          */
-        cell.imageView?.layer.cornerRadius = scaledImage.size.width/2
-        cell.imageView?.layer.masksToBounds = true
-        cell.imageView?.contentMode = .ScaleAspectFit
-        cell.textLabel?.text = "\(contact.firstName!) \(contact.lastName!)"
+        cell2.profilePic.layer.cornerRadius = scaledImage.size.width/2
+        cell2.profilePic.layer.masksToBounds = true
+        cell2.contentMode = .ScaleAspectFit
+        cell2.name.text = "\(contact.firstName!) \(contact.lastName!)"
         
-        return cell
-    }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        cell2.circularIndicator.layer.borderColor = UIColor.clearColor().CGColor
+        cell2.circularIndicator.layer.backgroundColor = UIColor.blueColor().CGColor
+        cell2.circularIndicator.layer.cornerRadius = cell2.circularIndicator.frame.width/2
+        cell2.circularIndicator.layer.borderWidth = 1.0
+        cell2.circularIndicator.layer.masksToBounds = true
     }
     
     // MARK: Segue

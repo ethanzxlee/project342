@@ -55,7 +55,7 @@
             </objects>
             <point key="canvasLocation" x="1562" y="-320"/>
         </scene>
-        <!--Create New Chat View Controller-->
+        <!--Create New Chat-->
         <scene sceneID="jWS-ge-60d">
             <objects>
                 <viewController id="CM7-F2-7Ih" customClass="CreateNewChatViewController" customModule="Project342" customModuleProvider="target" sceneMemberID="viewController">
@@ -79,25 +79,6 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="neF-bS-rhG">
                                 <rect key="frame" x="0.0" y="64" width="600" height="472"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="contactForCreateNewChat" textLabel="pb6-C1-AgJ" style="IBUITableViewCellStyleDefault" id="NMs-tR-C0U">
-                                        <rect key="frame" x="0.0" y="28" width="600" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="NMs-tR-C0U" id="1AA-vX-qfT">
-                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="pb6-C1-AgJ">
-                                                    <rect key="frame" x="15" y="0.0" width="570" height="43.5"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </prototypes>
                                 <connections>
                                     <outlet property="dataSource" destination="CM7-F2-7Ih" id="1tD-jh-vuU"/>
                                     <outlet property="delegate" destination="CM7-F2-7Ih" id="6LZ-KN-oNS"/>
@@ -131,7 +112,7 @@
                             </mask>
                         </variation>
                     </view>
-                    <navigationItem key="navigationItem" id="k60-e0-LaM">
+                    <navigationItem key="navigationItem" title="Create New Chat" id="k60-e0-LaM">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="4ua-cw-hTJ">
                             <connections>
                                 <action selector="cancelButtonFunc:" destination="CM7-F2-7Ih" id="FXs-Ba-1Ex"/>
