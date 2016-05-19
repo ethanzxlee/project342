@@ -15,8 +15,22 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
 
     @IBOutlet weak var searchBar: UISearchBar!
     
+    // Set the number of loading needed for query data from core data
+    // Set the default values needed add for the increasing of number of loading
+    var numberOfLoading = 1
+    let defaultLimit = 20
+    
+    var currentPage = 1
+    
+    // Recently conversation list
     var conversationList = [Conversation]()
+    
+    // Filtered result when use search
     var filteredConversationList = [Conversation]()
+    
+    // members for creation of new char
+    // get from CreateNewChat
+    var contactsForNewConversation: [Contact]?
     var searchBegin = false
     
     let appModel = AppModel()
@@ -35,8 +49,11 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         
         /**
          Catch the recent conservation form the cored data and assign to an arry variable
+         The limit of result is based on the number of loading * defaultLimit
          */
-        conversationList = appModel.getConversationList()
+        conversationList = appModel.getConversationList(numberOfLoading * defaultLimit)
+        numberOfLoading += 1
+        
         
         searchBar.delegate = self
         
@@ -171,6 +188,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     
     // MARK: - Bar Button Functions
     func createNewConversation(){
+        self.performSegueWithIdentifier("goToCreateNewChat", sender: self)
         print("createNewConversation()")
     }
     
@@ -208,6 +226,21 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         return true
     }
     
+    // MARK: Segue
+    @IBAction func getBackFromCreateNewChat(sender: UIStoryboardSegue){
+        print("1")
+        print(sender.identifier)
+        print(sender.accessibilityValue)
+        print("2")
+        hello()
+        
+        // FIXME: segue perform to ChatRoom
+        if contactsForNewConversation?.count > 0 {
+            self.appModel.createNewConversation(contactsForNewConversation!)
+        }
+    }
+    
+    
     
     // MARK: MUST DELETE
     func willDeleteAfterFinish(){
@@ -238,6 +271,10 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
             let success = appModel.createNewConversation(contactArry)
             print(success)
         }
+    }
+    
+    func hello(){
+        print("hello")
     }
 
 

@@ -17,10 +17,11 @@ class AppModel:NSManagedObjectModel{
     /**
      Get a list of conversation for display in 'Recently Contact' tab
      */
-    func getConversationList()->[Conversation]{
+    func getConversationList(limit: Int)->[Conversation]{
         
         let getConversationRequest = NSFetchRequest(entityName: "Conversation")
         do{
+            getConversationRequest.fetchLimit = limit
             if let getConversationList = try managedContext.executeFetchRequest(getConversationRequest) as? [Conversation]{
                 return getConversationList
             }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		090BED031CED454800534DC0 /* CreateNewChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090BED021CED454800534DC0 /* CreateNewChatViewController.swift */; };
 		093F20EC1CEC7D6A00F111AB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 093F20EB1CEC7D6A00F111AB /* Assets.xcassets */; };
 		093F20EE1CEC7DC800F111AB /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093F20ED1CEC7DC800F111AB /* AppModel.swift */; };
 		160FD4C2D78454226B6B3F93 /* Pods_Project342Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30B298289EF40F7674660A23 /* Pods_Project342Tests.framework */; };
@@ -55,6 +56,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		090BED021CED454800534DC0 /* CreateNewChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateNewChatViewController.swift; sourceTree = "<group>"; };
 		093F20EB1CEC7D6A00F111AB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		093F20ED1CEC7DC800F111AB /* AppModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		1FA9651905C93DDF390B4FBF /* Pods-Project342UITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342UITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Project342UITests/Pods-Project342UITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 				A1A4DA031CE87390006AA3CF /* ChatRoomSettingsViewController.swift */,
 				A1A4DA051CE873CD006AA3CF /* AddContactsViewController.swift */,
 				A1A4DA071CE879A1006AA3CF /* LoginViewController.swift */,
+				090BED021CED454800534DC0 /* CreateNewChatViewController.swift */,
 			);
 			name = ViewController;
 			sourceTree = "<group>";
@@ -523,6 +526,7 @@
 				A1A4DA561CE97AE5006AA3CF /* Contact+CoreDataProperties.swift in Sources */,
 				A1A4DA601CE98D06006AA3CF /* Attachment+CoreDataProperties.swift in Sources */,
 				093F20EE1CEC7DC800F111AB /* AppModel.swift in Sources */,
+				090BED031CED454800534DC0 /* CreateNewChatViewController.swift in Sources */,
 				A1A4DA4A1CE97974006AA3CF /* Project342.xcdatamodeld in Sources */,
 				A1A4DA5F1CE98D06006AA3CF /* Conversation.swift in Sources */,
 				A1A4DA061CE873CD006AA3CF /* AddContactsViewController.swift in Sources */,
