@@ -17,6 +17,8 @@ extension Contact {
     @NSManaged var firstName: String?
     @NSManaged var imagePath: String?
     @NSManaged var lastName: String?
+    @NSManaged var sectionTitleFirstName: String?
+    @NSManaged var sectionTitleLastName: String?
     @NSManaged var userId: String?
     @NSManaged var conversations: NSSet?
 

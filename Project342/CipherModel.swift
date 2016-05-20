@@ -5,6 +5,9 @@
 //  Created by Zhe Xian Lee on 19/05/2016.
 //  Copyright © 2016 UOW. All rights reserved.
 //
+//  References:
+//  http://nshipster.com/cfstringtransform/
+//
 
 import Foundation
 import CoreData
@@ -144,6 +147,19 @@ class CipherModel {
             contact?.firstName = firstName
             contact?.lastName = lastName
             contact?.userId = userSnapshot.key
+            
+            // Transform the names into latin to make sorting easier
+            let sectionTitleFirstName = NSMutableString(UTF8String: firstName)
+            CFStringTransform(sectionTitleFirstName, nil, kCFStringTransformToLatin, false)
+            CFStringTransform(sectionTitleFirstName, nil, kCFStringTransformStripCombiningMarks, false)
+            CFStringTransform(sectionTitleFirstName, nil, kCFStringTransformToUnicodeName, false)
+            contact?.sectionTitleFirstName = sectionTitleFirstName?.substringToIndex(1).uppercaseString
+            
+            let sectionTitleLastName = NSMutableString(UTF8String: firstName)
+            CFStringTransform(sectionTitleLastName, nil, kCFStringTransformToLatin, false)
+            CFStringTransform(sectionTitleLastName, nil, kCFStringTransformStripCombiningMarks, false)
+            CFStringTransform(sectionTitleLastName, nil, kCFStringTransformToUnicodeName, false)
+            contact?.sectionTitleFirstName = sectionTitleLastName?.substringToIndex(1).uppercaseString
             
             // Try to save the Contact
             try self.managedObjectContext.save()

@@ -20,11 +20,10 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
             let managedObjectContext = appDelegate.managedObjectContext
             
-            // TODO: Will be moved into the AppModel
             let fetchContactRequest = NSFetchRequest(entityName: String(Contact))
-            fetchContactRequest.sortDescriptors = [NSSortDescriptor(key: "firstName", ascending: true)]
+            fetchContactRequest.sortDescriptors = [NSSortDescriptor(key: "sectionTitleFirstName", ascending: true)]
             
-            fetchedResultController = NSFetchedResultsController(fetchRequest: fetchContactRequest, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+            fetchedResultController = NSFetchedResultsController(fetchRequest: fetchContactRequest, managedObjectContext: managedObjectContext, sectionNameKeyPath: "sectionTitleFirstName", cacheName: nil)
             fetchedResultController.delegate = self
             
             do {
@@ -33,33 +32,6 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             catch {
                 print(error)
             }
-            //            do {
-            //                if var contacts = try coreDataContext.executeFetchRequest(fetchContactRequest) as? [Contact] {
-            //                    // Sort all the contacts by their first name
-            //                    // TODO: IDEA? this preference can be override in our app settings page
-            //                    contacts = contacts.sort({ (a, b) -> Bool in
-            //                        a.firstName!.localizedCompare(b.firstName!) == .OrderedAscending
-            //                    })
-            //
-            //                    // Regroup the contacts into a dictionary according to their first names' first character
-            //                    for contact in contacts {
-            //                        // Convert the first character so that the grouping is case-insensitive
-            //                        let firstCharacter = String(contact.firstName![contact.firstName!.startIndex]).uppercaseString
-            //
-            //                        // Init the group if it doesn't exist
-            //                        if (self.contacts[firstCharacter] == nil) {
-            //                            self.contacts[firstCharacter] = [Contact]()
-            //                        }
-            //
-            //                        // Append the contact into the group
-            //                        self.contacts[firstCharacter]?.append(contact)
-            //                    }
-            //
-            //                }
-            //            }
-            //            catch {
-            //                print(error)
-            //            }
         }
         
     }
@@ -82,8 +54,6 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //        let keyFromIndex = self.contacts.sortedKeys[section]
-        //        return self.contacts[keyFromIndex]!.count
         guard
             let sections = fetchedResultController.sections
             else {
@@ -94,15 +64,26 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         return sectionInfo.numberOfObjects
     }
     
-    //
-    //    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-    //        return self.contacts.sortedKeys[section]
-    //    }
-    //
-    //
-    //    override func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
-    //        return self.contacts.sortedKeys
-    //    }
+    
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard
+            let sections = fetchedResultController.sections
+            else {
+                return nil
+        }
+        
+        let sectionInfo = sections[section]
+        return sectionInfo.name
+    }
+
+    override func tableView(tableView: UITableView, sectionForSectionIndexTitle title: String, atIndex index: Int) -> Int {
+        return fetchedResultController!.sectionForSectionIndexTitle(title, atIndex: index)
+    }
+    
+    
+    override func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
+        return fetchedResultController.sectionIndexTitles
+    }
     
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -114,12 +95,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 return UITableViewCell()
         }
         
-        // let keyFromIndex = self.contacts.sortedKeys[indexPath.section]
-        //
-        // cell.contactNameLabel.text = "\(contacts[keyFromIndex]![indexPath.row].firstName!) \(contacts[keyFromIndex]![indexPath.row].lastName!)"
-        
         cell.contactNameLabel.text = contact.firstName
-        
         
         return cell
     }
@@ -140,6 +116,17 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         }
     }
     
+    func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
+        switch type {
+        case .Insert:
+            tableView.insertSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Automatic)
+        case .Delete:
+            tableView.deleteSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Automatic)
+        default:
+            break
+        }
+    }
+    
     
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         switch type {
@@ -148,18 +135,10 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         case .Delete:
             tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
         case .Update:
-            guard
-                let contact = anObject as? Contact,
-                let cell = tableView.cellForRowAtIndexPath(indexPath!) as? ContactListTableViewCell
-                else {
-                    break
-            }
-            cell.contactNameLabel.text = contact.firstName
-            
+            tableView.reloadRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
         case .Move:
             tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
-            tableView.insertRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
-            
+            tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
         }
     }
     
@@ -172,4 +151,5 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     
     
 }
+
 
