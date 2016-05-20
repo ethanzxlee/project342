@@ -12,127 +12,156 @@ import Firebase
 
 class CipherModel {
     
+    static var sharedModel = CipherModel()
+    
     let firebaseRoot = Firebase(url: "https://fiery-fire-3992.firebaseio.com/")
+    
+    var usersRef: Firebase? {
+        return firebaseRoot.childByAppendingPath("users")
+    }
+    
+    var contactsRef: Firebase? {
+        guard
+            let authData = firebaseRoot.authData
+            else {
+                print("No logged in user")
+                return nil
+        }
+        
+        let contactsRef = firebaseRoot.childByAppendingPath("contacts")
+            .childByAppendingPath(authData.uid)
+            .childByAppendingPath("added")
+        contactsRef.keepSynced(true)
+        
+        return contactsRef
+    }
     
     var managedObjectContext: NSManagedObjectContext
     
     var contactAddedEventHandle: FirebaseHandle?
     var contactChangedEventHandle: FirebaseHandle?
-    var contactDeletedEventHandle: FirebaseHandle?
+    var contactRemovedEventHandle: FirebaseHandle?
+    
     
     init() {
         managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+        firebaseRoot.authUser("zxlee618@gmail.com", password: "10Zhexian01") { (error, authData) in}
+    }
+    
+    
+    func observeContactsEvents() {
+        if let handle = contactAddedEventHandle {
+            contactsRef?.removeObserverWithHandle(handle)
+        }
+        if let handle = contactChangedEventHandle {
+            contactsRef?.removeObserverWithHandle(handle)
+        }
+        if let handle = contactRemovedEventHandle {
+            contactsRef?.removeObserverWithHandle(handle)
+        }
+        
+        contactAddedEventHandle = contactsRef?.observeEventType(.ChildAdded, withBlock: { (contactSnapshot: FDataSnapshot!) -> Void in
+            self.didFirebaseUpdateContactEntry(contactSnapshot)
+        })
+        contactChangedEventHandle = contactsRef?.observeEventType(.ChildChanged, withBlock: { (contactSnapshot: FDataSnapshot!) -> Void in
+            self.didFirebaseUpdateContactEntry(contactSnapshot)
+        })
+        contactRemovedEventHandle = contactsRef?.observeEventType(.ChildRemoved, withBlock: { (contactSnapshot: FDataSnapshot!) -> Void in
+            self.didFirebaseRemoveContactEntry(contactSnapshot)
+        })
     
     }
     
-//    
-//    func observeContactAddedEventWith(contactsRef: Firebase) {
-//        contactAddedEventHandle = contactsRef.observeEventType(.ChildAdded, withBlock: { (contactsSnapshot: FDataSnapshot!) in
-//            guar
-//        })
-//    }
-//    
-//    
-//    func observeContactChangedEvent() {
-//        
-//    }
-//    
-//    
-//    func observeContactDeletedEvent() {
-//        
-//    }
-//    
-//    
-    func syncContacts() {
-        guard
-            let authData = firebaseRoot.authData
+    
+    func didFirebaseUpdateContactEntry(contactSnapshot: FDataSnapshot) {
+        let contactUserId = contactSnapshot.key
+        let contactUserRef = usersRef?.childByAppendingPath(contactUserId)
+        
+        contactUserRef?.observeSingleEventOfType(.Value, withBlock: { (userSnapshot: FDataSnapshot!) in
+            self.didFirebaseUpdateContactUserInfo(userSnapshot)
+        })
+    }
+
+        
+    func didFirebaseUpdateContactUserInfo(userSnapshot: FDataSnapshot) {
+        do {
+            guard
+                let userSnapshotValue = userSnapshot.value as? [String: AnyObject]
+                else {
+                    return
+            }
+            
+            // Try to find if the contact exists in our database
+            let fetchContactRequest = NSFetchRequest(entityName: String(Contact))
+            fetchContactRequest.predicate = NSPredicate(format: "userId = %@", userSnapshot.key)
+            
+            guard
+                let existingContact = try self.managedObjectContext.executeFetchRequest(fetchContactRequest) as? [Contact],
+                let firstName = userSnapshotValue["firstName"] as? String,
+                let lastName = userSnapshotValue["lastName"] as? String,
+                let email = userSnapshotValue["email"] as? String
+                else {
+                    return
+            }
+            
+            var contact: Contact?
+            
+            if existingContact.count == 1 {
+                // If the Contact exist
+                contact = existingContact[0]
+            }
             else {
-                print("No logged in user")
-                return
+                // Otherwise create a Contact
+                contact = NSEntityDescription.insertNewObjectForEntityForName(String(Contact), inManagedObjectContext: self.managedObjectContext) as? Contact
+            }
+            
+            // Assigning values to the Contact
+            contact?.firstName = firstName
+            contact?.lastName = lastName
+            contact?.userId = userSnapshot.key
+            
+            // Try to save the Contact
+            try self.managedObjectContext.save()
         }
-        
-        let contactsRef = firebaseRoot.childByAppendingPath("contacts")
-            .childByAppendingPath(authData.uid)
-        
-        contactsRef.childByAppendingPath("added")
-            .observeEventType(.Value) { (contactsSnapshot: FDataSnapshot!) in
-                
-                guard
-                    let contactsSnapshotValue = contactsSnapshot.value as? [String:AnyObject]
-                    else {
-                        return
-                }
-                
-                // Clean up the database before syncing
-                do {
-                    let fetchExistingContactsRequest = NSFetchRequest(entityName: String(Contact))
-                    
-                    guard
-                        let existingContacts = try self.managedObjectContext.executeFetchRequest(fetchExistingContactsRequest) as? [Contact]
-                        else {
-                            return
-                    }
-                    
-                    for contact in existingContacts {
-                        self.managedObjectContext.deleteObject(contact)
-                    }
-                    try self.managedObjectContext.save()
-                }
-                catch {
-                    print(error)
-                }
-                
-                // Get the user's profile of all the contacts from firebase
-                for contactSnapshotValue in contactsSnapshotValue {
-                    self.firebaseRoot.childByAppendingPath("users")
-                        .childByAppendingPath(contactSnapshotValue.0)
-                        .observeSingleEventOfType(.Value, withBlock: { (usersSnapshot) in
-                            
-                            guard
-                                let usersSnapshotValue = usersSnapshot.value as? [String: AnyObject]
-                                else {
-                                    return
-                            }
-                            
-                            do {
-                                let fetchContactRequest = NSFetchRequest(entityName: String(Contact))
-                                fetchContactRequest.predicate = NSPredicate(format: "userId = %@", contactSnapshotValue.0)
-                                
-                                guard
-                                    let contacts = try self.managedObjectContext.executeFetchRequest(fetchContactRequest) as? [Contact],
-                                    let firstName = usersSnapshotValue["firstName"] as? String,
-                                    let lastName = usersSnapshotValue["lastName"] as? String,
-                                    let email = usersSnapshotValue["email"] as? String
-                                    else {
-                                        return
-                                }
-                                
-                                if contacts.count == 1 {
-                                    contacts[0].firstName = firstName
-                                    contacts[0].lastName = lastName
-                                    contacts[0].userId = contactSnapshotValue.0
-                                }
-                                else {
-                                    guard
-                                        let newContact = NSEntityDescription.insertNewObjectForEntityForName(String(Contact), inManagedObjectContext: self.managedObjectContext) as? Contact
-                                        else {
-                                            return
-                                    }
-                                    
-                                    newContact.firstName = firstName
-                                    newContact.lastName = lastName
-                                    newContact.userId = contactSnapshotValue.0
-                                }
-                                
-                                try self.managedObjectContext.save()
-                                
-                            }
-                            catch {
-                                print(error)
-                            }
-                        })
-                }
+        catch {
+            print(error)
+        }
+
+    }
+
+    
+    func didFirebaseRemoveContactEntry(contactSnapshot: FDataSnapshot) {
+        let contactUserId = contactSnapshot.key
+        do {
+            // Try to find if the contact exists in our database
+            let fetchContactRequest = NSFetchRequest(entityName: String(Contact))
+            fetchContactRequest.predicate = NSPredicate(format: "userId = %@", contactUserId)
+            
+            guard
+                let existingContact = try managedObjectContext.executeFetchRequest(fetchContactRequest) as? [Contact]
+                else {
+                    return
+            }
+            
+            // Delete the contact if it is found
+            if existingContact.count == 1 {
+                managedObjectContext.deleteObject(existingContact[0])
+            }
+            
+            // Try to save the Contact
+            try managedObjectContext.save()
+        }
+        catch {
+            print(error)
         }
     }
     
+    
+    func removeContact(contactId: String) {
+        
+    }
+    
+    func confirmContact(contactId: String) {
+        
+    }
 }

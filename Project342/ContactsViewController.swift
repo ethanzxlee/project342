@@ -64,6 +64,14 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        
+        CipherModel.sharedModel.observeContactsEvents()
+     
+    }
+    
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return fetchedResultController.sections!.count

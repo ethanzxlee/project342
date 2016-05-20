@@ -20,122 +20,122 @@ class AddContactsViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-       // self.tableView.tableHeaderView = self.searchController.searchBar
-        let ref = Firebase(url: "https://fiery-fire-3992.firebaseio.com/")
-        
-//        ref.observeAuthEventWithBlock { (authData) in
-//            if let authData = authData {
-//                print(authData)
-//            }
-//        }
-        
 //        
-        
-        // Delete all the existing contact
-        guard
-            let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate
-        else {
-            return
-        }
-        
-        let managedObjectContext = appDelegate.managedObjectContext
-        
-        let fetchRequest = NSFetchRequest(entityName: String(Contact))
-        
-        do {
-            guard let contacts = try managedObjectContext.executeFetchRequest(fetchRequest) as? [Contact] else {
-                return
-            }
-            
-            for contact in contacts {
-                managedObjectContext.deleteObject(contact)
-            }
-            
-            try managedObjectContext.save()
-        }
-        catch {
-            print(error)
-        }
-        
-        let contactRef = ref.childByAppendingPath("contacts")
-        let myContactRef = contactRef.childByAppendingPath(ref.authData.uid)
-
-        // Prepare data
-        let myContacts = ["added":["f074d315-1f40-4bcf-aefe-50fc89790e04":true, "405c1f50-fae1-422d-9383-c9c4c426e65b":true], // apple already accepts
-            "blocked": ["e87c26ce-02df-47cc-87de-a129eb9808a6":true],
-            "request": ["316504bc-8d74-429b-aa56-9eb8b98735f1":true]] // abc2   // request receive from abc2
-        
-        myContactRef.setValue(myContacts)
-        
-        // Get all the added contacts
-        myContactRef.childByAppendingPath("added")
-            .observeEventType(.Value) { (dataSnapshot: FDataSnapshot!) in
-            
-                if let contacts = dataSnapshot.value as? NSDictionary {
-                    
-                    do {
-                        guard let contacts = try managedObjectContext.executeFetchRequest(fetchRequest) as? [Contact] else {
-                            return
-                        }
-                        
-                        for contact in contacts {
-                            managedObjectContext.deleteObject(contact)
-                        }
-                        
-                        try managedObjectContext.save()
-                    }
-                    catch {
-                        print(error)
-                    }
-                    
-                    // Get information of the contacts
-                    for contactSnapshot in contacts {
-                        
-                        ref.childByAppendingPath("users")
-                            .childByAppendingPath(String(contactSnapshot.key))
-                            .observeSingleEventOfType(.Value, withBlock: { (dataSnapshot: FDataSnapshot!) in
-                                guard
-                                    let firstName = dataSnapshot.value.objectForKey("firstName") as? String,
-                                    let lastName = dataSnapshot.value.objectForKey("lastName") as? String,
-                                    let email = dataSnapshot.value.objectForKey("email") as? String
-                                else {
-                                    return
-                                }
-                                
-                                let userId = dataSnapshot.key as String
-                                let fetchRequest = NSFetchRequest(entityName: String(Contact))
-                                fetchRequest.predicate = NSPredicate(format: "userId = %@", userId)
-                                
-                                do {
-                                    if let existingRecords = try managedObjectContext.executeFetchRequest(fetchRequest) as? [Contact] {
-                                        for existingRecord in existingRecords {
-                                            managedObjectContext.deleteObject(existingRecord)
-                                        }
-                                    }
-                                }
-                                catch {
-                                    print(error)
-                                }
-                                
-                                if let contact = NSEntityDescription.insertNewObjectForEntityForName(String(Contact), inManagedObjectContext: managedObjectContext) as? Contact {
-                                    contact.firstName = firstName
-                                    contact.lastName = lastName
-                                    contact.userId = userId
-                                }
-                                print(firstName)
-                                do {
-                                    try managedObjectContext.save()
-                                }
-                                catch {
-                                    print(error)
-                                }
-                        })
-                    }
-                }
-        
-        }
-        
+//       // self.tableView.tableHeaderView = self.searchController.searchBar
+//        let ref = Firebase(url: "https://fiery-fire-3992.firebaseio.com/")
+//        
+////        ref.observeAuthEventWithBlock { (authData) in
+////            if let authData = authData {
+////                print(authData)
+////            }
+////        }
+//        
+////        
+//        
+//        // Delete all the existing contact
+//        guard
+//            let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate
+//        else {
+//            return
+//        }
+//        
+//        let managedObjectContext = appDelegate.managedObjectContext
+//        
+//        let fetchRequest = NSFetchRequest(entityName: String(Contact))
+//        
+//        do {
+//            guard let contacts = try managedObjectContext.executeFetchRequest(fetchRequest) as? [Contact] else {
+//                return
+//            }
+//            
+//            for contact in contacts {
+//                managedObjectContext.deleteObject(contact)
+//            }
+//            
+//            try managedObjectContext.save()
+//        }
+//        catch {
+//            print(error)
+//        }
+//        
+//        let contactRef = ref.childByAppendingPath("contacts")
+//        let myContactRef = contactRef.childByAppendingPath(ref.authData.uid)
+//
+//        // Prepare data
+//        let myContacts = ["added":["f074d315-1f40-4bcf-aefe-50fc89790e04":true, "405c1f50-fae1-422d-9383-c9c4c426e65b":true], // apple already accepts
+//            "blocked": ["e87c26ce-02df-47cc-87de-a129eb9808a6":true],
+//            "request": ["316504bc-8d74-429b-aa56-9eb8b98735f1":true]] // abc2   // request receive from abc2
+//        
+//        myContactRef.setValue(myContacts)
+//        
+//        // Get all the added contacts
+//        myContactRef.childByAppendingPath("added")
+//            .observeEventType(.Value) { (dataSnapshot: FDataSnapshot!) in
+//            
+//                if let contacts = dataSnapshot.value as? NSDictionary {
+//                    
+//                    do {
+//                        guard let contacts = try managedObjectContext.executeFetchRequest(fetchRequest) as? [Contact] else {
+//                            return
+//                        }
+//                        
+//                        for contact in contacts {
+//                            managedObjectContext.deleteObject(contact)
+//                        }
+//                        
+//                        try managedObjectContext.save()
+//                    }
+//                    catch {
+//                        print(error)
+//                    }
+//                    
+//                    // Get information of the contacts
+//                    for contactSnapshot in contacts {
+//                        
+//                        ref.childByAppendingPath("users")
+//                            .childByAppendingPath(String(contactSnapshot.key))
+//                            .observeSingleEventOfType(.Value, withBlock: { (dataSnapshot: FDataSnapshot!) in
+//                                guard
+//                                    let firstName = dataSnapshot.value.objectForKey("firstName") as? String,
+//                                    let lastName = dataSnapshot.value.objectForKey("lastName") as? String,
+//                                    let email = dataSnapshot.value.objectForKey("email") as? String
+//                                else {
+//                                    return
+//                                }
+//                                
+//                                let userId = dataSnapshot.key as String
+//                                let fetchRequest = NSFetchRequest(entityName: String(Contact))
+//                                fetchRequest.predicate = NSPredicate(format: "userId = %@", userId)
+//                                
+//                                do {
+//                                    if let existingRecords = try managedObjectContext.executeFetchRequest(fetchRequest) as? [Contact] {
+//                                        for existingRecord in existingRecords {
+//                                            managedObjectContext.deleteObject(existingRecord)
+//                                        }
+//                                    }
+//                                }
+//                                catch {
+//                                    print(error)
+//                                }
+//                                
+//                                if let contact = NSEntityDescription.insertNewObjectForEntityForName(String(Contact), inManagedObjectContext: managedObjectContext) as? Contact {
+//                                    contact.firstName = firstName
+//                                    contact.lastName = lastName
+//                                    contact.userId = userId
+//                                }
+//                                print(firstName)
+//                                do {
+//                                    try managedObjectContext.save()
+//                                }
+//                                catch {
+//                                    print(error)
+//                                }
+//                        })
+//                    }
+//                }
+//        
+//        }
+//        
         
 //        ref.authUser("zxlee618@gmail.com", password: "10Zhexian01") { (error, authData) in
 //            guard let authData = authData where error == nil else {

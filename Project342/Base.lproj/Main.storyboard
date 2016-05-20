@@ -77,7 +77,7 @@
                                 <rect key="frame" x="0.0" y="92" width="600" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QJb-MT-O8K" id="8ru-Hm-cDu">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -128,7 +128,7 @@
             </objects>
             <point key="canvasLocation" x="3948" y="-320"/>
         </scene>
-        <!--Contacts-->
+        <!--Contacts View Controller-->
         <scene sceneID="wg7-f3-ORb">
             <objects>
                 <viewController id="8rJ-Kc-sve" customClass="ContactsViewController" customModule="Project342" customModuleProvider="target" sceneMemberID="viewController">
@@ -142,7 +142,7 @@
                                 <rect key="frame" x="0.0" y="92" width="600" height="64"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WtQ-OJ-OUd" id="1GE-SB-FRs">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="63"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="default-avatar" translatesAutoresizingMaskIntoConstraints="NO" id="DKA-G7-Um7">
@@ -153,7 +153,7 @@
                                             </constraints>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Someone's Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K09-PN-bHf">
-                                            <rect key="frame" x="80" y="21" width="512" height="21"/>
+                                            <rect key="frame" x="80" y="22" width="512" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="21" id="OKD-CS-zxs"/>
                                             </constraints>
@@ -187,7 +187,16 @@
                             </tableViewCell>
                         </prototypes>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Contacts" id="6VF-S8-hAf">
+                    <navigationItem key="navigationItem" id="6VF-S8-hAf">
+                        <nil key="title"/>
+                        <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="cmh-D3-suC">
+                            <rect key="frame" x="180" y="7" width="240" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <segments>
+                                <segment title="All Contacts"/>
+                                <segment title="Requests"/>
+                            </segments>
+                        </segmentedControl>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="IEn-70-qai">
                             <connections>
                                 <segue destination="Xir-0Z-zSE" kind="presentation" identifier="ShowAddContactsViewController" id="WsS-NQ-YzT"/>
