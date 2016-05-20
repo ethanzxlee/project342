@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 class ContactsViewController: UITableViewController, NSFetchedResultsControllerDelegate {
-
+    
     var contacts = [String: [Contact]]()
     var fetchedResultController: NSFetchedResultsController!
     
@@ -33,43 +33,46 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             catch {
                 print(error)
             }
-//            do {
-//                if var contacts = try coreDataContext.executeFetchRequest(fetchContactRequest) as? [Contact] {
-//                    // Sort all the contacts by their first name
-//                    // TODO: IDEA? this preference can be override in our app settings page
-//                    contacts = contacts.sort({ (a, b) -> Bool in
-//                        a.firstName!.localizedCompare(b.firstName!) == .OrderedAscending
-//                    })
-//                    
-//                    // Regroup the contacts into a dictionary according to their first names' first character
-//                    for contact in contacts {
-//                        // Convert the first character so that the grouping is case-insensitive
-//                        let firstCharacter = String(contact.firstName![contact.firstName!.startIndex]).uppercaseString
-//                        
-//                        // Init the group if it doesn't exist
-//                        if (self.contacts[firstCharacter] == nil) {
-//                            self.contacts[firstCharacter] = [Contact]()
-//                        }
-//                 
-//                        // Append the contact into the group
-//                        self.contacts[firstCharacter]?.append(contact)
-//                    }
-//                
-//                }
-//            }
-//            catch {
-//                print(error)
-//            }
+            //            do {
+            //                if var contacts = try coreDataContext.executeFetchRequest(fetchContactRequest) as? [Contact] {
+            //                    // Sort all the contacts by their first name
+            //                    // TODO: IDEA? this preference can be override in our app settings page
+            //                    contacts = contacts.sort({ (a, b) -> Bool in
+            //                        a.firstName!.localizedCompare(b.firstName!) == .OrderedAscending
+            //                    })
+            //
+            //                    // Regroup the contacts into a dictionary according to their first names' first character
+            //                    for contact in contacts {
+            //                        // Convert the first character so that the grouping is case-insensitive
+            //                        let firstCharacter = String(contact.firstName![contact.firstName!.startIndex]).uppercaseString
+            //
+            //                        // Init the group if it doesn't exist
+            //                        if (self.contacts[firstCharacter] == nil) {
+            //                            self.contacts[firstCharacter] = [Contact]()
+            //                        }
+            //
+            //                        // Append the contact into the group
+            //                        self.contacts[firstCharacter]?.append(contact)
+            //                    }
+            //
+            //                }
+            //            }
+            //            catch {
+            //                print(error)
+            //            }
         }
         
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        
-        
         CipherModel.sharedModel.observeContactsEvents()
-     
+    }
+    
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidAppear(animated)
+        CipherModel.sharedModel.stopObservingContactsEvents()
     }
     
     
@@ -79,10 +82,10 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        let keyFromIndex = self.contacts.sortedKeys[section]
-//        return self.contacts[keyFromIndex]!.count
+        //        let keyFromIndex = self.contacts.sortedKeys[section]
+        //        return self.contacts[keyFromIndex]!.count
         guard
-         let sections = fetchedResultController.sections
+            let sections = fetchedResultController.sections
             else {
                 return 0
         }
@@ -91,15 +94,15 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         return sectionInfo.numberOfObjects
     }
     
-//
-//    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        return self.contacts.sortedKeys[section]
-//    }
-//    
-//    
-//    override func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
-//        return self.contacts.sortedKeys
-//    }
+    //
+    //    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    //        return self.contacts.sortedKeys[section]
+    //    }
+    //
+    //
+    //    override func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
+    //        return self.contacts.sortedKeys
+    //    }
     
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -146,8 +149,8 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
         case .Update:
             guard
-            let contact = anObject as? Contact,
-            let cell = tableView.cellForRowAtIndexPath(indexPath!) as? ContactListTableViewCell
+                let contact = anObject as? Contact,
+                let cell = tableView.cellForRowAtIndexPath(indexPath!) as? ContactListTableViewCell
                 else {
                     break
             }
@@ -166,7 +169,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     @IBAction func unwindToContactsViewController(segue: UIStoryboardSegue) {
         
     }
-
-
+    
+    
 }
 

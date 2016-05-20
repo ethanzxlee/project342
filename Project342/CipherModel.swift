@@ -31,16 +31,13 @@ class CipherModel {
         let contactsRef = firebaseRoot.childByAppendingPath("contacts")
             .childByAppendingPath(authData.uid)
             .childByAppendingPath("added")
-        contactsRef.keepSynced(true)
         
         return contactsRef
     }
     
     var managedObjectContext: NSManagedObjectContext
     
-    var contactAddedEventHandle: FirebaseHandle?
-    var contactChangedEventHandle: FirebaseHandle?
-    var contactRemovedEventHandle: FirebaseHandle?
+    var contactValueChangedEventHandle: FirebaseHandle?
     
     
     init() {
@@ -50,40 +47,68 @@ class CipherModel {
     
     
     func observeContactsEvents() {
-        if let handle = contactAddedEventHandle {
-            contactsRef?.removeObserverWithHandle(handle)
-        }
-        if let handle = contactChangedEventHandle {
-            contactsRef?.removeObserverWithHandle(handle)
-        }
-        if let handle = contactRemovedEventHandle {
-            contactsRef?.removeObserverWithHandle(handle)
-        }
+        // Remove any existing observer
+        stopObservingContactsEvents()
         
-        contactAddedEventHandle = contactsRef?.observeEventType(.ChildAdded, withBlock: { (contactSnapshot: FDataSnapshot!) -> Void in
-            self.didFirebaseUpdateContactEntry(contactSnapshot)
+        contactValueChangedEventHandle = contactsRef?.observeEventType(.Value, withBlock: { (contactsSnapshot: FDataSnapshot!) in
+            self.didFirebaseContactsValueChange(contactsSnapshot)
         })
-        contactChangedEventHandle = contactsRef?.observeEventType(.ChildChanged, withBlock: { (contactSnapshot: FDataSnapshot!) -> Void in
-            self.didFirebaseUpdateContactEntry(contactSnapshot)
-        })
-        contactRemovedEventHandle = contactsRef?.observeEventType(.ChildRemoved, withBlock: { (contactSnapshot: FDataSnapshot!) -> Void in
-            self.didFirebaseRemoveContactEntry(contactSnapshot)
-        })
-    
     }
     
     
-    func didFirebaseUpdateContactEntry(contactSnapshot: FDataSnapshot) {
-        let contactUserId = contactSnapshot.key
-        let contactUserRef = usersRef?.childByAppendingPath(contactUserId)
-        
-        contactUserRef?.observeSingleEventOfType(.Value, withBlock: { (userSnapshot: FDataSnapshot!) in
-            self.didFirebaseUpdateContactUserInfo(userSnapshot)
-        })
+    func stopObservingContactsEvents() {
+        guard
+            let contactValueChangedEventHandle = contactValueChangedEventHandle
+            else {
+                return
+        }
+        contactsRef?.removeObserverWithHandle(contactValueChangedEventHandle)
     }
-
+    
+    
+    func didFirebaseContactsValueChange(contactsSnapshot: FDataSnapshot) {
+        guard
+            let contactsSnapshotValues = contactsSnapshot.value as? [String: AnyObject]
+            else {
+                return
+        }
         
-    func didFirebaseUpdateContactUserInfo(userSnapshot: FDataSnapshot) {
+        let currentContactsUserId = [String](contactsSnapshotValues.keys)
+        
+        do {
+            // Remove the contacts no longer exist
+            let fetchRemovedContactRequest = NSFetchRequest(entityName: String(Contact))
+            fetchRemovedContactRequest.predicate = NSPredicate(format: "NOT (userId IN %@)", currentContactsUserId)
+            
+            guard
+                let removedContacts = try managedObjectContext.executeFetchRequest(fetchRemovedContactRequest) as? [Contact]
+                else {
+                    return
+            }
+            
+            for removedContact in removedContacts {
+                managedObjectContext.deleteObject(removedContact)
+            }
+            
+            try managedObjectContext.save()
+        }
+        catch {
+            print(error)
+        }
+        
+        // Update the user info of the current contacts
+        for contactSnapshotValue in contactsSnapshotValues {
+            let contactUserId = contactSnapshotValue.0
+            let contactUserRef = usersRef?.childByAppendingPath(contactUserId)
+            
+            contactUserRef?.observeSingleEventOfType(.Value, withBlock: { (userSnapshot: FDataSnapshot!) in
+                self.didFirebaseContactUserInfoChange(userSnapshot)
+            })
+        }
+    }
+    
+    
+    func didFirebaseContactUserInfoChange(userSnapshot: FDataSnapshot) {
         do {
             guard
                 let userSnapshotValue = userSnapshot.value as? [String: AnyObject]
@@ -126,35 +151,10 @@ class CipherModel {
         catch {
             print(error)
         }
-
+        
     }
-
     
-    func didFirebaseRemoveContactEntry(contactSnapshot: FDataSnapshot) {
-        let contactUserId = contactSnapshot.key
-        do {
-            // Try to find if the contact exists in our database
-            let fetchContactRequest = NSFetchRequest(entityName: String(Contact))
-            fetchContactRequest.predicate = NSPredicate(format: "userId = %@", contactUserId)
-            
-            guard
-                let existingContact = try managedObjectContext.executeFetchRequest(fetchContactRequest) as? [Contact]
-                else {
-                    return
-            }
-            
-            // Delete the contact if it is found
-            if existingContact.count == 1 {
-                managedObjectContext.deleteObject(existingContact[0])
-            }
-            
-            // Try to save the Contact
-            try managedObjectContext.save()
-        }
-        catch {
-            print(error)
-        }
-    }
+    
     
     
     func removeContact(contactId: String) {
