@@ -163,6 +163,8 @@ class AppModel:NSManagedObjectModel{
     func getContactList()->[Contact]{
         
         let getContactRequest = NSFetchRequest(entityName: "Contact")
+        let firstNameSort = NSSortDescriptor(key: "firstName", ascending: true)
+        getContactRequest.sortDescriptors = [firstNameSort]
         do{
             if let getContactList = try managedContext.executeFetchRequest(getContactRequest) as? [Contact]{
                 return getContactList
@@ -170,6 +172,26 @@ class AppModel:NSManagedObjectModel{
         }catch{}
         return []
     }
+    
+    func searchContactList(str: String)-> [Contact]{
+        let predicate = NSPredicate(format:
+            "(firstName.lowercaseString CONTAINS %@) OR " +
+                "(lastName.lowercaseString CONTAINS %@) OR" +
+            "(firstName.lowercaseString IN %@)",
+                                    str.lowercaseString, str.lowercaseString, str.lowercaseString)
+        
+        let fetchRequest = NSFetchRequest(entityName: "Contact")
+        let firstNameSort = NSSortDescriptor(key: "firstName", ascending: true)
+        fetchRequest.sortDescriptors = [firstNameSort]
+        var resultArray = [Contact]()
+        do{
+            let contactList = try managedContext.executeFetchRequest(fetchRequest) as NSArray
+            resultArray = contactList.filteredArrayUsingPredicate(predicate) as! [Contact]
+            return resultArray
+        }catch{}
+        return []
+    }
+
     
     // MARK: - Comparison
     func sortBasedOnLastMessage(conversation1: Conversation, conversation2: Conversation)-> Bool{
@@ -190,6 +212,7 @@ class AppModel:NSManagedObjectModel{
         }
         return false
     }
-
+    
+    
 
 }

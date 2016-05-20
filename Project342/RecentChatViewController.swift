@@ -37,8 +37,8 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //Load inital data for try
-        willDeleteAfterFinish()
+        // MARK: MUST DELETE Load inital data for try
+        //willDeleteAfterFinish()
         
         // Add edit button to navigation bar
         self.navigationItem.leftBarButtonItem = editButtonItem()
@@ -111,6 +111,12 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         
         // FIXME: get the image from Directory
         let image = UIImage(named: members[0].imagePath!)!
+        
+//        let imgName = contact.imagePath
+//        let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+//        let documentDirectory = documentPath[0]
+//        let destinationPath = NSURL(fileURLWithPath: documentDirectory).URLByAppendingPathComponent(imgName!)
+//        let image = UIImage(named: destinationPath.absoluteString)
         
         let size = CGSize(width: 50, height: 50)
         let hasAlpha = false
@@ -274,9 +280,10 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
         searchActive = true
-        let searchText = self.searchBar.text
+        let searchText = searchBar.text
         if searchText == "" {
-            searchActive = true
+            // Search Text Empty, so it will take the origin conversation list
+            searchActive = false
         }else{
             filteredConversationList = self.appModel.searchResult(searchText!)
         }
@@ -286,7 +293,8 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         searchActive = true
         if searchText == "" {
-            searchActive = true
+            // Search Text Empty, so it will take the origin conversation list
+            searchActive = false
         }else{
             filteredConversationList = self.appModel.searchResult(searchText)
         }
@@ -310,10 +318,12 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     
     
     // MARK: Segue
+    // FIXME: segue to chat room
     @IBAction func getBackFromCreateNewChat(sender: UIStoryboardSegue){
         // FIXME: segue perform to ChatRoom
         if contactsForNewConversation?.count > 0 {
             self.appModel.createNewConversation(contactsForNewConversation!)
+            self.performSegueWithIdentifier("toChatRoom", sender: self)
         }
     }
     
@@ -328,7 +338,8 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
                 if let contact = NSEntityDescription.insertNewObjectForEntityForName("Contact", inManagedObjectContext: context) as? Contact {
                     contact.firstName = "kkkk \(a)"
                     contact.lastName = "hello"
-                    contact.imagePath = "defaultPicture.png"
+                    contact.imagePath = "pic.png"
+                    let randnum = random()
                     // Try to save
                     do {
                         try context.save()
