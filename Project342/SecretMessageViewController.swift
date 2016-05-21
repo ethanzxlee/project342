@@ -52,6 +52,7 @@ class SecretMessageViewController: UIViewController, AVAudioPlayerDelegate {
         // If gt message MEAN it is not voice message
         if msg?.content != "" {
             secretMessage.text = msg?.content
+            secretMessage.font = UIFont(name: "HelveticaNeue", size: 16)
             dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)){
                 dispatch_async(dispatch_get_main_queue()){
                     if self.audioPlayer?.duration <= 0{
@@ -130,8 +131,8 @@ class SecretMessageViewController: UIViewController, AVAudioPlayerDelegate {
         
         let path = UIBezierPath()
         
-        path.moveToPoint(CGPoint(x: self.secretMessage.frame.minX, y: self.secretMessage.frame.maxY+5))
-        path.addLineToPoint(CGPoint(x: self.secretMessage.frame.maxX, y: self.secretMessage.frame.maxY+5))
+        path.moveToPoint(CGPoint(x: self.secretMessage.frame.minX, y: self.secretMessage.frame.maxY+15))
+        path.addLineToPoint(CGPoint(x: self.secretMessage.frame.maxX, y: self.secretMessage.frame.maxY+15))
         
         line.path = path.CGPath
         line.strokeColor = UIColor.grayColor().CGColor

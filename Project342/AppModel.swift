@@ -57,7 +57,7 @@ class AppModel:NSManagedObjectModel{
         }catch{}
         return []
     }
-
+    
     
     /**
      Create new conversation
@@ -80,7 +80,7 @@ class AppModel:NSManagedObjectModel{
              */
             conversation.members = NSSet(array: members)
             conversation.conversationName = self.getConversationName(members)
-
+            
             do{
                 try managedContext.save()
             }catch{
@@ -102,7 +102,7 @@ class AppModel:NSManagedObjectModel{
         // Remove the ',' and ' ' in the string
         name.removeAtIndex(name.startIndex)
         name.removeAtIndex(name.startIndex)
-
+        
         return name
     }
     
@@ -136,12 +136,12 @@ class AppModel:NSManagedObjectModel{
         // Any used for NSArray or NSSet
         let predicate = NSPredicate(format:
             "(conversationName.lowercaseString CONTAINS %@) OR " +      // Get the string contain @ in conversationName
-            "(ANY members.firstName.lowercaseString CONTAINS %@) OR " + // Get the string contain @ in firstName
-            "(ANY members.lastName.lowercaseString CONTAINS %@) OR " +  // Get the string contain @ in lastName
-            "(ANY members.firstName.lowercaseString IN %@) OR " +       // Get the string that members.firstName contain inside the @
-            "(ANY messages.content.lowercaseString CONTAINS %@) OR " +
+                "(ANY members.firstName.lowercaseString CONTAINS %@) OR " + // Get the string contain @ in firstName
+                "(ANY members.lastName.lowercaseString CONTAINS %@) OR " +  // Get the string contain @ in lastName
+                "(ANY members.firstName.lowercaseString IN %@) OR " +       // Get the string that members.firstName contain inside the @
+                "(ANY messages.content.lowercaseString CONTAINS %@) OR " +
             "(ANY messages.content.lowercaseString IN %@)",
-            str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString)
+                                    str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString)
         
         var resultArray = [Conversation]()
         do{
@@ -191,7 +191,7 @@ class AppModel:NSManagedObjectModel{
         }catch{}
         return []
     }
-
+    
     
     // MARK: - Comparison
     func sortBasedOnLastMessage(conversation1: Conversation, conversation2: Conversation)-> Bool{
@@ -214,5 +214,5 @@ class AppModel:NSManagedObjectModel{
     }
     
     
-
+    
 }
