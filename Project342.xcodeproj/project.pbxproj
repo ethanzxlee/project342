@@ -10,6 +10,7 @@
 		090BED031CED454800534DC0 /* CreateNewChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090BED021CED454800534DC0 /* CreateNewChatViewController.swift */; };
 		093F20EC1CEC7D6A00F111AB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 093F20EB1CEC7D6A00F111AB /* Assets.xcassets */; };
 		093F20EE1CEC7DC800F111AB /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093F20ED1CEC7DC800F111AB /* AppModel.swift */; };
+		09B79BB11CF01B0000AA0807 /* Concentrate and ask again.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 09B79BB01CF01B0000AA0807 /* Concentrate and ask again.m4a */; };
 		160FD4C2D78454226B6B3F93 /* Pods_Project342Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30B298289EF40F7674660A23 /* Pods_Project342Tests.framework */; };
 		318DC7BD670D22321BC888BB /* Pods_Project342UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F73ADE18FAC502123383AC /* Pods_Project342UITests.framework */; };
 		A1A4D9C51CE86E74006AA3CF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4D9C41CE86E74006AA3CF /* AppDelegate.swift */; };
@@ -59,6 +60,7 @@
 		090BED021CED454800534DC0 /* CreateNewChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateNewChatViewController.swift; sourceTree = "<group>"; };
 		093F20EB1CEC7D6A00F111AB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		093F20ED1CEC7DC800F111AB /* AppModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		09B79BB01CF01B0000AA0807 /* Concentrate and ask again.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Concentrate and ask again.m4a"; path = "../Magic 8 Ball/Magic 8 Ball/Concentrate and ask again.m4a"; sourceTree = "<group>"; };
 		1FA9651905C93DDF390B4FBF /* Pods-Project342UITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342UITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Project342UITests/Pods-Project342UITests.debug.xcconfig"; sourceTree = "<group>"; };
 		20E7928135FC046EF0466792 /* Pods-Project342Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Project342Tests/Pods-Project342Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		30B298289EF40F7674660A23 /* Pods_Project342Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Project342Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -152,6 +154,7 @@
 		A1A4D9B81CE86E74006AA3CF = {
 			isa = PBXGroup;
 			children = (
+				09B79BB01CF01B0000AA0807 /* Concentrate and ask again.m4a */,
 				A1A4D9C31CE86E74006AA3CF /* Project342 */,
 				A1A4D9DA1CE86E74006AA3CF /* Project342Tests */,
 				A1A4D9E51CE86E74006AA3CF /* Project342UITests */,
@@ -373,6 +376,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1A4D9D11CE86E74006AA3CF /* LaunchScreen.storyboard in Resources */,
+				09B79BB11CF01B0000AA0807 /* Concentrate and ask again.m4a in Resources */,
 				093F20EC1CEC7D6A00F111AB /* Assets.xcassets in Resources */,
 				A1A4D9CC1CE86E74006AA3CF /* Main.storyboard in Resources */,
 			);

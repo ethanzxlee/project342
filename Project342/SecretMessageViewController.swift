@@ -10,17 +10,29 @@ import UIKit
 import AVFoundation
 import CoreData
 
-class SecretMessageViewController: UIViewController {
+class SecretMessageViewController: UIViewController, AVAudioPlayerDelegate {
+    
+    /**
+     allocate from stakeoverflow.com
+     Audio playback progress as UISlider in Swift
+     http://stackoverflow.com/questions/29542001/audio-playback-progress-as-uislider-in-swift
+     User for: Put the sliders to indicate the amount of length of sound play
+     */
+    var updaterForProgressSlider : CADisplayLink! = nil
+    var progressBarSlider = UISlider()
     
     @IBOutlet weak var textViewHeight: NSLayoutConstraint!
     
-    // If multple img, use transition show it.. just like ass3
     @IBOutlet weak var secretMessage: UITextView!
     
     @IBOutlet weak var secretImg: UIImageView!
     
     var msg: Message?
+    
     var timer = NSTimer()
+    
+    let line = CAShapeLayer()
+    
     var attachmentIndexShown: Int = 0        // Used to control the transition of image
     
     var audioPlayer : AVAudioPlayer?
@@ -29,17 +41,23 @@ class SecretMessageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        self.progressBarSlider.frame.width = self.view.frame.width/2
+        self.progressBarSlider.center = self.view.center
+        self.view.addSubview(progressBarSlider)
         
         //TODO: MUST DELETE
         loadInitialDataFortry()
         
         // Load the message content into the text view. if it iis empty, hide the view
+        // If gt message MEAN it is not voice message
         if msg?.content != "" {
             secretMessage.text = msg?.content
             dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)){
                 dispatch_async(dispatch_get_main_queue()){
-                    self.adjustTextViewHeight()
-                    self.textViewBorder()
+                    if self.audioPlayer?.duration <= 0{
+                        self.adjustTextViewHeight()
+                        self.textViewBorder()
+                    }
                 }
             }
         }else{
@@ -53,17 +71,28 @@ class SecretMessageViewController: UIViewController {
         if attachmentContentObject.count > 0{
             // Get the filePath form attachement and detect it is voice message or not
             let componentsOfAttachment = attachmentContentObject[0].filePath!.componentsSeparatedByString(".")
-            if componentsOfAttachment[componentsOfAttachment.endIndex-1] == "mp3"{
+            if componentsOfAttachment[componentsOfAttachment.endIndex-1] == "mp3" || componentsOfAttachment[componentsOfAttachment.endIndex-1] == "m4a"{
                 let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
                 let documentDirectory = documentPath[0]
                 let destinationPath = NSURL(fileURLWithPath: documentDirectory).URLByAppendingPathComponent(attachmentContentObject[0].filePath!)
+                
+                secretImg.removeFromSuperview()
+                secretMessage.removeFromSuperview()
+                
                 playVoiceMessage(destinationPath)
+         
             }else{
                 // Load the first image before another image continue by using timer
                 self.transitionImgAttachment()
-                // Load the image
-                timer = NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(SecretMessageViewController.transitionImgAttachment), userInfo: nil, repeats: true)
+                // Load the image by interval timer if consist more than 1 image attachment
+                if attachmentContentObject.count > 1{
+                    timer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(SecretMessageViewController.transitionImgAttachment), userInfo: nil, repeats: true)
+                }
             }
+        }
+        
+        if audioPlayer?.duration <= 0 {
+            self.progressBarSlider.removeFromSuperview()
         }
         
         
@@ -98,7 +127,6 @@ class SecretMessageViewController: UIViewController {
     }
     
     func textViewBorder(){
-        let line = CAShapeLayer()
         
         let path = UIBezierPath()
         
@@ -114,10 +142,26 @@ class SecretMessageViewController: UIViewController {
     func playVoiceMessage(path: NSURL){
         
         do{
+            updaterForProgressSlider = CADisplayLink(target: self, selector: #selector(SecretMessageViewController.trackVoiceMessage))
+            updaterForProgressSlider.frameInterval = 1
+            updaterForProgressSlider.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSRunLoopCommonModes)
+            
+           
             try audioPlayer = AVAudioPlayer(contentsOfURL: path)
+            audioPlayer?.numberOfLoops = 0      // -1 if wan infinity loop
+            audioPlayer?.delegate = self
             audioPlayer?.play()
+    
+            progressBarSlider.minimumValue = 0
+            progressBarSlider.maximumValue = 100
         }catch{}
         
+    }
+    
+    // Track the amount of sound been played
+    func trackVoiceMessage() {
+        let progressPercentage = Float(audioPlayer!.currentTime * 100 / audioPlayer!.duration)
+        progressBarSlider.value = progressPercentage
     }
     
     // MARK: Img Attachment
@@ -129,7 +173,7 @@ class SecretMessageViewController: UIViewController {
 //            let destinationPath = NSURL(fileURLWithPath: documentDirectory).URLByAppendingPathComponent(self.attachmentContentObject[self.attachmentIndexShown].filePath!)
 //            self.secretImg.image = UIImage(contentsOfFile: destinationPath.absoluteString)
             
-            // TODO: MUST DELETE JUST FOR TRYING 
+            // TODO: MUST DELETE JUST FOR TRYING : image get  from assest
             self.secretImg.image = UIImage(named: self.attachmentContentObject[self.attachmentIndexShown].filePath!)!
             
             self.secretImg.contentMode = .ScaleAspectFit
@@ -162,15 +206,15 @@ class SecretMessageViewController: UIViewController {
                     
                     var imgS = [Attachment]()
                     let attachment = NSEntityDescription.insertNewObjectForEntityForName("Attachment", inManagedObjectContext: context) as? Attachment
-                        attachment!.filePath = "defaultPicture.png"
+                        attachment!.filePath = "Concentrate and ask again.m4a"
                         attachment!.message = message
                         imgS.append(attachment!)
                     
-                    let attachment2 = NSEntityDescription.insertNewObjectForEntityForName("Attachment", inManagedObjectContext: context) as? Attachment
-                        attachment2!.filePath = "pic.png"
-                        attachment2!.message = message
-                         imgS.append(attachment2!)
-                        
+//                    let attachment2 = NSEntityDescription.insertNewObjectForEntityForName("Attachment", inManagedObjectContext: context) as? Attachment
+//                        attachment2!.filePath = "pic.png"
+//                        attachment2!.message = message
+//                         imgS.append(attachment2!)
+                    
                     
                     print(imgS.count)
                     message.attachements = NSSet(array: imgS)
@@ -191,6 +235,30 @@ class SecretMessageViewController: UIViewController {
             }catch{}
             
         }
+//        func playVoiceMessage(){
+//            
+//            do{
+//                updaterForProgressSlider = CADisplayLink(target: self, selector: #selector(SecretMessageViewController.trackVoiceMessage))
+//                updaterForProgressSlider.frameInterval = 1
+//                updaterForProgressSlider.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSRunLoopCommonModes)
+//                
+//                let path = NSBundle.mainBundle().pathForResource("Concentrate and ask again", ofType: "m4a")
+//                if let path2 = path {
+//                    let url = NSURL.fileURLWithPath(path2)
+//                    try audioPlayer = AVAudioPlayer(contentsOfURL: url)
+//                    audioPlayer?.delegate = self
+//                    audioPlayer?.play()
+//                    
+//                    progressBarSlider.minimumValue = 0
+//                    progressBarSlider.maximumValue = 100 // Percentage
+//                }
+//            }catch{}
+//            
+//        }
     }
+    
+
+    
+
 
 }
