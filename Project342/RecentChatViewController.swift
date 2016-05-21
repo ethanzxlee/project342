@@ -180,6 +180,10 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         
     }
     
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        self.performSegueWithIdentifier("toChatRoom", sender: self)
+    }
+    
     /**
      vacawama from stakeoverflow.com
      Load More After Coming to Bottom of UITableView
