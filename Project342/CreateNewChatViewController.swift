@@ -225,9 +225,10 @@ class CreateNewChatViewController: UIViewController, UITableViewDelegate, UITabl
         membersList.font = UIFont(name: "HelveticaNeue", size: 16)
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
             dispatch_async(dispatch_get_main_queue()) {
-
-        self.adjustTextView()
-                self.textViewBorder()}}
+                self.adjustTextView()
+                self.textViewBorder()
+            }
+        }
         
     }
     
