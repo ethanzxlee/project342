@@ -31,5 +31,8 @@ class ChatRoomViewController: UITableViewController {
         // Pass the selected object to the new view controller.
     }
     */
+    
+    // MARK: Segue
+    @IBAction func backFromAttachmentView(sender: UIStoryboardSegue){}
 
 }

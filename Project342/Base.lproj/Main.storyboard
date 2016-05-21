@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="A9T-6h-JA2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="B3A-Ju-v7V">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -170,7 +170,7 @@
                     </tableView>
                     <connections>
                         <segue destination="WbM-ww-BFi" kind="show" id="YqH-qb-7dK"/>
-                        <segue destination="A9T-6h-JA2" kind="show" id="IHh-48-hqk"/>
+                        <segue destination="B3A-Ju-v7V" kind="show" id="IHh-48-hqk"/>
                         <segue destination="6cw-7O-20E" kind="show" id="HdW-WG-NvO"/>
                     </connections>
                 </viewController>
@@ -191,10 +191,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fRd-3U-S8t">
-                                <rect key="frame" x="0.0" y="64" width="600" height="487"/>
+                                <rect key="frame" x="0.0" y="64" width="600" height="492"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ySO-DN-1JC">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="487"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="492"/>
                                     </imageView>
                                 </subviews>
                                 <constraints>
@@ -216,6 +216,15 @@
                             <constraint firstItem="fRd-3U-S8t" firstAttribute="leading" secondItem="xzz-fi-EQe" secondAttribute="leading" id="zxw-LR-cUi"/>
                         </constraints>
                     </view>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="1QT-Q6-nPF">
+                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="jtN-2m-Wlt">
+                            <connections>
+                                <action selector="doneButtonFunc:" destination="A9T-6h-JA2" id="WW8-Zu-tN7"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="imgView" destination="ySO-DN-1JC" id="jYe-rl-RYz"/>
                         <outlet property="imgViewBottomConstraint" destination="yrv-pI-Tg4" id="vau-Vw-fTZ"/>
@@ -223,11 +232,13 @@
                         <outlet property="imgViewTopConstraint" destination="NoV-ly-EMn" id="Ofg-k0-YQ1"/>
                         <outlet property="imgViewTrailingConstraint" destination="W0i-B8-x7L" id="BRR-4c-wGh"/>
                         <outlet property="scrollView" destination="fRd-3U-S8t" id="QBn-CP-1JF"/>
+                        <segue destination="Vcr-Nl-1z0" kind="unwind" identifier="backToChatRoom" unwindAction="backFromAttachmentView:" id="9Sm-Sx-mgh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LUr-OD-kMZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="Vcr-Nl-1z0" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3992" y="-1200"/>
+            <point key="canvasLocation" x="4804" y="-1200"/>
         </scene>
         <!--Add Contacts View Controller-->
         <scene sceneID="zDV-Cc-c7o">
@@ -508,6 +519,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NAy-mT-U1T" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2470" y="-2489"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="xKy-UB-qyh">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="B3A-Ju-v7V" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="wa2-gk-xhB">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="A9T-6h-JA2" kind="relationship" relationship="rootViewController" id="Efd-DF-vWQ"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1Xq-dq-ekZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3992" y="-1200"/>
         </scene>
     </scenes>
     <resources>
