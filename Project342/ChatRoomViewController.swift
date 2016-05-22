@@ -94,6 +94,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         }
         sendButton.hidden = true
         microphoneButton.hidden = false
+        adjustTextViewHeight()
     }
     
     @IBOutlet weak var contentView: UIView!
@@ -163,18 +164,21 @@ self.locationManager.startUpdatingLocation()
             sendButton.hidden = false
             microphoneButton.hidden = true
         }
-            var adjustment = textView.bounds.size.height - textView.contentSize.height
-            if adjustment < 0 {
-                adjustment = 0
-            }
-            
-            textView.contentOffset = CGPoint(x: 0, y: -adjustment)
-            let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.max))
-            if newSize.height > 30 {
-                messageContentViewHeightConstraint.constant = newSize.height
-            }
-        
+        adjustTextViewHeight()
        
+    }
+    
+    func adjustTextViewHeight(){
+        var adjustment = textView.bounds.size.height - textView.contentSize.height
+        if adjustment < 0 {
+            adjustment = 0
+        }
+        
+        textView.contentOffset = CGPoint(x: 0, y: -adjustment)
+        let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.max))
+        if newSize.height > 30 {
+            messageContentViewHeightConstraint.constant = newSize.height
+        }
     }
     
     // MARK: Keyboard Notification
