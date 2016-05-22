@@ -9,115 +9,133 @@
 import UIKit
 import Firebase
 import CoreData
+import QuartzCore
+import CoreLocation
+import AVFoundation
 
-class ChatRoomViewController: UITableViewController{
-    let managedContent = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePickerControllerDelegate, CLLocationManagerDelegate, AVAudioRecorderDelegate{
+    
+    @IBOutlet weak var microphoneButton: UIButton!
+    
+    @IBOutlet weak var textView: UITextView!
+    
+    @IBOutlet weak var sendButton: UIButton!
+    
+    @IBOutlet weak var chatContentTableView: UITableView!
+    
+    @IBAction func multiSelectionButtonFunc(sender: AnyObject) {
+        let alertDialog = UIAlertController()
+        
+        let takePhotoVideoAction = UIAlertAction(title: "Take Photo/Video", style: .Default) { (_) in
+            self.imagePicker.allowsEditing = false
+            self.imagePicker.sourceType = .Camera
+            self.presentViewController(self.imagePicker, animated: true, completion: nil)
+        }
+        
+        let choosePhotoVideoAction = UIAlertAction(title: "Choose Photo/Video", style: .Default){(_) in
+            self.imagePicker.allowsEditing = false
+            self.imagePicker.sourceType = .PhotoLibrary
+            self.presentViewController(self.imagePicker, animated: true, completion: nil)
+        }
+        
+        let shareLocationAction = UIAlertAction(title: "Share Location", style: .Default) { (_) in
+            
+            
+            
+
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        
+        alertDialog.addAction(cancelAction)
+        alertDialog.addAction(takePhotoVideoAction)
+        alertDialog.addAction(choosePhotoVideoAction)
+        alertDialog.addAction(shareLocationAction)
+        
+        self.presentViewController(alertDialog, animated: true, completion: nil)
+        
+    }
+    
+    @IBAction func microphoneButtonFunc(sender: AnyObject) {
+        let settings = [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 12000.0,
+            AVNumberOfChannelsKey: 1 as NSNumber,
+            AVEncoderAudioQualityKey: AVAudioQuality.High.rawValue
+        ]
+        let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true) as [String]
+        let documentsDirectory = paths[0]
+        let audioFilename = documentsDirectory.stringByAppendingString("whistle.m4a")
+        let audioURL = NSURL(fileURLWithPath: audioFilename)
+        do {
+            // 5
+            recorder = try AVAudioRecorder(URL: audioURL, settings: settings)
+            recorder.delegate = self
+            recorder.record()
+        } catch {
+
+        }
+    }
+    
+    @IBAction func hiddenButtonFunc(sender: AnyObject) {
+        if self.hiddenMessageSign {
+            self.hiddenMessageSign = false
+            self.contentView.backgroundColor = UIColor.lightGrayColor()
+        }else{
+            self.hiddenMessageSign = true
+            self.contentView.backgroundColor = UIColor.blackColor()
+        }
+    }
+    
+    @IBAction func sendButtonFunc(sender: AnyObject) {
+        if self.textView.text != "" {
+            self.appModel.sendMessage(self.textView.text, conversation:  self.conversation!)
+            self.textView.text = ""
+        }
+        sendButton.hidden = true
+        microphoneButton.hidden = false
+    }
+    
+    @IBOutlet weak var contentView: UIView!
+    
+    @IBOutlet weak var messageContentViewBottomConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var messageContentViewHeightConstraint: NSLayoutConstraint!
+    
+    var recordingSession: AVAudioSession!
+    
+    var recorder: AVAudioRecorder!
+    
+    var imagePicker = UIImagePickerController()
+    
+    let locationManager = CLLocationManager()
+    
+    var hiddenMessageSign = false
+    
+    let appModel = AppModel()
+    
     var message: Message?
+    
     var conversation: Conversation?
-        override func viewDidLoad() {
-            super.viewDidLoad()
-            let path = Firebase(url: "https://fiery-fire-3992.firebaseio.com/conversations/-KILrzoi04AK_0N65P_m")
-            path.authUser("9w2owd@gmail.com", password: "123456789/") { (error, authData) in}
-            
-            path.observeEventType(.Value, withBlock: { snapshot in
-                let attchmentList = snapshot.value.objectForKey("item") as! String
-
-                let imgData = NSData(base64EncodedString: attchmentList, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)!
-                let img = UIImage(data: imgData)
-                let viewImg = UIImageView()
-                viewImg.image = img
-                viewImg.center = self.view.center
-                self.view.addSubview(viewImg)
-                },
-                withCancelBlock: { error in
-                    print(error.description)
-                }
-            )
-
-            
-            
-//            let attachment2 = NSEntityDescription.insertNewObjectForEntityForName("Attachment", inManagedObjectContext: managedContent) as! Attachment
-//                        attachment2.filePath = "pic.png"
-//            
-//                        attachment2.sentDate = NSDate()
-//                        attachment2.message = message
-//
-//            path.setValue(attachment2.dictionary())
-            
-//        let path = Firebase(url: "https://fiery-fire-3992.firebaseio.com")
-//        path.authUser("9w2owd@gmail.com", password: "123456789/") { (error, authData) in}
-//        let postPath = path.childByAppendingPath("conversations")
-//        let pathRefrecence = postPath.childByAutoId()
-//            message = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedContent) as? Message
-//            conversation = NSEntityDescription.insertNewObjectForEntityForName("Conversation", inManagedObjectContext: managedContent) as? Conversation
-//
-//        let attachment = NSEntityDescription.insertNewObjectForEntityForName("Attachment", inManagedObjectContext: managedContent) as! Attachment
-//            attachment.filePath = "pic.png"
-//            attachment.sentDate = NSDate()
-//            attachment.message = message
-//        
-//            
-//            let attachment2 = NSEntityDescription.insertNewObjectForEntityForName("Attachment", inManagedObjectContext: managedContent) as! Attachment
-//            attachment2.filePath = "pic.png"
-//            
-//            attachment2.sentDate = NSDate()
-//            attachment2.message = message
-//            
-//        message?.content = "dddddd"
-//        message?.conversation = conversation
-//            message?.sentDate = NSDate()
-//            message?.shouldCover = true
-//            message?.attachements = NSSet(array: [attachment2, attachment])
-//        conversation?.messages = NSSet(array: [message!])
-//            print(message?.sentDate)
-//
-//            pathRefrecence.setValue(attachment2.dictionary())
-//            print(pathRefrecence.authData.uid)
-//            print(pathRefrecence.authData)
-//            print(pathRefrecence)
-//
-////            let arry =  pathRefrecence.description.componentsSeparatedByString("/-")
-//            
-//            let getData = path.childByAppendingPath("conversations")
-//            .childByAppendingPath("-KILecpezSfOFTP7zPEH")
-//            .childByAppendingPath("attachments")
-//            
-//            getData.observeEventType(.Value, withBlock: { snapshot in
-//                let attchmentList = snapshot.value as! [NSDictionary]
-////                for eachAtt in attchmentList{
-////                    
-////                }
-////                print(attchmentList[0].sentDate)
-//                },
-//                withCancelBlock: { error in
-//                    print(error.description)
-//                }
-//            )
-//            
-//            let getData2 = path.childByAppendingPath("conversations")
-//                .childByAppendingPath("-KILecpezSfOFTP7zPEH")
-//            
-//            getData2.observeEventType(.Value, withBlock: { snapshot in
-//                let info = snapshot.value.objectForKey("content") as! String
-//                print(info)
-//                
-//                },
-//                                     withCancelBlock: { error in
-//                                        print(error.description)
-//                }
-//            )
-//
-//
-//            
-//            print("w")
-            
-            
-            
-//            let postRef = ref.childByAppendingPath("posts")
-//            let post1 = ["author": "gracehop", "title": "Announcing COBOL, a New Programming Language"]
-//            let post1Ref = postRef.childByAutoId()
-//            post1Ref.setValue(post1)
-        // Do any additional setup after loading the view.
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.title = conversation?.conversationName!
+        
+        self.textView.delegate = self
+        self.textView.layer.cornerRadius = 5
+        
+        self.recordingSession = AVAudioSession.sharedInstance()
+        
+        self.locationManager.delegate = self
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.locationManager.requestAlwaysAuthorization()
+self.locationManager.startUpdatingLocation()
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -136,8 +154,66 @@ class ChatRoomViewController: UITableViewController{
     }
     */
     
+    // MARK: TextView
+    func textViewDidChange(textView: UITextView) {
+        if textView.text == "" {
+            sendButton.hidden = true
+            microphoneButton.hidden = false
+        }else{
+            sendButton.hidden = false
+            microphoneButton.hidden = true
+        }
+            var adjustment = textView.bounds.size.height - textView.contentSize.height
+            if adjustment < 0 {
+                adjustment = 0
+            }
+            
+            textView.contentOffset = CGPoint(x: 0, y: -adjustment)
+            let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.max))
+            if newSize.height > 30 {
+                messageContentViewHeightConstraint.constant = newSize.height
+            }
+        
+       
+    }
+    
+    // MARK: Keyboard Notification
+    func keyboardWillShow(notification: NSNotification){
+        if let keyboardSize = (notification.userInfo![UIKeyboardFrameBeginUserInfoKey] as? NSValue){
+            let keyboardHeight = keyboardSize.CGRectValue().height
+            
+            messageContentViewBottomConstraint.constant += keyboardHeight
+            
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification){
+        if let keyboardSize = (notification.userInfo![UIKeyboardFrameBeginUserInfoKey] as? NSValue){
+            let keyboardHeight = keyboardSize.CGRectValue().height
+            
+            messageContentViewBottomConstraint.constant -= keyboardHeight
+            
+        }
+    }
+    
     // MARK: Segue
     @IBAction func backFromAttachmentView(sender: UIStoryboardSegue){}
+    
+    // MARK: Location & Share Location feature
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let location = locations.last
+        let lat = location?.coordinate.latitude
+        let lon = location?.coordinate.longitude
+        self.locationManager.stopUpdatingLocation()
+        self.shareLocation(lat!, lon: lon!)
+    }
+    
+    
+    // TODO: fix how to share in message
+    func shareLocation(lat: CLLocationDegrees, lon: CLLocationDegrees){
+        print("dd")
+    }
+    
     
     
 

@@ -65,7 +65,7 @@ class AppModel:NSManagedObjectModel{
      Return false: fail
      */
     // FIXME: Upload to Firebase
-    func createNewConversation(members:[Contact])->Bool{
+    func createNewConversation(members:[Contact])->Conversation{
         if let conversation = NSEntityDescription.insertNewObjectForEntityForName("Conversation", inManagedObjectContext: managedContext)as? Conversation{
             
             /**
@@ -86,26 +86,44 @@ class AppModel:NSManagedObjectModel{
                 try managedContext.save()
                 
                 // TODO: Upload to Firebase with members needed to include current users
-                
+                return conversation
             }catch{
-                return false
+            
             }
             
         }
-        return true
+        return Conversation()
     }
     
     // Get name of conversation
     func getConversationName(members: [Contact])->String{
         var name: String = ""
-        for eachMember in members{
-            let firstName = eachMember.firstName!
-            name = "\(name), \(firstName)"
+        if members.count > 2 {
+            // Load first 2 people name, the rest with will be ignore and add number
+            for eachMember in 0..<2{
+                let firstName = members[eachMember].firstName!
+                name = "\(name), \(firstName)"
+            }
+            
+            // Remove the ',' and ' ' in the string
+            name.removeAtIndex(name.startIndex)
+            name.removeAtIndex(name.startIndex)
+            let numOfpeople = " and ... (\(members.count+1))"
+            name.appendContentsOf(numOfpeople)
+        }else{
+            for eachMember in members{
+                let firstName = eachMember.firstName!
+                name = "\(name), \(firstName)"
+            }
+            
+            // Remove the ',' and ' ' in the string
+            name.removeAtIndex(name.startIndex)
+            name.removeAtIndex(name.startIndex)
+            let numOfpeople = "(\(members.count+1))"
+            name.appendContentsOf(numOfpeople)
         }
         
-        // Remove the ',' and ' ' in the string
-        name.removeAtIndex(name.startIndex)
-        name.removeAtIndex(name.startIndex)
+        
         
         return name
     }
@@ -157,6 +175,10 @@ class AppModel:NSManagedObjectModel{
             return resultArray
         }catch{}
         return []
+    }
+    
+    func sendMessage(msg: String, conversation: Conversation){
+        
     }
     
     

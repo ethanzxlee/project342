@@ -47,7 +47,7 @@
                     <navigationItem key="navigationItem" title="Recents" id="H0j-T3-g0U"/>
                     <connections>
                         <outlet property="searchBar" destination="CSf-4n-9Ak" id="4iV-4u-jyA"/>
-                        <segue destination="iAg-cx-Yx1" kind="show" identifier="toChatRoom" id="rzW-Ys-4ft"/>
+                        <segue destination="pJb-uc-Bgd" kind="show" identifier="toChatRoom" id="rzW-Ys-4ft"/>
                         <segue destination="n5I-1s-UFH" kind="show" identifier="goToCreateNewChat" id="GGF-mF-c0w"/>
                     </connections>
                 </viewController>
@@ -159,24 +159,130 @@
             </objects>
             <point key="canvasLocation" x="2470" y="-1529"/>
         </scene>
-        <!--Chat Room View Controller-->
+        <!--Chat-->
         <scene sceneID="fsV-uO-RTR">
             <objects>
                 <viewController id="iAg-cx-Yx1" customClass="ChatRoomViewController" customModule="Project342" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="DgB-L0-CWA">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="q6g-JM-iWO"/>
+                        <viewControllerLayoutGuide type="bottom" id="5Zo-Dj-0LP"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="2qg-AK-QMB">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dXL-yq-icw">
+                                <rect key="frame" x="0.0" y="521" width="600" height="30"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="55P-1z-AZB">
+                                        <rect key="frame" x="5" y="2" width="24" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="24" id="I7l-7w-yrc"/>
+                                            <constraint firstAttribute="width" constant="24" id="hbw-m1-k9H"/>
+                                        </constraints>
+                                        <state key="normal" title="multiSelectionButton" image="options"/>
+                                        <connections>
+                                            <action selector="multiSelectionButtonFunc:" destination="iAg-cx-Yx1" eventType="touchUpInside" id="Ovd-rz-46l"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jwQ-h4-jyz">
+                                        <rect key="frame" x="568" y="2" width="24" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="24" id="bC3-gm-qLA"/>
+                                            <constraint firstAttribute="height" constant="24" id="xmC-zu-eGG"/>
+                                        </constraints>
+                                        <state key="normal" image="mic"/>
+                                        <connections>
+                                            <action selector="microphoneButtonFunc:" destination="iAg-cx-Yx1" eventType="touchUpInside" id="O7y-RH-vCi"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oj7-Lg-iZr">
+                                        <rect key="frame" x="538" y="2" width="24" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="24" id="CLX-fg-zJD"/>
+                                            <constraint firstAttribute="height" constant="24" id="Y2n-aC-25L"/>
+                                        </constraints>
+                                        <state key="normal" title="HiddenMessage" image="treasure"/>
+                                        <connections>
+                                            <action selector="hiddenButtonFunc:" destination="iAg-cx-Yx1" eventType="touchUpInside" id="SLb-Og-GqQ"/>
+                                        </connections>
+                                    </button>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="xCP-Tv-fHP">
+                                        <rect key="frame" x="34" y="2" width="499" height="26"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z3T-Cp-XXV">
+                                        <rect key="frame" x="568" y="2" width="24" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="24" id="nZb-zJ-3Zf"/>
+                                            <constraint firstAttribute="height" constant="24" id="zBz-9n-zgp"/>
+                                        </constraints>
+                                        <state key="normal" image="send"/>
+                                        <connections>
+                                            <action selector="sendButtonFunc:" destination="iAg-cx-Yx1" eventType="touchUpInside" id="m1E-t7-4VV"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" red="0.57281037950000002" green="0.845132679" blue="0.85384615379999995" alpha="0.53803879310000002" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="55P-1z-AZB" firstAttribute="leading" secondItem="dXL-yq-icw" secondAttribute="leading" constant="5" id="0Oz-6E-J2P"/>
+                                    <constraint firstItem="xCP-Tv-fHP" firstAttribute="top" secondItem="dXL-yq-icw" secondAttribute="top" constant="2" id="1YX-7p-ycE"/>
+                                    <constraint firstAttribute="bottom" secondItem="jwQ-h4-jyz" secondAttribute="bottom" constant="4" id="7UL-W0-GEZ"/>
+                                    <constraint firstItem="Oj7-Lg-iZr" firstAttribute="leading" secondItem="xCP-Tv-fHP" secondAttribute="trailing" constant="5" id="8ZV-Uw-s2M"/>
+                                    <constraint firstAttribute="trailing" secondItem="jwQ-h4-jyz" secondAttribute="trailing" constant="8" id="Kin-Su-tfo"/>
+                                    <constraint firstAttribute="bottom" secondItem="z3T-Cp-XXV" secondAttribute="bottom" constant="4" id="M4h-hU-pSY"/>
+                                    <constraint firstAttribute="bottom" secondItem="xCP-Tv-fHP" secondAttribute="bottom" constant="2" id="MW4-gv-6Hc"/>
+                                    <constraint firstAttribute="bottom" secondItem="55P-1z-AZB" secondAttribute="bottom" constant="4" id="Rn7-IV-gL6"/>
+                                    <constraint firstAttribute="bottom" secondItem="Oj7-Lg-iZr" secondAttribute="bottom" constant="4" id="Ucw-ce-mXf"/>
+                                    <constraint firstItem="Oj7-Lg-iZr" firstAttribute="trailing" secondItem="jwQ-h4-jyz" secondAttribute="trailing" constant="-30" id="c2R-6n-QTu"/>
+                                    <constraint firstAttribute="trailing" secondItem="z3T-Cp-XXV" secondAttribute="trailing" constant="8" id="h9K-xL-pqA"/>
+                                    <constraint firstItem="xCP-Tv-fHP" firstAttribute="leading" secondItem="55P-1z-AZB" secondAttribute="trailing" constant="5" id="rFz-KM-oNx"/>
+                                    <constraint firstAttribute="height" constant="30" id="xVS-Ei-Ogu"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="gR7-b3-wsM">
+                                <rect key="frame" x="0.0" y="64" width="600" height="457"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </tableView>
+                        <constraints>
+                            <constraint firstItem="gR7-b3-wsM" firstAttribute="top" secondItem="q6g-JM-iWO" secondAttribute="bottom" id="46E-UZ-m43"/>
+                            <constraint firstItem="dXL-yq-icw" firstAttribute="width" secondItem="2qg-AK-QMB" secondAttribute="width" id="BUM-WK-HDh"/>
+                            <constraint firstItem="5Zo-Dj-0LP" firstAttribute="top" secondItem="dXL-yq-icw" secondAttribute="bottom" id="O0O-sN-IkO"/>
+                            <constraint firstItem="gR7-b3-wsM" firstAttribute="centerX" secondItem="2qg-AK-QMB" secondAttribute="centerX" id="UAC-gn-saQ"/>
+                            <constraint firstItem="dXL-yq-icw" firstAttribute="top" secondItem="gR7-b3-wsM" secondAttribute="bottom" id="iTo-oA-l5x"/>
+                            <constraint firstItem="dXL-yq-icw" firstAttribute="centerX" secondItem="2qg-AK-QMB" secondAttribute="centerX" id="uoV-cG-QOs"/>
+                            <constraint firstItem="gR7-b3-wsM" firstAttribute="width" secondItem="2qg-AK-QMB" secondAttribute="width" id="vez-cm-TWi"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Chat" id="J06-Jy-D85">
+                        <barButtonItem key="leftBarButtonItem" tag="1" title="&lt; Chat" id="eaD-bR-Qe5">
+                            <connections>
+                                <segue destination="kGZ-Us-7Ok" kind="unwind" unwindAction="unwindFromChatRoom:" id="RVl-hA-19y"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="chatContentTableView" destination="gR7-b3-wsM" id="kER-mV-fal"/>
+                        <outlet property="contentView" destination="dXL-yq-icw" id="dKF-4L-mXh"/>
+                        <outlet property="messageContentViewBottomConstraint" destination="O0O-sN-IkO" id="pwr-Kk-ixT"/>
+                        <outlet property="messageContentViewHeightConstraint" destination="xVS-Ei-Ogu" id="lnJ-hq-KYv"/>
+                        <outlet property="microphoneButton" destination="jwQ-h4-jyz" id="tcV-a1-Tmq"/>
+                        <outlet property="sendButton" destination="z3T-Cp-XXV" id="8Pq-QK-JgZ"/>
+                        <outlet property="textView" destination="xCP-Tv-fHP" id="hfj-g3-ElZ"/>
                         <segue destination="WbM-ww-BFi" kind="show" id="YqH-qb-7dK"/>
                         <segue destination="B3A-Ju-v7V" kind="show" id="IHh-48-hqk"/>
                         <segue destination="6cw-7O-20E" kind="show" id="HdW-WG-NvO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mo6-cf-Wob" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="kGZ-Us-7Ok" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2366" y="-320"/>
+            <point key="canvasLocation" x="3178" y="-320"/>
         </scene>
         <!--Attachment Viewer View Controller-->
         <scene sceneID="Ild-sk-2P0">
@@ -362,7 +468,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6XV-27-51V" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3960" y="-376"/>
+            <point key="canvasLocation" x="4772" y="-376"/>
         </scene>
         <!--Contacts View Controller-->
         <scene sceneID="wg7-f3-ORb">
@@ -378,7 +484,7 @@
                     </navigationItem>
                     <connections>
                         <segue destination="wMX-2M-vNv" kind="show" id="1fC-BI-Uy6"/>
-                        <segue destination="iAg-cx-Yx1" kind="show" id="k1c-uk-mqJ"/>
+                        <segue destination="pJb-uc-Bgd" kind="show" id="k1c-uk-mqJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Nw-L8-lE0" sceneMemberID="firstResponder"/>
@@ -538,9 +644,31 @@
             </objects>
             <point key="canvasLocation" x="3992" y="-1200"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="9AU-ea-8xw">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="pJb-uc-Bgd" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Igc-uw-UdU">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="iAg-cx-Yx1" kind="relationship" relationship="rootViewController" id="TYJ-wp-Wpt"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="wKV-AA-IiX" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2366" y="-320"/>
+        </scene>
     </scenes>
     <resources>
         <image name="defaultPicture" width="96" height="96"/>
+        <image name="mic" width="29" height="29"/>
+        <image name="options" width="29" height="29"/>
+        <image name="send" width="29" height="29"/>
+        <image name="treasure" width="29" height="29"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="rzW-Ys-4ft"/>
