@@ -38,7 +38,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // TODO: MUST DELETE Load inital data for try
-        //willDeleteAfterFinish()
+//        willDeleteAfterFinish()
         
         // Add edit button to navigation bar
         self.navigationItem.leftBarButtonItem = editButtonItem()
@@ -153,9 +153,26 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
      override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
              // Delete the row from the data source
-            appModel.deleteConversation(conversationList[indexPath.row])
-            conversationList.removeAtIndex(indexPath.row)
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            if conversationList[indexPath.row].members?.count > 2{
+                let alertDialog = UIAlertController(title: "Delete Group Message", message: "You will be assume left the group if you delete the group message. Do you would like to continue carry out the deletion process?", preferredStyle: .Alert)
+                let yesAction = UIAlertAction(title: "Leave and Delete", style: .Default, handler: { (_) in
+                    self.appModel.deleteConversation(self.conversationList[indexPath.row])
+                    self.conversationList.removeAtIndex(indexPath.row)
+                    tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+                })
+                
+                let noAction = UIAlertAction(title: "No", style: .Cancel, handler: nil)
+                
+                alertDialog.addAction(noAction)
+                alertDialog.addAction(yesAction)
+                
+                self.presentViewController(alertDialog, animated: true, completion: nil)
+            }else{
+                self.appModel.deleteConversation(self.conversationList[indexPath.row])
+                self.conversationList.removeAtIndex(indexPath.row)
+                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            }
+            
          } else if editingStyle == .Insert {
          // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
          }
@@ -267,9 +284,18 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     
     // Function for 'Delete All' button when tableview enter edit mode
     func deleteAllConversations(){
-        self.appModel.deleteAllConversations()
-        self.conversationList.removeAll()
-        self.tableView.reloadData()
+        let alertDialog = UIAlertController(title: "Delete All Chats", message: "The group chats setting will assume you leave the group once delete the conversation. Dou you would like to carry out the deletions? ", preferredStyle: .Alert)
+        let yesAction = UIAlertAction(title: "Delete All", style: .Default) { (_) in
+            self.appModel.deleteAllConversations()
+            self.conversationList.removeAll()
+            self.tableView.reloadData()
+        }
+        let noAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        
+        alertDialog.addAction(noAction)
+        alertDialog.addAction(yesAction)
+        
+        self.presentViewController(alertDialog, animated: true, completion: nil)
 
     }
     
@@ -359,7 +385,8 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         for a in 0...6{
                        var contactArry = [Contact]()
             contactArry.append(contactList[a])
-
+contactArry.append(contactList[3])
+            contactArry.append(contactList[2])
             let success = self.appModel.createNewConversation(contactArry)
             print(success)
         }

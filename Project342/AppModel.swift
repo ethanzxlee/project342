@@ -64,6 +64,7 @@ class AppModel:NSManagedObjectModel{
      Return true: success
      Return false: fail
      */
+    // FIXME: Upload to Firebase
     func createNewConversation(members:[Contact])->Bool{
         if let conversation = NSEntityDescription.insertNewObjectForEntityForName("Conversation", inManagedObjectContext: managedContext)as? Conversation{
             
@@ -83,6 +84,9 @@ class AppModel:NSManagedObjectModel{
             
             do{
                 try managedContext.save()
+                
+                // TODO: Upload to Firebase with members needed to include current users
+                
             }catch{
                 return false
             }

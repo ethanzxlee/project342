@@ -19,5 +19,19 @@ extension Message {
     @NSManaged var shouldCover: NSNumber?
     @NSManaged var attachements: NSSet?
     @NSManaged var conversation: Conversation?
+    
+    func dictionary()-> NSDictionary{
+        let dateformater = NSDateFormatter()
+        dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        return [
+            "content": self.content!,
+            "sentDate": dateformater.stringFromDate(self.sentDate!),
+            "shouldCover":self.shouldCover!,
+            "attachments": (attachements?.allObjects as! [Attachment]).map { (attachment) -> NSDictionary in
+                return attachment.dictionary()
+            }
+        ]
+    }
+
 
 }
