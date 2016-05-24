@@ -16,7 +16,9 @@ class ContactListTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        
+        contactProfileImageView.layer.cornerRadius = contactProfileImageView.frame.height / 2
+        contactProfileImageView.layer.masksToBounds = true
     }
 
     override func setSelected(selected: Bool, animated: Bool) {

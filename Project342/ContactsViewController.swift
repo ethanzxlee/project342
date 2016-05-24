@@ -11,11 +11,11 @@ import CoreData
 
 class ContactsViewController: UITableViewController, NSFetchedResultsControllerDelegate {
     
-    var contacts = [String: [Contact]]()
     var fetchedResultController: NSFetchedResultsController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         
         if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
             let managedObjectContext = appDelegate.managedObjectContext
@@ -33,7 +33,6 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 print(error)
             }
         }
-        
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -89,16 +88,57 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         guard
             let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactListTableViewCell)) as? ContactListTableViewCell,
-            let contact = fetchedResultController.objectAtIndexPath(indexPath) as? Contact
+            let contact = fetchedResultController.objectAtIndexPath(indexPath) as? Contact,
+            let profilePicDirectory = CipherModel.sharedModel.profilePicDirectory
             else {
-                print("Failed to dequeue \(String(ContactListTableViewCell))")
                 return UITableViewCell()
         }
         
+        let profilePicFileURL = profilePicDirectory.URLByAppendingPathComponent(contact.userId!)
+        cell.contactProfileImageView.image = UIImage(contentsOfFile: profilePicFileURL.path!)
         cell.contactNameLabel.text = contact.firstName
+        
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+//            guard
+//                let userId = contact.userId
+//                let cell = self.tableView.cellForRowAtIndexPath(indexPath) as? ContactListTableViewCell
+//                else {
+//                    return
+//            }
+//            
+//            let profilePic = UIImage(contentsOfFile: userId)
+//            
+//        }
         
         return cell
     }
+    
+    
+    override func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        guard let headerView = view as? UITableViewHeaderFooterView else {
+            return
+        }
+        // Changing the header text color
+        headerView.textLabel?.textColor = UIColor.themeColor()
+    }
+    
+    
+    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+    
+    
+    override func tableView(tableView: UITableView, shouldShowMenuForRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+    
+    
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if editingStyle == .Delete {
+            deleteContactAt(indexPath)
+        }
+    }
+    
     
     
     // MARK: - NSFetchedResultControllerDelegate
@@ -149,6 +189,18 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         
     }
     
+    
+    // MARK: Function 
+    
+    func deleteContactAt(indexPath: NSIndexPath) {
+        guard
+            let contact = fetchedResultController.objectAtIndexPath(indexPath) as? Contact
+            else {
+                return
+        }
+        
+        CipherModel.sharedModel.deleteContact(contact.userId!)
+    }
     
 }
 

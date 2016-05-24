@@ -38,6 +38,30 @@ class CipherModel {
         return contactsRef
     }
     
+    var documentDirectory: NSURL? {
+        do {
+            return try NSFileManager.defaultManager().URLForDirectory(.DocumentDirectory, inDomain: .UserDomainMask, appropriateForURL: nil, create: true)
+        }
+        catch {
+            print(error)
+            return nil
+        }
+    }
+    
+    var profilePicDirectory: NSURL? {
+        let profilePicDirectory = documentDirectory?.URLByAppendingPathComponent("ProfilePic")
+        if !NSFileManager.defaultManager().fileExistsAtPath(profilePicDirectory!.path!) {
+            do {
+            try NSFileManager.defaultManager().createDirectoryAtURL(profilePicDirectory!, withIntermediateDirectories: false, attributes: nil)
+            }
+            catch {
+                print(error)
+            }
+        }
+        return profilePicDirectory
+    }
+    
+    
     var managedObjectContext: NSManagedObjectContext
     
     var contactValueChangedEventHandle: FirebaseHandle?
@@ -127,13 +151,30 @@ class CipherModel {
                 let existingContact = try self.managedObjectContext.executeFetchRequest(fetchContactRequest) as? [Contact],
                 let firstName = userSnapshotValue["firstName"] as? String,
                 let lastName = userSnapshotValue["lastName"] as? String,
-                let email = userSnapshotValue["email"] as? String
+                let profilePicBase64String = userSnapshotValue["profilePic"] as? String
                 else {
                     return
             }
             
-            var contact: Contact?
+            // Try to save the image
+            if
+                let profilePicData = NSData(base64EncodedString: profilePicBase64String, options: NSDataBase64DecodingOptions(rawValue: 0)),
+                let profilePicDirectory = profilePicDirectory {
+                
+                let profilePicFileURL = profilePicDirectory.URLByAppendingPathComponent(userSnapshot.key)
+                
+                do {
+                    print(profilePicDirectory)
+                    try profilePicData.writeToURL(profilePicFileURL, options: .DataWritingFileProtectionComplete)
+                }
+                catch {
+                    print(error)
+                }
+                
+            }
             
+            
+            var contact: Contact?
             if existingContact.count == 1 {
                 // If the Contact exist
                 contact = existingContact[0]
@@ -163,6 +204,7 @@ class CipherModel {
             
             // Try to save the Contact
             try self.managedObjectContext.save()
+            
         }
         catch {
             print(error)
@@ -173,8 +215,8 @@ class CipherModel {
     
     
     
-    func removeContact(contactId: String) {
-        
+    func deleteContact(contactId: String) {
+        contactsRef?.childByAppendingPath(contactId).removeValue()
     }
     
     func confirmContact(contactId: String) {

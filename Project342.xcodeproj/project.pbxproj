@@ -14,6 +14,8 @@
 		A1083D291CEB513200FFE32A /* DictionaryExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1083D281CEB513200FFE32A /* DictionaryExtensions.swift */; };
 		A1083D2C1CEC1CFE00FFE32A /* CustomPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1083D2B1CEC1CFE00FFE32A /* CustomPresentationController.swift */; };
 		A13723661CED7C97002446F1 /* CipherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13723651CED7C97002446F1 /* CipherModel.swift */; };
+		A197BF771CF489DA00C7D40D /* UIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A197BF761CF489DA00C7D40D /* UIColorExtensions.swift */; };
+		A197BF791CF48C3300C7D40D /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A197BF781CF48C3300C7D40D /* TabBarController.swift */; };
 		A1A4D9C51CE86E74006AA3CF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4D9C41CE86E74006AA3CF /* AppDelegate.swift */; };
 		A1A4D9C71CE86E74006AA3CF /* RecentChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4D9C61CE86E74006AA3CF /* RecentChatViewController.swift */; };
 		A1A4D9C91CE86E74006AA3CF /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4D9C81CE86E74006AA3CF /* ContactsViewController.swift */; };
@@ -69,6 +71,8 @@
 		A1083D281CEB513200FFE32A /* DictionaryExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryExtensions.swift; sourceTree = "<group>"; };
 		A1083D2B1CEC1CFE00FFE32A /* CustomPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPresentationController.swift; sourceTree = "<group>"; };
 		A13723651CED7C97002446F1 /* CipherModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CipherModel.swift; sourceTree = "<group>"; };
+		A197BF761CF489DA00C7D40D /* UIColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColorExtensions.swift; sourceTree = "<group>"; };
+		A197BF781CF48C3300C7D40D /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		A1A4D9C11CE86E74006AA3CF /* Project342.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Project342.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1A4D9C41CE86E74006AA3CF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1A4D9C61CE86E74006AA3CF /* RecentChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentChatViewController.swift; sourceTree = "<group>"; };
@@ -156,6 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				A1083D281CEB513200FFE32A /* DictionaryExtensions.swift */,
+				A197BF761CF489DA00C7D40D /* UIColorExtensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -231,6 +236,7 @@
 				A1A4DA031CE87390006AA3CF /* ChatRoomSettingsViewController.swift */,
 				A1A4DA051CE873CD006AA3CF /* AddContactsViewController.swift */,
 				A1A4DA071CE879A1006AA3CF /* LoginViewController.swift */,
+				A197BF781CF48C3300C7D40D /* TabBarController.swift */,
 			);
 			name = ViewController;
 			sourceTree = "<group>";
@@ -551,8 +557,10 @@
 				A1A4D9FE1CE872A4006AA3CF /* ChatRoomViewController.swift in Sources */,
 				A1A4DA001CE87351006AA3CF /* AttachmentViewerViewController.swift in Sources */,
 				A13723661CED7C97002446F1 /* CipherModel.swift in Sources */,
+				A197BF771CF489DA00C7D40D /* UIColorExtensions.swift in Sources */,
 				A1083D251CEB34C600FFE32A /* ContactListTableViewCell.swift in Sources */,
 				A1A4DA5E1CE98D06006AA3CF /* Conversation+CoreDataProperties.swift in Sources */,
+				A197BF791CF48C3300C7D40D /* TabBarController.swift in Sources */,
 				A1A4DA041CE87390006AA3CF /* ChatRoomSettingsViewController.swift in Sources */,
 				A1A4DA021CE87363006AA3CF /* SecretMessageViewController.swift in Sources */,
 				A1A4DA621CE98D06006AA3CF /* Message+CoreDataProperties.swift in Sources */,
