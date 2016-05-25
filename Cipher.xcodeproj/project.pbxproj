@@ -59,17 +59,17 @@
 		5BE727CD3B3F5D3CF1E85860 /* Pods_Project342.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Project342.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C5ED0A635A1C317D61FA3B9 /* Pods-Project342UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342UITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Project342UITests/Pods-Project342UITests.release.xcconfig"; sourceTree = "<group>"; };
 		A0F73ADE18FAC502123383AC /* Pods_Project342UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Project342UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A1A4D9C11CE86E74006AA3CF /* Project342.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Project342.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1A4D9C11CE86E74006AA3CF /* Cipher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cipher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1A4D9C41CE86E74006AA3CF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1A4D9C61CE86E74006AA3CF /* RecentChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentChatViewController.swift; sourceTree = "<group>"; };
 		A1A4D9C81CE86E74006AA3CF /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
 		A1A4D9CB1CE86E74006AA3CF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A1A4D9D01CE86E74006AA3CF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A1A4D9D21CE86E74006AA3CF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A1A4D9D71CE86E74006AA3CF /* Project342Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Project342Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1A4D9D71CE86E74006AA3CF /* Cipher.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Cipher.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1A4D9DB1CE86E74006AA3CF /* Project342Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project342Tests.swift; sourceTree = "<group>"; };
 		A1A4D9DD1CE86E74006AA3CF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A1A4D9E21CE86E74006AA3CF /* Project342UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Project342UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1A4D9E21CE86E74006AA3CF /* Cipher.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Cipher.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1A4D9E61CE86E74006AA3CF /* Project342UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project342UITests.swift; sourceTree = "<group>"; };
 		A1A4D9E81CE86E74006AA3CF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1A4D9FB1CE8724E006AA3CF /* UserSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserSettingsViewController.swift; sourceTree = "<group>"; };
@@ -149,9 +149,9 @@
 		A1A4D9C21CE86E74006AA3CF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A1A4D9C11CE86E74006AA3CF /* Project342.app */,
-				A1A4D9D71CE86E74006AA3CF /* Project342Tests.xctest */,
-				A1A4D9E21CE86E74006AA3CF /* Project342UITests.xctest */,
+				A1A4D9C11CE86E74006AA3CF /* Cipher.app */,
+				A1A4D9D71CE86E74006AA3CF /* Cipher.xctest */,
+				A1A4D9E21CE86E74006AA3CF /* Cipher.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -232,9 +232,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A1A4D9C01CE86E74006AA3CF /* Project342 */ = {
+		A1A4D9C01CE86E74006AA3CF /* Cipher */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A1A4D9EB1CE86E74006AA3CF /* Build configuration list for PBXNativeTarget "Project342" */;
+			buildConfigurationList = A1A4D9EB1CE86E74006AA3CF /* Build configuration list for PBXNativeTarget "Cipher" */;
 			buildPhases = (
 				FD1CA8B6ABDA1F803DE6F9AB /* 📦 Check Pods Manifest.lock */,
 				A1A4D9BD1CE86E74006AA3CF /* Sources */,
@@ -247,14 +247,14 @@
 			);
 			dependencies = (
 			);
-			name = Project342;
+			name = Cipher;
 			productName = Project342;
-			productReference = A1A4D9C11CE86E74006AA3CF /* Project342.app */;
+			productReference = A1A4D9C11CE86E74006AA3CF /* Cipher.app */;
 			productType = "com.apple.product-type.application";
 		};
-		A1A4D9D61CE86E74006AA3CF /* Project342Tests */ = {
+		A1A4D9D61CE86E74006AA3CF /* CipherTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A1A4D9EE1CE86E74006AA3CF /* Build configuration list for PBXNativeTarget "Project342Tests" */;
+			buildConfigurationList = A1A4D9EE1CE86E74006AA3CF /* Build configuration list for PBXNativeTarget "CipherTests" */;
 			buildPhases = (
 				1974AE426A9B011ECAB74B8D /* 📦 Check Pods Manifest.lock */,
 				A1A4D9D31CE86E74006AA3CF /* Sources */,
@@ -268,14 +268,14 @@
 			dependencies = (
 				A1A4D9D91CE86E74006AA3CF /* PBXTargetDependency */,
 			);
-			name = Project342Tests;
+			name = CipherTests;
 			productName = Project342Tests;
-			productReference = A1A4D9D71CE86E74006AA3CF /* Project342Tests.xctest */;
+			productReference = A1A4D9D71CE86E74006AA3CF /* Cipher.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		A1A4D9E11CE86E74006AA3CF /* Project342UITests */ = {
+		A1A4D9E11CE86E74006AA3CF /* CipherUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A1A4D9F11CE86E74006AA3CF /* Build configuration list for PBXNativeTarget "Project342UITests" */;
+			buildConfigurationList = A1A4D9F11CE86E74006AA3CF /* Build configuration list for PBXNativeTarget "CipherUITests" */;
 			buildPhases = (
 				FA42B8EFD767666FBECE62BE /* 📦 Check Pods Manifest.lock */,
 				A1A4D9DE1CE86E74006AA3CF /* Sources */,
@@ -288,9 +288,9 @@
 			dependencies = (
 				A1A4D9E41CE86E74006AA3CF /* PBXTargetDependency */,
 			);
-			name = Project342UITests;
+			name = CipherUITests;
 			productName = Project342UITests;
-			productReference = A1A4D9E21CE86E74006AA3CF /* Project342UITests.xctest */;
+			productReference = A1A4D9E21CE86E74006AA3CF /* Cipher.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -330,7 +330,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A1A4D9BC1CE86E74006AA3CF /* Build configuration list for PBXProject "Project342" */;
+			buildConfigurationList = A1A4D9BC1CE86E74006AA3CF /* Build configuration list for PBXProject "Cipher" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -343,9 +343,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A1A4D9C01CE86E74006AA3CF /* Project342 */,
-				A1A4D9D61CE86E74006AA3CF /* Project342Tests */,
-				A1A4D9E11CE86E74006AA3CF /* Project342UITests */,
+				A1A4D9C01CE86E74006AA3CF /* Cipher */,
+				A1A4D9D61CE86E74006AA3CF /* CipherTests */,
+				A1A4D9E11CE86E74006AA3CF /* CipherUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -547,12 +547,12 @@
 /* Begin PBXTargetDependency section */
 		A1A4D9D91CE86E74006AA3CF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A1A4D9C01CE86E74006AA3CF /* Project342 */;
+			target = A1A4D9C01CE86E74006AA3CF /* Cipher */;
 			targetProxy = A1A4D9D81CE86E74006AA3CF /* PBXContainerItemProxy */;
 		};
 		A1A4D9E41CE86E74006AA3CF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A1A4D9C01CE86E74006AA3CF /* Project342 */;
+			target = A1A4D9C01CE86E74006AA3CF /* Cipher */;
 			targetProxy = A1A4D9E31CE86E74006AA3CF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -670,7 +670,7 @@
 				INFOPLIST_FILE = Project342/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = au.edu.uow.Project342;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Cipher;
 				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
@@ -685,7 +685,7 @@
 				INFOPLIST_FILE = Project342/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = au.edu.uow.Project342;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Cipher;
 				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
@@ -698,8 +698,8 @@
 				INFOPLIST_FILE = Project342Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = au.edu.uow.Project342Tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Project342.app/Project342";
+				PRODUCT_NAME = Cipher;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cipher.app/Cipher";
 			};
 			name = Debug;
 		};
@@ -711,8 +711,8 @@
 				INFOPLIST_FILE = Project342Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = au.edu.uow.Project342Tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Project342.app/Project342";
+				PRODUCT_NAME = Cipher;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cipher.app/Cipher";
 			};
 			name = Release;
 		};
@@ -723,7 +723,7 @@
 				INFOPLIST_FILE = Project342UITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = au.edu.uow.Project342UITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Cipher;
 				TEST_TARGET_NAME = Project342;
 				USES_XCTRUNNER = YES;
 			};
@@ -736,7 +736,7 @@
 				INFOPLIST_FILE = Project342UITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = au.edu.uow.Project342UITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Cipher;
 				TEST_TARGET_NAME = Project342;
 				USES_XCTRUNNER = YES;
 			};
@@ -745,7 +745,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A1A4D9BC1CE86E74006AA3CF /* Build configuration list for PBXProject "Project342" */ = {
+		A1A4D9BC1CE86E74006AA3CF /* Build configuration list for PBXProject "Cipher" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1A4D9E91CE86E74006AA3CF /* Debug */,
@@ -754,7 +754,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A1A4D9EB1CE86E74006AA3CF /* Build configuration list for PBXNativeTarget "Project342" */ = {
+		A1A4D9EB1CE86E74006AA3CF /* Build configuration list for PBXNativeTarget "Cipher" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1A4D9EC1CE86E74006AA3CF /* Debug */,
@@ -763,7 +763,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A1A4D9EE1CE86E74006AA3CF /* Build configuration list for PBXNativeTarget "Project342Tests" */ = {
+		A1A4D9EE1CE86E74006AA3CF /* Build configuration list for PBXNativeTarget "CipherTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1A4D9EF1CE86E74006AA3CF /* Debug */,
@@ -772,7 +772,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A1A4D9F11CE86E74006AA3CF /* Build configuration list for PBXNativeTarget "Project342UITests" */ = {
+		A1A4D9F11CE86E74006AA3CF /* Build configuration list for PBXNativeTarget "CipherUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1A4D9F21CE86E74006AA3CF /* Debug */,

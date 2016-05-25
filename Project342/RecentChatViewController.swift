@@ -18,7 +18,7 @@ class RecentChatViewController: UITableViewController {
         if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
             let context = appDelegate.managedObjectContext
             if let contact = NSEntityDescription.insertNewObjectForEntityForName("Contact", inManagedObjectContext: context) as? Contact {
-                contact.name = "Test \(NSDate())"
+                contact.firstName = "Test \(NSDate())"
                 // Try to save
                 do {
                     try context.save()
@@ -32,7 +32,7 @@ class RecentChatViewController: UITableViewController {
                 do {
                     if let fetchedContacts = try context.executeFetchRequest(fetchRequest) as? [Contact] {
                         for fetchedContact in fetchedContacts {
-                            print(fetchedContact.name)
+                            print(fetchedContact.firstName)
                         }
                     }
                 }
