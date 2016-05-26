@@ -13,9 +13,9 @@ import Foundation
 import CoreData
 import Firebase
 
-class CipherModel {
+class ContactManager {
     
-    static var sharedModel = CipherModel()
+    static var sharedManager = ContactManager()
     var managedObjectContext: NSManagedObjectContext
     
     // MARK: Firebase ref
@@ -253,5 +253,4 @@ class CipherModel {
         contactsRef?.childByAppendingPath(contactId).setValue(ContactStatus.Added.rawValue)
     }
     
-
 }

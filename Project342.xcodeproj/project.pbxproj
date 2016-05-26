@@ -12,7 +12,7 @@
 		A1083D251CEB34C600FFE32A /* ContactListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1083D241CEB34C600FFE32A /* ContactListTableViewCell.swift */; };
 		A1083D271CEB361600FFE32A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1083D261CEB361600FFE32A /* Assets.xcassets */; };
 		A1083D2C1CEC1CFE00FFE32A /* CustomPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1083D2B1CEC1CFE00FFE32A /* CustomPresentationController.swift */; };
-		A13723661CED7C97002446F1 /* CipherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13723651CED7C97002446F1 /* CipherModel.swift */; };
+		A13723661CED7C97002446F1 /* ContactManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13723651CED7C97002446F1 /* ContactManager.swift */; };
 		A197BF771CF489DA00C7D40D /* UIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A197BF761CF489DA00C7D40D /* UIColorExtensions.swift */; };
 		A197BF791CF48C3300C7D40D /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A197BF781CF48C3300C7D40D /* TabBarController.swift */; };
 		A197BF7D1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A197BF7C1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift */; };
@@ -70,7 +70,7 @@
 		A1083D241CEB34C600FFE32A /* ContactListTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactListTableViewCell.swift; sourceTree = "<group>"; };
 		A1083D261CEB361600FFE32A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1083D2B1CEC1CFE00FFE32A /* CustomPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPresentationController.swift; sourceTree = "<group>"; };
-		A13723651CED7C97002446F1 /* CipherModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CipherModel.swift; sourceTree = "<group>"; };
+		A13723651CED7C97002446F1 /* ContactManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactManager.swift; sourceTree = "<group>"; };
 		A197BF761CF489DA00C7D40D /* UIColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColorExtensions.swift; sourceTree = "<group>"; };
 		A197BF781CF48C3300C7D40D /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		A197BF7C1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactRequestTableViewCell.swift; sourceTree = "<group>"; };
@@ -168,6 +168,14 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
+		A197BF841CF7428200C7D40D /* FirebaseManager */ = {
+			isa = PBXGroup;
+			children = (
+				A13723651CED7C97002446F1 /* ContactManager.swift */,
+			);
+			name = FirebaseManager;
+			sourceTree = "<group>";
+		};
 		A1A4D9B81CE86E74006AA3CF = {
 			isa = PBXGroup;
 			children = (
@@ -200,11 +208,11 @@
 				A1083D261CEB361600FFE32A /* Assets.xcassets */,
 				A1A4DA531CE97ABB006AA3CF /* CoreData */,
 				A1083D2A1CEB513700FFE32A /* Extensions */,
+				A197BF841CF7428200C7D40D /* FirebaseManager */,
 				A1083D231CEB347F00FFE32A /* View */,
 				A1A4D9FA1CE871A9006AA3CF /* ViewController */,
 				A1A4DA481CE97974006AA3CF /* Project342.xcdatamodeld */,
 				A1083D2B1CEC1CFE00FFE32A /* CustomPresentationController.swift */,
-				A13723651CED7C97002446F1 /* CipherModel.swift */,
 			);
 			path = Project342;
 			sourceTree = "<group>";
@@ -559,7 +567,7 @@
 				A1A4D9C91CE86E74006AA3CF /* ContactsViewController.swift in Sources */,
 				A1A4D9FE1CE872A4006AA3CF /* ChatRoomViewController.swift in Sources */,
 				A1A4DA001CE87351006AA3CF /* AttachmentViewerViewController.swift in Sources */,
-				A13723661CED7C97002446F1 /* CipherModel.swift in Sources */,
+				A13723661CED7C97002446F1 /* ContactManager.swift in Sources */,
 				A197BF771CF489DA00C7D40D /* UIColorExtensions.swift in Sources */,
 				A1083D251CEB34C600FFE32A /* ContactListTableViewCell.swift in Sources */,
 				A1A4DA5E1CE98D06006AA3CF /* Conversation+CoreDataProperties.swift in Sources */,

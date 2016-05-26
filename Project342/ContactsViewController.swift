@@ -20,7 +20,6 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     var contactFetchedResultController: NSFetchedResultsController?
     var requestFetchedResultController: NSFetchedResultsController?
     var searchController: UISearchController!
-    var sharedCipherModel: CipherModel?
     var contactRequestsSnapshot: FDataSnapshot?
     
     @IBOutlet weak var segmentedControl: UISegmentedControl!
@@ -65,13 +64,13 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        CipherModel.sharedModel.observeContactsEvents()
+        ContactManager.sharedManager.observeContactsEvents()
     }
     
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidAppear(animated)
-        CipherModel.sharedModel.stopObservingContactsEvents()
+        ContactManager.sharedManager.stopObservingContactsEvents()
     }
     
     
@@ -157,7 +156,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             guard
                 let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactListTableViewCell)) as? ContactListTableViewCell,
                 let contact = contactFetchedResultController?.objectAtIndexPath(indexPath) as? Contact,
-                let profilePicDirectory = CipherModel.sharedModel.profilePicDirectory
+                let profilePicDirectory = ContactManager.sharedManager.profilePicDirectory
                 else {
                     return UITableViewCell()
             }
@@ -172,7 +171,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             guard
                 let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactRequestTableViewCell)) as? ContactRequestTableViewCell,
                 let contact = requestFetchedResultController?.objectAtIndexPath(indexPath) as? Contact,
-                let profilePicDirectory = CipherModel.sharedModel.profilePicDirectory
+                let profilePicDirectory = ContactManager.sharedManager.profilePicDirectory
                 else {
                     return UITableViewCell()
             }
@@ -347,7 +346,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 else {
                     return
             }
-            CipherModel.sharedModel.deleteContact(contact.userId!)
+            ContactManager.sharedManager.deleteContact(contact.userId!)
         }
         else if segmentedControl.selectedSegmentIndex == ContactSegment.Request.rawValue {
             guard
@@ -355,7 +354,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 else {
                     return
             }
-            CipherModel.sharedModel.deleteContact(contact.userId!)
+            ContactManager.sharedManager.deleteContact(contact.userId!)
         }
     }
     
@@ -366,7 +365,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             else {
                 return
         }
-        CipherModel.sharedModel.acceptContactRequest(contact.userId!)
+        ContactManager.sharedManager.acceptContactRequest(contact.userId!)
     }
 }
 
