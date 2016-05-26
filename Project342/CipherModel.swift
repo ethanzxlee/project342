@@ -16,6 +16,9 @@ import Firebase
 class CipherModel {
     
     static var sharedModel = CipherModel()
+    var managedObjectContext: NSManagedObjectContext
+    
+    // MARK: Firebase ref
     
     let firebaseRoot = Firebase(url: "https://fiery-fire-3992.firebaseio.com/")
     
@@ -33,10 +36,15 @@ class CipherModel {
         
         let contactsRef = firebaseRoot.childByAppendingPath("contacts")
             .childByAppendingPath(authData.uid)
-            .childByAppendingPath("added")
         
         return contactsRef
     }
+    
+    // Firebase event handles
+    
+    var contactValueChangedEventHandle: FirebaseHandle?
+    
+    // MARK: Directory URLs
     
     var documentDirectory: NSURL? {
         do {
@@ -52,7 +60,7 @@ class CipherModel {
         let profilePicDirectory = documentDirectory?.URLByAppendingPathComponent("ProfilePic")
         if !NSFileManager.defaultManager().fileExistsAtPath(profilePicDirectory!.path!) {
             do {
-            try NSFileManager.defaultManager().createDirectoryAtURL(profilePicDirectory!, withIntermediateDirectories: false, attributes: nil)
+                try NSFileManager.defaultManager().createDirectoryAtURL(profilePicDirectory!, withIntermediateDirectories: false, attributes: nil)
             }
             catch {
                 print(error)
@@ -62,22 +70,19 @@ class CipherModel {
     }
     
     
-    var managedObjectContext: NSManagedObjectContext
-    
-    var contactValueChangedEventHandle: FirebaseHandle?
-    
-    
     init() {
         managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
         firebaseRoot.authUser("zxlee618@gmail.com", password: "10Zhexian01") { (error, authData) in}
     }
     
     
+    // MARK: - Contact
+    
     func observeContactsEvents() {
         // Remove any existing observer
         stopObservingContactsEvents()
         
-        contactValueChangedEventHandle = contactsRef?.observeEventType(.Value, withBlock: { (contactsSnapshot: FDataSnapshot!) in
+        contactValueChangedEventHandle = contactsRef?.observeEventType(.Value, withBlock: { (contactsSnapshot) in
             self.didFirebaseContactsValueChange(contactsSnapshot)
         })
     }
@@ -95,15 +100,15 @@ class CipherModel {
     
     func didFirebaseContactsValueChange(contactsSnapshot: FDataSnapshot) {
         guard
-            let contactsSnapshotValues = contactsSnapshot.value as? [String: AnyObject]
+            let contactsSnapshotValues = contactsSnapshot.value as? [String: String]
             else {
                 return
         }
         
         let currentContactsUserId = [String](contactsSnapshotValues.keys)
         
+        // Remove the contacts no longer exist
         do {
-            // Remove the contacts no longer exist
             let fetchRemovedContactRequest = NSFetchRequest(entityName: String(Contact))
             fetchRemovedContactRequest.predicate = NSPredicate(format: "NOT (userId IN %@)", currentContactsUserId)
             
@@ -115,6 +120,15 @@ class CipherModel {
             
             for removedContact in removedContacts {
                 managedObjectContext.deleteObject(removedContact)
+                
+                // Remove their profile picture as well
+                let profilePicFileURL = profilePicDirectory?.URLByAppendingPathComponent(removedContact.userId!)
+                do {
+                    try NSFileManager.defaultManager().removeItemAtURL(profilePicFileURL!)
+                }
+                catch {
+                    print(error)
+                }
             }
             
             try managedObjectContext.save()
@@ -123,19 +137,20 @@ class CipherModel {
             print(error)
         }
         
-        // Update the user info of the current contacts
+        // Observe the user info of the current contacts
         for contactSnapshotValue in contactsSnapshotValues {
             let contactUserId = contactSnapshotValue.0
             let contactUserRef = usersRef?.childByAppendingPath(contactUserId)
             
-            contactUserRef?.observeSingleEventOfType(.Value, withBlock: { (userSnapshot: FDataSnapshot!) in
-                self.didFirebaseContactUserInfoChange(userSnapshot)
+            
+            contactUserRef?.observeSingleEventOfType(.Value, withBlock: { (userSnapshot) in
+                self.didFirebaseContactUserInfoChange(userSnapshot, status: contactSnapshotValue.1)
             })
         }
     }
     
     
-    func didFirebaseContactUserInfoChange(userSnapshot: FDataSnapshot) {
+    func didFirebaseContactUserInfoChange(userSnapshot: FDataSnapshot, status: String) {
         do {
             guard
                 let userSnapshotValue = userSnapshot.value as? [String: AnyObject]
@@ -148,39 +163,36 @@ class CipherModel {
             fetchContactRequest.predicate = NSPredicate(format: "userId = %@", userSnapshot.key)
             
             guard
-                let existingContact = try self.managedObjectContext.executeFetchRequest(fetchContactRequest) as? [Contact],
+                let existingContact = try managedObjectContext.executeFetchRequest(fetchContactRequest) as? [Contact],
                 let firstName = userSnapshotValue["firstName"] as? String,
                 let lastName = userSnapshotValue["lastName"] as? String,
-                let profilePicBase64String = userSnapshotValue["profilePic"] as? String
+                let profilePicBase64String = userSnapshotValue["profilePic"] as? String,
+                let createdAtString = userSnapshotValue["createdAt"] as? String,
+                let updatedAtString = userSnapshotValue["updatedAt"] as? String
                 else {
                     return
             }
             
-            // Try to save the image
-            if
-                let profilePicData = NSData(base64EncodedString: profilePicBase64String, options: NSDataBase64DecodingOptions(rawValue: 0)),
-                let profilePicDirectory = profilePicDirectory {
-                
-                let profilePicFileURL = profilePicDirectory.URLByAppendingPathComponent(userSnapshot.key)
-                
-                do {
-                    print(profilePicDirectory)
-                    try profilePicData.writeToURL(profilePicFileURL, options: .DataWritingFileProtectionComplete)
-                }
-                catch {
-                    print(error)
-                }
-                
+            guard
+                let createdAt = NSDateFormatter.dateFromISO8601String(createdAtString),
+                let updatedAt = NSDateFormatter.dateFromISO8601String(updatedAtString)
+                else {
+                    return
             }
-            
             
             var contact: Contact?
+            
+            // If the Contact exist
             if existingContact.count == 1 {
-                // If the Contact exist
                 contact = existingContact[0]
+                
+                // If the contact is already up-to-date
+                if contact?.updatedAt?.timeIntervalSince1970 <= updatedAt.timeIntervalSince1970 && contact?.status == status {
+                    return
+                }
             }
+            // Otherwise create a Contact
             else {
-                // Otherwise create a Contact
                 contact = NSEntityDescription.insertNewObjectForEntityForName(String(Contact), inManagedObjectContext: self.managedObjectContext) as? Contact
             }
             
@@ -188,6 +200,9 @@ class CipherModel {
             contact?.firstName = firstName
             contact?.lastName = lastName
             contact?.userId = userSnapshot.key
+            contact?.updatedAt = updatedAt
+            contact?.createdAt = createdAt
+            contact?.status = status
             
             // Transform the names into latin to make sorting easier
             let sectionTitleFirstName = NSMutableString(UTF8String: firstName)
@@ -200,10 +215,26 @@ class CipherModel {
             CFStringTransform(sectionTitleLastName, nil, kCFStringTransformToLatin, false)
             CFStringTransform(sectionTitleLastName, nil, kCFStringTransformStripCombiningMarks, false)
             CFStringTransform(sectionTitleLastName, nil, kCFStringTransformToUnicodeName, false)
-            contact?.sectionTitleFirstName = sectionTitleLastName?.substringToIndex(1).uppercaseString
+            contact?.sectionTitleLastName = sectionTitleLastName?.substringToIndex(1).uppercaseString
             
             // Try to save the Contact
             try self.managedObjectContext.save()
+            
+            // Try to save the image
+            if
+                let profilePicData = NSData(base64EncodedString: profilePicBase64String, options: NSDataBase64DecodingOptions(rawValue: 0)),
+                let profilePicDirectory = profilePicDirectory {
+                
+                let profilePicFileURL = profilePicDirectory.URLByAppendingPathComponent(userSnapshot.key)
+                
+                do {
+                    try profilePicData.writeToURL(profilePicFileURL, options: .DataWritingFileProtectionComplete)
+                }
+                catch {
+                    print(error)
+                }
+                
+            }
             
         }
         catch {
@@ -213,13 +244,14 @@ class CipherModel {
     }
     
     
-    
-    
     func deleteContact(contactId: String) {
         contactsRef?.childByAppendingPath(contactId).removeValue()
     }
     
-    func confirmContact(contactId: String) {
-        
+    
+    func acceptContactRequest(contactId: String) {
+        contactsRef?.childByAppendingPath(contactId).setValue(ContactStatus.Added.rawValue)
     }
+    
+
 }

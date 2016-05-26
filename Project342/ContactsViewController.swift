@@ -8,31 +8,59 @@
 
 import UIKit
 import CoreData
+import Firebase
 
-class ContactsViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+class ContactsViewController: UITableViewController, NSFetchedResultsControllerDelegate, UISearchResultsUpdating {
     
-    var fetchedResultController: NSFetchedResultsController!
+    enum ContactSegment: Int {
+        case AllContacts = 0
+        case Request = 1
+    }
+    
+    var contactFetchedResultController: NSFetchedResultsController?
+    var requestFetchedResultController: NSFetchedResultsController?
+    var searchController: UISearchController!
+    var sharedCipherModel: CipherModel?
+    var contactRequestsSnapshot: FDataSnapshot?
+    
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         
         if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
             let managedObjectContext = appDelegate.managedObjectContext
             
             let fetchContactRequest = NSFetchRequest(entityName: String(Contact))
             fetchContactRequest.sortDescriptors = [NSSortDescriptor(key: "sectionTitleFirstName", ascending: true)]
+            contactFetchedResultController = NSFetchedResultsController(fetchRequest: fetchContactRequest, managedObjectContext: managedObjectContext, sectionNameKeyPath: "sectionTitleFirstName", cacheName: nil)
             
-            fetchedResultController = NSFetchedResultsController(fetchRequest: fetchContactRequest, managedObjectContext: managedObjectContext, sectionNameKeyPath: "sectionTitleFirstName", cacheName: nil)
-            fetchedResultController.delegate = self
-            
-            do {
-                try fetchedResultController.performFetch()
-            }
-            catch {
-                print(error)
-            }
+            let fetchContactRequestRequest = NSFetchRequest(entityName: String(Contact))
+            fetchContactRequestRequest.sortDescriptors = [NSSortDescriptor(key: "status", ascending: false)]
+            requestFetchedResultController = NSFetchedResultsController(fetchRequest: fetchContactRequestRequest, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         }
+        
+        // Setup tableView appearance
+        tableView.sectionIndexBackgroundColor = UIColor(white: 1, alpha: 0)
+        tableView.backgroundView = UIView()
+        
+        // Hide the divider between empty cells
+        tableView.tableFooterView = UIView()
+        
+        // Setup the search bar
+        searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.translucent = true
+        searchController.searchBar.searchBarStyle = .Prominent
+        searchController.searchBar.barTintColor = UIColor(red: 0xF7/255, green: 0xF7/255, blue: 0xF7/255, alpha: 1)
+        searchController.searchBar.tintColor = UIColor.themeColor()
+        searchController.searchBar.backgroundColor = UIColor(red: 0xF7/255, green: 0xF7/255, blue: 0xF7/255, alpha: 1)
+        searchController.searchBar.backgroundImage = UIImage()
+        searchController.dimsBackgroundDuringPresentation = false
+        definesPresentationContext = true
+        
+        setupTableViewData()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -48,69 +76,118 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return fetchedResultController.sections!.count
+        if segmentedControl.selectedSegmentIndex == ContactSegment.AllContacts.rawValue {
+            guard
+                let sectionCount = contactFetchedResultController?.sections?.count
+                else {
+                    return 0
+            }
+            return sectionCount
+        }
+        else if segmentedControl.selectedSegmentIndex == ContactSegment.Request.rawValue {
+            guard
+                let sectionCount = requestFetchedResultController?.sections?.count
+                else {
+                    return 0
+            }
+            return sectionCount
+        }
+        return 0
     }
     
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard
-            let sections = fetchedResultController.sections
-            else {
-                return 0
+        if segmentedControl.selectedSegmentIndex == ContactSegment.AllContacts.rawValue {
+            guard
+                let sections = contactFetchedResultController?.sections
+                else {
+                    return 0
+            }
+            
+            let sectionInfo = sections[section]
+            return sectionInfo.numberOfObjects
         }
-        
-        let sectionInfo = sections[section]
-        return sectionInfo.numberOfObjects
+        else if segmentedControl.selectedSegmentIndex == ContactSegment.Request.rawValue {
+            guard
+                let sections = requestFetchedResultController?.sections
+                else {
+                    return 0
+            }
+            
+            let sectionInfo = sections[section]
+            return sectionInfo.numberOfObjects
+        }
+        return 0
     }
     
     
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        guard
-            let sections = fetchedResultController.sections
-            else {
-                return nil
+        if segmentedControl.selectedSegmentIndex == ContactSegment.AllContacts.rawValue {
+            guard
+                let sections = contactFetchedResultController?.sections
+                else {
+                    return nil
+            }
+            
+            let sectionInfo = sections[section]
+            return sectionInfo.name
         }
-        
-        let sectionInfo = sections[section]
-        return sectionInfo.name
+        return nil
     }
-
+    
+    
     override func tableView(tableView: UITableView, sectionForSectionIndexTitle title: String, atIndex index: Int) -> Int {
-        return fetchedResultController!.sectionForSectionIndexTitle(title, atIndex: index)
+        if segmentedControl.selectedSegmentIndex == ContactSegment.AllContacts.rawValue {
+            return contactFetchedResultController!.sectionForSectionIndexTitle(title, atIndex: index)
+        }
+        return index
     }
     
     
     override func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
-        return fetchedResultController.sectionIndexTitles
+        if segmentedControl.selectedSegmentIndex == ContactSegment.AllContacts.rawValue {
+            return contactFetchedResultController?.sectionIndexTitles
+        }
+        return nil
     }
     
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        guard
-            let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactListTableViewCell)) as? ContactListTableViewCell,
-            let contact = fetchedResultController.objectAtIndexPath(indexPath) as? Contact,
-            let profilePicDirectory = CipherModel.sharedModel.profilePicDirectory
-            else {
-                return UITableViewCell()
+        if segmentedControl.selectedSegmentIndex == ContactSegment.AllContacts.rawValue {
+            guard
+                let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactListTableViewCell)) as? ContactListTableViewCell,
+                let contact = contactFetchedResultController?.objectAtIndexPath(indexPath) as? Contact,
+                let profilePicDirectory = CipherModel.sharedModel.profilePicDirectory
+                else {
+                    return UITableViewCell()
+            }
+            
+            let profilePicFileURL = profilePicDirectory.URLByAppendingPathComponent(contact.userId!)
+            cell.contactProfileImageView.image = UIImage(contentsOfFile: profilePicFileURL.path!)
+            cell.contactNameLabel.text = "\(contact.firstName!) \(contact.lastName!)"
+            
+            return cell
+        }
+        else if segmentedControl.selectedSegmentIndex == ContactSegment.Request.rawValue {
+            guard
+                let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactRequestTableViewCell)) as? ContactRequestTableViewCell,
+                let contact = requestFetchedResultController?.objectAtIndexPath(indexPath) as? Contact,
+                let profilePicDirectory = CipherModel.sharedModel.profilePicDirectory
+                else {
+                    return UITableViewCell()
+            }
+            
+            let profilePicFileURL = profilePicDirectory.URLByAppendingPathComponent(contact.userId!)
+            cell.contactProfileImageView.image = UIImage(contentsOfFile: profilePicFileURL.path!)
+            cell.contactNameLabel.text = "\(contact.firstName!) \(contact.lastName!)"
+            cell.didAcceptButtonPressedAction = { () -> (Void) in
+                self.acceptContactAt(indexPath)
+            }
+            
+            return cell
         }
         
-        let profilePicFileURL = profilePicDirectory.URLByAppendingPathComponent(contact.userId!)
-        cell.contactProfileImageView.image = UIImage(contentsOfFile: profilePicFileURL.path!)
-        cell.contactNameLabel.text = contact.firstName
-        
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-//            guard
-//                let userId = contact.userId
-//                let cell = self.tableView.cellForRowAtIndexPath(indexPath) as? ContactListTableViewCell
-//                else {
-//                    return
-//            }
-//            
-//            let profilePic = UIImage(contentsOfFile: userId)
-//            
-//        }
-        
-        return cell
+        return UITableViewCell()
     }
     
     
@@ -118,7 +195,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         guard let headerView = view as? UITableViewHeaderFooterView else {
             return
         }
-        // Changing the header text color
+        // Change the header text color
         headerView.textLabel?.textColor = UIColor.themeColor()
     }
     
@@ -140,21 +217,17 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     }
     
     
-    
-    // MARK: - NSFetchedResultControllerDelegate
+    // MARK: - NScontactFetchedResultControllerDelegate
     
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
-        if controller == fetchedResultController {
-            tableView.beginUpdates()
-        }
+        tableView.beginUpdates()
     }
     
     
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
-        if controller == fetchedResultController {
-            tableView.endUpdates()
-        }
+        tableView.endUpdates()
     }
+    
     
     func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
         switch type {
@@ -183,25 +256,118 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     }
     
     
-    // MARK: Navigation
+    // MARK: - UISearchResultsUpdating
+    
+    func updateSearchResultsForSearchController(searchController: UISearchController) {
+        if searchController.active {
+            guard
+                let searchText = searchController.searchBar.text
+                else {
+                    return
+            }
+            let predicate = NSPredicate(format: "((firstName CONTAINS[c] %@) or (lastName CONTAINS[c] %@)) and status = %@", searchText, searchText, ContactStatus.Added.rawValue)
+            contactFetchedResultController?.fetchRequest.predicate = predicate
+            
+        }
+        else {
+            let predicate = NSPredicate(format: "status = %@", ContactStatus.Added.rawValue)
+            contactFetchedResultController?.fetchRequest.predicate = predicate
+        }
+        
+        // Update the contactFetchedResultController and tableview
+        do {
+            try contactFetchedResultController?.performFetch()
+            tableView.reloadData()
+        }
+        catch {
+            print(error)
+        }
+        
+    }
+    
+    
+    // MARK: - Navigation
     
     @IBAction func unwindToContactsViewController(segue: UIStoryboardSegue) {
         
     }
     
     
-    // MARK: Function 
+    // MARK: - IBActions
+    
+    @IBAction func didSegmentedControlValueChange(sender: UISegmentedControl) {
+        setupTableViewData()
+    }
+    
+    
+    // MARK: - Function
+    
+    func setupTableViewData()  {
+        if (segmentedControl.selectedSegmentIndex == ContactSegment.AllContacts.rawValue) {
+            contactFetchedResultController?.delegate = self
+            requestFetchedResultController?.delegate = nil
+            
+            do {
+                let predicate = NSPredicate(format: "status = %@", ContactStatus.Added.rawValue)
+                contactFetchedResultController?.fetchRequest.predicate = predicate
+                
+                try contactFetchedResultController?.performFetch()
+                tableView.tableHeaderView = searchController.searchBar
+                tableView.reloadData()
+                searchController.searchBar.sizeToFit()
+            }
+            catch {
+                print(error)
+            }
+            
+        }
+        else if (segmentedControl.selectedSegmentIndex == ContactSegment.Request.rawValue) {
+            contactFetchedResultController?.delegate = nil
+            requestFetchedResultController?.delegate = self
+            do {
+                let predicate = NSPredicate(format: "status BEGINSWITH[c] %@", ContactStatus.Request.rawValue)
+                requestFetchedResultController?.fetchRequest.predicate = predicate
+                
+                try requestFetchedResultController?.performFetch()
+                tableView.tableHeaderView = nil
+                tableView.reloadData()
+            }
+            catch {
+                print(error)
+            }
+            
+        }
+    }
+    
     
     func deleteContactAt(indexPath: NSIndexPath) {
+        if segmentedControl.selectedSegmentIndex == ContactSegment.AllContacts.rawValue {
+            guard
+                let contact = contactFetchedResultController?.objectAtIndexPath(indexPath) as? Contact
+                else {
+                    return
+            }
+            CipherModel.sharedModel.deleteContact(contact.userId!)
+        }
+        else if segmentedControl.selectedSegmentIndex == ContactSegment.Request.rawValue {
+            guard
+                let contact = requestFetchedResultController?.objectAtIndexPath(indexPath) as? Contact
+                else {
+                    return
+            }
+            CipherModel.sharedModel.deleteContact(contact.userId!)
+        }
+    }
+    
+    
+    func acceptContactAt(indexPath: NSIndexPath) {
         guard
-            let contact = fetchedResultController.objectAtIndexPath(indexPath) as? Contact
+            let contact = requestFetchedResultController?.objectAtIndexPath(indexPath) as? Contact
             else {
                 return
         }
-        
-        CipherModel.sharedModel.deleteContact(contact.userId!)
+        CipherModel.sharedModel.acceptContactRequest(contact.userId!)
     }
-    
 }
 
 
