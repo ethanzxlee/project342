@@ -20,7 +20,7 @@ class ContactManager {
     
     // MARK: Firebase ref
     
-    let firebaseRoot = Firebase(url: "https://fiery-fire-3992.firebaseio.com/")
+    var firebaseRoot = Firebase(url: "https://fiery-fire-3992.firebaseio.com/")
     
     var usersRef: Firebase? {
         return firebaseRoot.childByAppendingPath("users")
@@ -43,6 +43,7 @@ class ContactManager {
     // Firebase event handles
     
     var contactValueChangedEventHandle: FirebaseHandle?
+    var contactUserInfoValueChangedHandles: [String: FirebaseHandle]
     
     // MARK: Directory URLs
     
@@ -72,6 +73,7 @@ class ContactManager {
     
     init() {
         managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+        contactUserInfoValueChangedHandles = [String: FirebaseHandle]()
         firebaseRoot.authUser("zxlee618@gmail.com", password: "10Zhexian01") { (error, authData) in}
     }
     
@@ -95,6 +97,10 @@ class ContactManager {
                 return
         }
         contactsRef?.removeObserverWithHandle(contactValueChangedEventHandle)
+        
+        for handle in contactUserInfoValueChangedHandles {
+            usersRef?.childByAppendingPath(handle.0).removeObserverWithHandle(handle.1)
+        }
     }
     
     
@@ -142,10 +148,14 @@ class ContactManager {
             let contactUserId = contactSnapshotValue.0
             let contactUserRef = usersRef?.childByAppendingPath(contactUserId)
             
-            
-            contactUserRef?.observeSingleEventOfType(.Value, withBlock: { (userSnapshot) in
+           
+            let contactUserInfoEventHandle = contactUserRef?.observeEventType(.Value, withBlock: { (userSnapshot) in
                 self.didFirebaseContactUserInfoChange(userSnapshot, status: contactSnapshotValue.1)
             })
+            
+            if contactUserInfoEventHandle != nil {
+                contactUserInfoValueChangedHandles[contactUserId] = contactUserInfoEventHandle
+            }
         }
     }
     
@@ -187,7 +197,8 @@ class ContactManager {
                 contact = existingContact[0]
                 
                 // If the contact is already up-to-date
-                if contact?.updatedAt?.timeIntervalSince1970 <= updatedAt.timeIntervalSince1970 && contact?.status == status {
+                print("\(firstName)   \(contact?.updatedAt) __ \(updatedAtString)")
+                if contact?.updatedAt?.timeIntervalSince1970 >= updatedAt.timeIntervalSince1970 && contact?.status == status {
                     return
                 }
             }
