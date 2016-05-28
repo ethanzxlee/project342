@@ -8,7 +8,6 @@
 
 import UIKit
 import CoreData
-import Firebase
 
 class ContactsViewController: UITableViewController, NSFetchedResultsControllerDelegate, UISearchResultsUpdating {
     
@@ -63,13 +62,13 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        ContactSyncManager.sharedManager.observeContactsEvents()
+        ContactObserver.observer.observeContactsEvents()
     }
     
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidAppear(animated)
-        ContactSyncManager.sharedManager.stopObservingContactsEvents()
+        ContactObserver.observer.stopObservingContactsEvents()
     }
     
     
@@ -155,7 +154,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             guard
                 let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactListTableViewCell)) as? ContactListTableViewCell,
                 let contact = contactFetchedResultController?.objectAtIndexPath(indexPath) as? Contact,
-                let profilePicDirectory = ContactSyncManager.sharedManager.profilePicDirectory
+                let profilePicDirectory = ContactObserver.observer.profilePicDirectory
                 else {
                     return UITableViewCell()
             }
@@ -170,7 +169,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             guard
                 let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactRequestTableViewCell)) as? ContactRequestTableViewCell,
                 let contact = requestFetchedResultController?.objectAtIndexPath(indexPath) as? Contact,
-                let profilePicDirectory = ContactSyncManager.sharedManager.profilePicDirectory
+                let profilePicDirectory = ContactObserver.observer.profilePicDirectory
                 else {
                     return UITableViewCell()
             }
@@ -345,7 +344,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 else {
                     return
             }
-            ContactSyncManager.sharedManager.deleteContact(contact.userId!)
+            ContactObserver.observer.deleteContact(contact.userId!)
         }
         else if segmentedControl.selectedSegmentIndex == ContactSegment.Request.rawValue {
             guard
@@ -353,7 +352,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 else {
                     return
             }
-            ContactSyncManager.sharedManager.deleteContact(contact.userId!)
+            ContactObserver.observer.deleteContact(contact.userId!)
         }
     }
     
@@ -364,7 +363,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             else {
                 return
         }
-        ContactSyncManager.sharedManager.acceptContactRequest(contact.userId!)
+        ContactObserver.observer.acceptContactRequest(contact.userId!)
     }
 }
 

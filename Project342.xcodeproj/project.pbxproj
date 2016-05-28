@@ -13,9 +13,9 @@
 		A1083D271CEB361600FFE32A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1083D261CEB361600FFE32A /* Assets.xcassets */; };
 		A1083D2C1CEC1CFE00FFE32A /* CustomPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1083D2B1CEC1CFE00FFE32A /* CustomPresentationController.swift */; };
 		A1115A881CF869B300DD2CD1 /* AddContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1115A871CF869B300DD2CD1 /* AddContactTableViewCell.swift */; };
-		A1115A8A1CF956C900DD2CD1 /* ContactSearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1115A891CF956C900DD2CD1 /* ContactSearchManager.swift */; };
+		A1115A8A1CF956C900DD2CD1 /* SearchContactObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1115A891CF956C900DD2CD1 /* SearchContactObserver.swift */; };
 		A1115A8C1CF95BD200DD2CD1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A1115A8B1CF95BD200DD2CD1 /* GoogleService-Info.plist */; };
-		A13723661CED7C97002446F1 /* ContactManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13723651CED7C97002446F1 /* ContactManager.swift */; };
+		A13723661CED7C97002446F1 /* ContactObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13723651CED7C97002446F1 /* ContactObserver.swift */; };
 		A197BF771CF489DA00C7D40D /* UIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A197BF761CF489DA00C7D40D /* UIColorExtensions.swift */; };
 		A197BF791CF48C3300C7D40D /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A197BF781CF48C3300C7D40D /* TabBarController.swift */; };
 		A197BF7D1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A197BF7C1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift */; };
@@ -43,6 +43,7 @@
 		A1A4DA611CE98D06006AA3CF /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA5B1CE98D06006AA3CF /* Attachment.swift */; };
 		A1A4DA621CE98D06006AA3CF /* Message+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA5C1CE98D06006AA3CF /* Message+CoreDataProperties.swift */; };
 		A1A4DA631CE98D06006AA3CF /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA5D1CE98D06006AA3CF /* Message.swift */; };
+		A1B03D211CF97DAB00120565 /* FirebaseRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B03D201CF97DAB00120565 /* FirebaseRef.swift */; };
 		DA1C40630E55B30B7B798DCC /* Pods_Project342.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BE727CD3B3F5D3CF1E85860 /* Pods_Project342.framework */; };
 /* End PBXBuildFile section */
 
@@ -74,9 +75,9 @@
 		A1083D261CEB361600FFE32A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1083D2B1CEC1CFE00FFE32A /* CustomPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPresentationController.swift; sourceTree = "<group>"; };
 		A1115A871CF869B300DD2CD1 /* AddContactTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddContactTableViewCell.swift; sourceTree = "<group>"; };
-		A1115A891CF956C900DD2CD1 /* ContactSearchManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactSearchManager.swift; sourceTree = "<group>"; };
+		A1115A891CF956C900DD2CD1 /* SearchContactObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchContactObserver.swift; sourceTree = "<group>"; };
 		A1115A8B1CF95BD200DD2CD1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		A13723651CED7C97002446F1 /* ContactManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactManager.swift; sourceTree = "<group>"; };
+		A13723651CED7C97002446F1 /* ContactObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactObserver.swift; sourceTree = "<group>"; };
 		A197BF761CF489DA00C7D40D /* UIColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColorExtensions.swift; sourceTree = "<group>"; };
 		A197BF781CF48C3300C7D40D /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		A197BF7C1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactRequestTableViewCell.swift; sourceTree = "<group>"; };
@@ -110,6 +111,7 @@
 		A1A4DA5B1CE98D06006AA3CF /* Attachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		A1A4DA5C1CE98D06006AA3CF /* Message+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Message+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		A1A4DA5D1CE98D06006AA3CF /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		A1B03D201CF97DAB00120565 /* FirebaseRef.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseRef.swift; sourceTree = "<group>"; };
 		AA9C9396558ADA8F33E1D3DD /* Pods-Project342.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342.release.xcconfig"; path = "Pods/Target Support Files/Pods-Project342/Pods-Project342.release.xcconfig"; sourceTree = "<group>"; };
 		AC819E102F18403E9DE93F75 /* Pods-Project342.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Project342/Pods-Project342.debug.xcconfig"; sourceTree = "<group>"; };
 		ED9AD4F5E4D2EE230EAC45B7 /* Pods-Project342Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Project342Tests/Pods-Project342Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -175,13 +177,14 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
-		A197BF841CF7428200C7D40D /* FirebaseManager */ = {
+		A197BF841CF7428200C7D40D /* FirebaseObserver */ = {
 			isa = PBXGroup;
 			children = (
-				A13723651CED7C97002446F1 /* ContactManager.swift */,
-				A1115A891CF956C900DD2CD1 /* ContactSearchManager.swift */,
+				A13723651CED7C97002446F1 /* ContactObserver.swift */,
+				A1115A891CF956C900DD2CD1 /* SearchContactObserver.swift */,
+				A1B03D201CF97DAB00120565 /* FirebaseRef.swift */,
 			);
-			name = FirebaseManager;
+			name = FirebaseObserver;
 			sourceTree = "<group>";
 		};
 		A1A4D9B81CE86E74006AA3CF = {
@@ -217,7 +220,7 @@
 				A1083D261CEB361600FFE32A /* Assets.xcassets */,
 				A1A4DA531CE97ABB006AA3CF /* CoreData */,
 				A1083D2A1CEB513700FFE32A /* Extensions */,
-				A197BF841CF7428200C7D40D /* FirebaseManager */,
+				A197BF841CF7428200C7D40D /* FirebaseObserver */,
 				A1083D231CEB347F00FFE32A /* View */,
 				A1A4D9FA1CE871A9006AA3CF /* ViewController */,
 				A1A4DA481CE97974006AA3CF /* Project342.xcdatamodeld */,
@@ -249,12 +252,12 @@
 			children = (
 				A1A4D9C61CE86E74006AA3CF /* RecentChatViewController.swift */,
 				A1A4D9C81CE86E74006AA3CF /* ContactsViewController.swift */,
+				A1A4DA051CE873CD006AA3CF /* AddContactsViewController.swift */,
 				A1A4D9FB1CE8724E006AA3CF /* UserSettingsViewController.swift */,
 				A1A4D9FD1CE872A4006AA3CF /* ChatRoomViewController.swift */,
 				A1A4D9FF1CE87351006AA3CF /* AttachmentViewerViewController.swift */,
 				A1A4DA011CE87363006AA3CF /* SecretMessageViewController.swift */,
 				A1A4DA031CE87390006AA3CF /* ChatRoomSettingsViewController.swift */,
-				A1A4DA051CE873CD006AA3CF /* AddContactsViewController.swift */,
 				A1A4DA071CE879A1006AA3CF /* LoginViewController.swift */,
 				A197BF781CF48C3300C7D40D /* TabBarController.swift */,
 			);
@@ -573,12 +576,13 @@
 				A1A4DA611CE98D06006AA3CF /* Attachment.swift in Sources */,
 				A197BF7D1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift in Sources */,
 				A1A4DA631CE98D06006AA3CF /* Message.swift in Sources */,
-				A1115A8A1CF956C900DD2CD1 /* ContactSearchManager.swift in Sources */,
+				A1115A8A1CF956C900DD2CD1 /* SearchContactObserver.swift in Sources */,
 				A1A4D9FC1CE8724E006AA3CF /* UserSettingsViewController.swift in Sources */,
 				A1A4D9C91CE86E74006AA3CF /* ContactsViewController.swift in Sources */,
 				A1A4D9FE1CE872A4006AA3CF /* ChatRoomViewController.swift in Sources */,
 				A1A4DA001CE87351006AA3CF /* AttachmentViewerViewController.swift in Sources */,
-				A13723661CED7C97002446F1 /* ContactManager.swift in Sources */,
+				A1B03D211CF97DAB00120565 /* FirebaseRef.swift in Sources */,
+				A13723661CED7C97002446F1 /* ContactObserver.swift in Sources */,
 				A197BF771CF489DA00C7D40D /* UIColorExtensions.swift in Sources */,
 				A1083D251CEB34C600FFE32A /* ContactListTableViewCell.swift in Sources */,
 				A1A4DA5E1CE98D06006AA3CF /* Conversation+CoreDataProperties.swift in Sources */,

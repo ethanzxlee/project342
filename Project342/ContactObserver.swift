@@ -9,37 +9,14 @@
 //  http://nshipster.com/cfstringtransform/
 //
 
-import Foundation
 import CoreData
 import Firebase
 
-class ContactSyncManager {
+class ContactObserver {
     
-    static var sharedManager = ContactSyncManager()
+    static let observer = ContactObserver()
     
-    var managedObjectContext: NSManagedObjectContext
-    
-    // MARK: Firebase ref
-    
-    var firebaseRoot = FIRDatabase.database().reference()
-    
-    var usersRef: FIRDatabaseReference? {
-        return firebaseRoot.child("users")
-    }
-    
-    var contactsRef: FIRDatabaseReference? {
-        guard
-            let currentUser = FIRAuth.auth()?.currentUser
-            else {
-                print("No logged in user")
-                return nil
-        }
-        
-        let contactsRef = firebaseRoot.child("contacts")
-            .child(currentUser.uid)
-        
-        return contactsRef
-    }
+    let managedObjectContext: NSManagedObjectContext
     
     // MARK: Firebase event handles
     
@@ -81,11 +58,12 @@ class ContactSyncManager {
     
     // MARK: - Contact
     
+    // TODO: Allow observe only contact, without contact's user info
     func observeContactsEvents() {
         // Remove any existing observer
         stopObservingContactsEvents()
         
-        contactValueChangedEventHandle = contactsRef?.observeEventType(.Value, withBlock: { (contactsSnapshot) in
+        contactValueChangedEventHandle = FirebaseRef.contactsRef?.observeEventType(.Value, withBlock: { (contactsSnapshot) in
             self.didFirebaseContactsValueChange(contactsSnapshot)
         })
     }
@@ -97,10 +75,10 @@ class ContactSyncManager {
             else {
                 return
         }
-        contactsRef?.removeObserverWithHandle(contactValueChangedEventHandle)
+        FirebaseRef.contactsRef?.removeObserverWithHandle(contactValueChangedEventHandle)
         
         for handle in contactUserInfoValueChangedHandles {
-            usersRef?.child(handle.0).removeObserverWithHandle(handle.1)
+            FirebaseRef.usersInfoRef?.child(handle.0).removeObserverWithHandle(handle.1)
         }
     }
     
@@ -147,7 +125,7 @@ class ContactSyncManager {
         // Observe the user info of the current contacts
         for contactSnapshotValue in contactsSnapshotValues {
             let contactUserId = contactSnapshotValue.0
-            let contactUserRef = usersRef?.child(contactUserId)
+            let contactUserRef = FirebaseRef.usersInfoRef?.child(contactUserId)
             
            
             let contactUserInfoEventHandle = contactUserRef?.observeEventType(.Value, withBlock: { (userSnapshot) in
@@ -256,12 +234,12 @@ class ContactSyncManager {
     
     
     func deleteContact(contactId: String) {
-        contactsRef?.child(contactId).removeValue()
+        FirebaseRef.contactsRef?.child(contactId).removeValue()
     }
     
     
     func acceptContactRequest(contactId: String) {
-        contactsRef?.child(contactId).setValue(ContactStatus.Added.rawValue)
+        FirebaseRef.contactsRef?.child(contactId).setValue(ContactStatus.Added.rawValue)
     }
     
 }
