@@ -13,15 +13,23 @@ import QuartzCore
 import CoreLocation
 import AVFoundation
 
-class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePickerControllerDelegate, CLLocationManagerDelegate, AVAudioRecorderDelegate{
-    
+class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePickerControllerDelegate, CLLocationManagerDelegate, AVAudioRecorderDelegate, UITableViewDataSource, UITableViewDelegate{
+        
     @IBOutlet weak var microphoneButton: UIButton!
     
     @IBOutlet weak var textView: UITextView!
     
+    @IBOutlet weak var hiddenButton: UIButton!
+    
     @IBOutlet weak var sendButton: UIButton!
     
     @IBOutlet weak var chatContentTableView: UITableView!
+    
+    @IBOutlet weak var contentView: UIView!
+    
+    @IBOutlet weak var messageContentViewBottomConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var messageContentViewHeightConstraint: NSLayoutConstraint!
     
     @IBAction func multiSelectionButtonFunc(sender: AnyObject) {
         let alertDialog = UIAlertController()
@@ -40,7 +48,10 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         
         let shareLocationAction = UIAlertAction(title: "Share Location", style: .Default) { (_) in
             
-            
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            self.locationManager.requestAlwaysAuthorization()
+            self.locationManager.startUpdatingLocation()
+
             
 
         }
@@ -94,14 +105,9 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         }
         sendButton.hidden = true
         microphoneButton.hidden = false
+        hiddenButton.hidden = false
         adjustTextViewHeight()
     }
-    
-    @IBOutlet weak var contentView: UIView!
-    
-    @IBOutlet weak var messageContentViewBottomConstraint: NSLayoutConstraint!
-    
-    @IBOutlet weak var messageContentViewHeightConstraint: NSLayoutConstraint!
     
     var recordingSession: AVAudioSession!
     
@@ -119,6 +125,10 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     var conversation: Conversation?
     
+    var img : [UIImage] = []
+    
+    var messagesDisplay : [Message] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -130,12 +140,48 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         self.recordingSession = AVAudioSession.sharedInstance()
         
         self.locationManager.delegate = self
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        self.locationManager.requestAlwaysAuthorization()
-self.locationManager.startUpdatingLocation()
+        
+
+        self.chatContentTableView.registerNib(UINib(nibName: "ChatRoomCustomCell", bundle: nil), forCellReuseIdentifier: "chatRoomCell")
+        
+        self.chatContentTableView.rowHeight = UITableViewAutomaticDimension
+        self.chatContentTableView.estimatedRowHeight = 500
+
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+        
+        let context = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+        let message1 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
+        let message2 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
+        
+        message1.content = "hello world. It is so fucking cold a=even though i just open a small gap of my door. The wind still flow from my living room to my bed room. What the fuck. This is so fuck. I just have one day to do 342 project. Tmr i still need to do revision for my quiz meanwhile I have touch my 321 documentation."
+        
+        message2.content = "hello world. It is so fucking cold a=even though i just open a small gap of my door. The wind still flow from my living room to my bed room. What the fuck. This is so fuck. I just have one day to do 342 project. Tmr i still need to do revision for my quiz meanwhile I have touch my 321 documentation."
+        
+        messagesDisplay.append(message2)
+        messagesDisplay.append(message1)
+        
+        let message3 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
+        let message4 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
+        
+        message3.content = "hello world.\nhello world.\nwhy right s"
+        
+        message4.content = "hello "
+        
+        messagesDisplay.append(message3)
+        messagesDisplay.append(message4)
+        
+        let message5 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
+        let message6 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
+        
+        message6.content = "hello world.\nhello world.\nwhy right"
+        
+        message5.content = "hello "
+        
+        messagesDisplay.append(message5)
+        messagesDisplay.append(message6)
+        print(messagesDisplay.count)
         
     }
 
@@ -160,9 +206,11 @@ self.locationManager.startUpdatingLocation()
         if textView.text == "" {
             sendButton.hidden = true
             microphoneButton.hidden = false
+            hiddenButton.hidden = false
         }else{
             sendButton.hidden = false
             microphoneButton.hidden = true
+            hiddenButton.hidden = true
         }
         adjustTextViewHeight()
        
@@ -219,6 +267,146 @@ self.locationManager.startUpdatingLocation()
     }
     
     
+    // MARK: ImagePicker
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        if let imgSelected = info[UIImagePickerControllerOriginalImage] as? UIImage{
+            img.append(imgSelected)
+        }
+        
+        // TODO: Do something to send video url
+        if let video = info[UIImagePickerControllerMediaURL] as? NSURL{
+            
+        }
+    }
+    
+    // MARK: TableView
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return messagesDisplay.count
+    }
+    
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("chatRoomCell", forIndexPath: indexPath) as! ChatRoomCustomCell
+        
+        cell.messageContent.text = messagesDisplay[indexPath.row].content
+        
+        cell.messageContent.sizeToFit()
+        
+        /**
+         Change the priority of contraints according to the message sent by users or the friends
+         The constant of Leading and Trailing of label message: 40
+         The constant of Leading and Trailing of imageView: 5
+         
+         The priority will be different will change according to below:
+         LEFT SIDE:
+         cell.contentLeading.priority = 751
+         cell.contentTrailing.priority = 750
+         ** The content will move toward left side as the Leading contraint priority is higher
+         
+         cell.profileLeading.priority = 751
+         cell.profileTrailing.priority = 750
+         ** The image view will move toward left side as the Leading contraint priority is higher
+         
+         RIGHT SIDE:
+         cell.contentLeading.priority = 750
+         cell.contentTrailing.priority = 751
+         ** The content will move toward right side as the Trailing contraint priority is higher
+         
+         cell.profileLeading.priority = 750
+         cell.profileTrailing.priority = 751
+         ** The image view will move toward right side as the Trailing contraint priority is higher
+         */
+        
+        // TODO: FIXME when merge
+//        let userInfo = NSUserDefaults()
+//        let userID = userInfo.stringForKey("userID")
+//        if messagesDisplay[indexPath.row].senderID == userID!{
+//            cell.contentLeading.priority = 750
+//            cell.contentTrailing.priority = 751
+//            cell.profileLeading.priority = 750
+//            cell.profileTrailing.priority = 751
+//            cell.messageContent.backgroundColor = UIColor.init(red: 51/255, green: 1, blue: 153/255, alpha: 1.0)
+//        }else{
+//            cell.contentLeading.priority = 751
+//            cell.contentTrailing.priority = 750
+//            cell.profileLeading.priority = 751
+//            cell.profileTrailing.priority = 750
+//            cell.messageContent.backgroundColor = UIColor.init(red: 102/255, green: 1, blue: 1, alpha: 1.0)
+//        }
+        
+        switch(indexPath.row) {
+        case 0:
+            cell.contentLeading.priority = 750
+            cell.contentTrailing.priority = 751
+            cell.profileLeading.priority = 750
+            cell.profileTrailing.priority = 751
+            cell.messageContent.backgroundColor = UIColor.init(red: 51/255, green: 1, blue: 153/255, alpha: 1.0)
+            break
+        case 1:
+            cell.contentLeading.priority = 751
+            cell.contentTrailing.priority = 750
+            cell.profileLeading.priority = 751
+            cell.profileTrailing.priority = 750
+            cell.messageContent.backgroundColor = UIColor.init(red: 102/255, green: 1, blue: 1, alpha: 1.0)
+            break
+        case 2:
+            cell.contentLeading.priority = 750
+            cell.contentTrailing.priority = 751
+            cell.profileLeading.priority = 750
+            cell.profileTrailing.priority = 751
+            cell.messageContent.backgroundColor = UIColor.init(red: 51/255, green: 1, blue: 153/255, alpha: 1.0)
+            break
+        case 3:
+            cell.contentLeading.priority = 751
+            cell.contentTrailing.priority = 750
+            cell.profileLeading.priority = 751
+            cell.profileTrailing.priority = 750
+            cell.messageContent.backgroundColor = UIColor.init(red: 102/255, green: 1, blue: 1, alpha: 1.0)
+            break
+        case 4:
+            cell.contentLeading.priority = 750
+            cell.contentTrailing.priority = 751
+            cell.profileLeading.priority = 750
+            cell.profileTrailing.priority = 751
+            cell.messageContent.backgroundColor = UIColor.init(red: 51/255, green: 1, blue: 153/255, alpha: 1.0)
+            break
+        case 5:
+            cell.contentLeading.priority = 751
+            cell.contentTrailing.priority = 750
+            cell.profileLeading.priority = 751
+            cell.profileTrailing.priority = 750
+            cell.messageContent.backgroundColor = UIColor.init(red: 102/255, green: 1, blue: 1, alpha: 1.0)
+            break
+        default:
+            cell.contentLeading.priority = 750
+            cell.contentTrailing.priority = 751
+            cell.profileLeading.priority = 750
+            cell.profileTrailing.priority = 751
+            cell.messageContent.backgroundColor = UIColor.init(red: 51/255, green: 1, blue: 153/255, alpha: 1.0)
+            break
+        }
+        
+        
+        
+        
+        return cell
+    }
+    
+    func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        let cell = tableView.dequeueReusableCellWithIdentifier("chatRoomCell", forIndexPath: indexPath) as! ChatRoomCustomCell
+        
+        return cell.messageContent.frame.size.height
+    }
     
 
+    
+    
+    
 }

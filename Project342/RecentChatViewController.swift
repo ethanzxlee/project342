@@ -299,7 +299,6 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     // MARK: - Bar Button Functions
     func createNewConversation(){
         self.performSegueWithIdentifier("goToCreateNewChat", sender: self)
-        print("createNewConversation()")
     }
     
     
@@ -370,50 +369,48 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     
     // TODO: MUST DELETE
     func willDeleteAfterFinish(){
-        let contactList = appModel.getContactList()
-        var contactArry = [Contact]()
-        contactArry.append(contactList[1])
-        contactArry.append(contactList[3])
-        contactArry.append(contactList[2])
-        contactArry.append(contactList[4])
-        contactArry.append(contactList[5])
-        contactArry.append(contactList[6])
-        contactArry.append(contactList[7])
-        contactArry.append(contactList[8])
-        contactArry.append(contactList[9])
-        contactArry.append(contactList[10])
-        contactArry.append(contactList[11])
-        contactArry.append(contactList[12])
-        let success = self.appModel.createNewConversation(contactArry)
-        
-//        if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
-//            let context = appDelegate.managedObjectContext
-//            for a in 0...6{
-//                if let contact = NSEntityDescription.insertNewObjectForEntityForName("Contact", inManagedObjectContext: context) as? Contact {
-//                    contact.firstName = "kkkk \(a)"
-//                    contact.lastName = "hello"
-//                    contact.imagePath = "pic.png"
-//                    let randnum = random()
-//                    // Try to save
-//                    do {
-//                        try context.save()
-//                    }
-//                    catch {
-//                        
-//                    }
-//                }
-//            }
-//        }
-//        
 //        let contactList = appModel.getContactList()
-//        for a in 0...6{
-//                       var contactArry = [Contact]()
-//            contactArry.append(contactList[a])
-//contactArry.append(contactList[3])
-//            contactArry.append(contactList[2])
-//            let success = self.appModel.createNewConversation(contactArry)
-//            print(success)
-//        }
+//        var contactArry = [Contact]()
+//        contactArry.append(contactList[1])
+//        contactArry.append(contactList[3])
+//        contactArry.append(contactList[2])
+//        contactArry.append(contactList[4])
+//        contactArry.append(contactList[5])
+//        contactArry.append(contactList[6])
+//        contactArry.append(contactList[7])
+//        contactArry.append(contactList[8])
+//        contactArry.append(contactList[9])
+//        contactArry.append(contactList[10])
+//        contactArry.append(contactList[11])
+//        contactArry.append(contactList[12])
+//        let success = self.appModel.createNewConversation(contactArry)
+//        
+        if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
+            let context = appDelegate.managedObjectContext
+            for a in 0...30{
+                if let contact = NSEntityDescription.insertNewObjectForEntityForName("Contact", inManagedObjectContext: context) as? Contact {
+                    contact.firstName = "kkkk \(a)"
+                    contact.lastName = "hello"
+                    contact.imagePath = "pic.png"
+                    // Try to save
+                    do {
+                        try context.save()
+                    }
+                    catch {
+                        
+                    }
+                }
+            }
+        }
+        
+        let contactList = appModel.getContactList()
+        for a in 0...30{
+                       var contactArry = [Contact]()
+            contactArry.append(contactList[a])
+contactArry.append(contactList[3])
+            contactArry.append(contactList[2])
+            let success = self.appModel.createNewConversation(contactArry)
+        }
         
 //        if let msg = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedContext) as? Message {
 //            msg.content = "whatever"

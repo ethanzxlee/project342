@@ -87,7 +87,7 @@
                                 </variation>
                             </textView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="neF-bS-rhG">
-                                <rect key="frame" x="0.0" y="142" width="600" height="522"/>
+                                <rect key="frame" x="0.0" y="142" width="600" height="409"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="createNewChatCell" textLabel="4zT-jh-P7h" imageView="geb-rm-JHs" style="IBUITableViewCellStyleDefault" id="DHQ-Wh-R4S">
@@ -127,7 +127,7 @@
                             <constraint firstAttribute="leadingMargin" secondItem="OZq-ZL-fEQ" secondAttribute="leading" id="ej4-56-WKr"/>
                             <constraint firstItem="qrU-GR-MKf" firstAttribute="centerX" secondItem="NcO-gj-cZI" secondAttribute="centerX" id="jct-78-btA"/>
                             <constraint firstItem="neF-bS-rhG" firstAttribute="centerX" secondItem="NcO-gj-cZI" secondAttribute="centerX" id="oR2-lE-paL"/>
-                            <constraint firstItem="6bQ-CZ-Yz9" firstAttribute="top" secondItem="neF-bS-rhG" secondAttribute="bottom" constant="-113" id="tDP-hf-aYD"/>
+                            <constraint firstItem="6bQ-CZ-Yz9" firstAttribute="top" secondItem="neF-bS-rhG" secondAttribute="bottom" id="tDP-hf-aYD"/>
                             <constraint firstItem="qrU-GR-MKf" firstAttribute="top" secondItem="4aI-Mc-7LS" secondAttribute="bottom" id="tEX-dR-eEx"/>
                             <constraint firstItem="neF-bS-rhG" firstAttribute="width" secondItem="NcO-gj-cZI" secondAttribute="width" id="txN-9g-3Ws"/>
                             <constraint firstAttribute="trailingMargin" secondItem="qrU-GR-MKf" secondAttribute="trailing" constant="-20" id="zhA-pR-omH"/>
@@ -185,17 +185,6 @@
                                             <action selector="multiSelectionButtonFunc:" destination="iAg-cx-Yx1" eventType="touchUpInside" id="Ovd-rz-46l"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jwQ-h4-jyz">
-                                        <rect key="frame" x="568" y="2" width="24" height="24"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="24" id="bC3-gm-qLA"/>
-                                            <constraint firstAttribute="height" constant="24" id="xmC-zu-eGG"/>
-                                        </constraints>
-                                        <state key="normal" image="mic"/>
-                                        <connections>
-                                            <action selector="microphoneButtonFunc:" destination="iAg-cx-Yx1" eventType="touchUpInside" id="O7y-RH-vCi"/>
-                                        </connections>
-                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oj7-Lg-iZr">
                                         <rect key="frame" x="538" y="2" width="24" height="24"/>
                                         <constraints>
@@ -207,6 +196,29 @@
                                             <action selector="hiddenButtonFunc:" destination="iAg-cx-Yx1" eventType="touchUpInside" id="SLb-Og-GqQ"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jwQ-h4-jyz">
+                                        <rect key="frame" x="568" y="2" width="24" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="24" id="bC3-gm-qLA"/>
+                                            <constraint firstAttribute="height" constant="24" id="xmC-zu-eGG"/>
+                                        </constraints>
+                                        <state key="normal" image="mic"/>
+                                        <connections>
+                                            <action selector="microphoneButtonFunc:" destination="iAg-cx-Yx1" eventType="touchUpInside" id="O7y-RH-vCi"/>
+                                        </connections>
+                                    </button>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z3T-Cp-XXV">
+                                        <rect key="frame" x="538" y="2" width="54" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="54" id="nZb-zJ-3Zf"/>
+                                            <constraint firstAttribute="height" constant="24" id="zBz-9n-zgp"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                        <state key="normal" title="Send"/>
+                                        <connections>
+                                            <action selector="sendButtonFunc:" destination="iAg-cx-Yx1" eventType="touchUpInside" id="m1E-t7-4VV"/>
+                                        </connections>
+                                    </button>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="xCP-Tv-fHP">
                                         <rect key="frame" x="34" y="2" width="499" height="26"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -214,17 +226,6 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
-                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z3T-Cp-XXV">
-                                        <rect key="frame" x="568" y="2" width="24" height="24"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="24" id="nZb-zJ-3Zf"/>
-                                            <constraint firstAttribute="height" constant="24" id="zBz-9n-zgp"/>
-                                        </constraints>
-                                        <state key="normal" image="send"/>
-                                        <connections>
-                                            <action selector="sendButtonFunc:" destination="iAg-cx-Yx1" eventType="touchUpInside" id="m1E-t7-4VV"/>
-                                        </connections>
-                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.57281037950000002" green="0.845132679" blue="0.85384615379999995" alpha="0.53803879310000002" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -243,9 +244,23 @@
                                     <constraint firstAttribute="height" constant="30" id="xVS-Ei-Ogu"/>
                                 </constraints>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="gR7-b3-wsM">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="gR7-b3-wsM">
                                 <rect key="frame" x="0.0" y="64" width="600" height="457"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="dzS-2U-g4B">
+                                        <rect key="frame" x="0.0" y="28" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="dzS-2U-g4B" id="qeA-B7-Znn">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="iAg-cx-Yx1" id="qay-qP-sXB"/>
+                                    <outlet property="delegate" destination="iAg-cx-Yx1" id="jIn-ut-bgG"/>
+                                </connections>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -269,6 +284,7 @@
                     <connections>
                         <outlet property="chatContentTableView" destination="gR7-b3-wsM" id="kER-mV-fal"/>
                         <outlet property="contentView" destination="dXL-yq-icw" id="dKF-4L-mXh"/>
+                        <outlet property="hiddenButton" destination="Oj7-Lg-iZr" id="SvV-4L-gv6"/>
                         <outlet property="messageContentViewBottomConstraint" destination="O0O-sN-IkO" id="pwr-Kk-ixT"/>
                         <outlet property="messageContentViewHeightConstraint" destination="xVS-Ei-Ogu" id="lnJ-hq-KYv"/>
                         <outlet property="microphoneButton" destination="jwQ-h4-jyz" id="tcV-a1-Tmq"/>
@@ -667,7 +683,6 @@
         <image name="defaultPicture" width="96" height="96"/>
         <image name="mic" width="29" height="29"/>
         <image name="options" width="29" height="29"/>
-        <image name="send" width="29" height="29"/>
         <image name="treasure" width="29" height="29"/>
     </resources>
     <inferredMetricsTieBreakers>
