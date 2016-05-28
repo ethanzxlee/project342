@@ -21,30 +21,30 @@ class ContactSyncManager {
     
     // MARK: Firebase ref
     
-    var firebaseRoot = Firebase(url: "https://fiery-fire-3992.firebaseio.com/")
+    var firebaseRoot = FIRDatabase.database().reference()
     
-    var usersRef: Firebase? {
-        return firebaseRoot.childByAppendingPath("users")
+    var usersRef: FIRDatabaseReference? {
+        return firebaseRoot.child("users")
     }
     
-    var contactsRef: Firebase? {
+    var contactsRef: FIRDatabaseReference? {
         guard
-            let authData = firebaseRoot.authData
+            let currentUser = FIRAuth.auth()?.currentUser
             else {
                 print("No logged in user")
                 return nil
         }
         
-        let contactsRef = firebaseRoot.childByAppendingPath("contacts")
-            .childByAppendingPath(authData.uid)
+        let contactsRef = firebaseRoot.child("contacts")
+            .child(currentUser.uid)
         
         return contactsRef
     }
     
     // MARK: Firebase event handles
     
-    var contactValueChangedEventHandle: FirebaseHandle?
-    var contactUserInfoValueChangedHandles: [String: FirebaseHandle]
+    var contactValueChangedEventHandle: FIRDatabaseHandle?
+    var contactUserInfoValueChangedHandles: [String: FIRDatabaseHandle]
     
     // MARK: Directory URLs
     
@@ -74,8 +74,8 @@ class ContactSyncManager {
     
     private init() {
         managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
-        contactUserInfoValueChangedHandles = [String: FirebaseHandle]()
-        firebaseRoot.authUser("zxlee618@gmail.com", password: "10Zhexian01") { (error, authData) in}
+        contactUserInfoValueChangedHandles = [String: FIRDatabaseHandle]()
+        FIRAuth.auth()?.signInWithEmail("zxlee618@gmail.com", password: "10Zhexian01", completion: nil)
     }
     
     
@@ -100,12 +100,12 @@ class ContactSyncManager {
         contactsRef?.removeObserverWithHandle(contactValueChangedEventHandle)
         
         for handle in contactUserInfoValueChangedHandles {
-            usersRef?.childByAppendingPath(handle.0).removeObserverWithHandle(handle.1)
+            usersRef?.child(handle.0).removeObserverWithHandle(handle.1)
         }
     }
     
     
-    func didFirebaseContactsValueChange(contactsSnapshot: FDataSnapshot) {
+    func didFirebaseContactsValueChange(contactsSnapshot: FIRDataSnapshot) {
         guard
             let contactsSnapshotValues = contactsSnapshot.value as? [String: String]
             else {
@@ -147,7 +147,7 @@ class ContactSyncManager {
         // Observe the user info of the current contacts
         for contactSnapshotValue in contactsSnapshotValues {
             let contactUserId = contactSnapshotValue.0
-            let contactUserRef = usersRef?.childByAppendingPath(contactUserId)
+            let contactUserRef = usersRef?.child(contactUserId)
             
            
             let contactUserInfoEventHandle = contactUserRef?.observeEventType(.Value, withBlock: { (userSnapshot) in
@@ -161,7 +161,7 @@ class ContactSyncManager {
     }
     
     
-    func didFirebaseContactUserInfoChange(userSnapshot: FDataSnapshot, status: String) {
+    func didFirebaseContactUserInfoChange(userSnapshot: FIRDataSnapshot, status: String) {
         do {
             guard
                 let userSnapshotValue = userSnapshot.value as? [String: AnyObject]
@@ -256,12 +256,12 @@ class ContactSyncManager {
     
     
     func deleteContact(contactId: String) {
-        contactsRef?.childByAppendingPath(contactId).removeValue()
+        contactsRef?.child(contactId).removeValue()
     }
     
     
     func acceptContactRequest(contactId: String) {
-        contactsRef?.childByAppendingPath(contactId).setValue(ContactStatus.Added.rawValue)
+        contactsRef?.child(contactId).setValue(ContactStatus.Added.rawValue)
     }
     
 }

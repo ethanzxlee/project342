@@ -13,7 +13,7 @@ import Firebase
 class AddContactsViewController: UITableViewController, UISearchResultsUpdating {
     
     var searchController: UISearchController!
-    var searchEventHandle: FirebaseHandle?
+    var searchEventHandle: FIRDatabaseHandle?
     var searchResult: [[String: String]]?
     
     
