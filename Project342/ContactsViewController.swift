@@ -20,7 +20,6 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     var contactFetchedResultController: NSFetchedResultsController?
     var requestFetchedResultController: NSFetchedResultsController?
     var searchController: UISearchController!
-    var contactRequestsSnapshot: FDataSnapshot?
     
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     
@@ -52,9 +51,9 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         searchController.searchResultsUpdater = self
         searchController.searchBar.translucent = true
         searchController.searchBar.searchBarStyle = .Prominent
-        searchController.searchBar.barTintColor = UIColor(red: 0xF7/255, green: 0xF7/255, blue: 0xF7/255, alpha: 1)
+        searchController.searchBar.barTintColor = UIColor.searchBarBackgroundColor()
         searchController.searchBar.tintColor = UIColor.themeColor()
-        searchController.searchBar.backgroundColor = UIColor(red: 0xF7/255, green: 0xF7/255, blue: 0xF7/255, alpha: 1)
+        searchController.searchBar.backgroundColor = UIColor.searchBarBackgroundColor()
         searchController.searchBar.backgroundImage = UIImage()
         searchController.dimsBackgroundDuringPresentation = false
         definesPresentationContext = true
@@ -64,13 +63,13 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        ContactManager.sharedManager.observeContactsEvents()
+        ContactSyncManager.sharedManager.observeContactsEvents()
     }
     
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidAppear(animated)
-        ContactManager.sharedManager.stopObservingContactsEvents()
+        ContactSyncManager.sharedManager.stopObservingContactsEvents()
     }
     
     
@@ -156,7 +155,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             guard
                 let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactListTableViewCell)) as? ContactListTableViewCell,
                 let contact = contactFetchedResultController?.objectAtIndexPath(indexPath) as? Contact,
-                let profilePicDirectory = ContactManager.sharedManager.profilePicDirectory
+                let profilePicDirectory = ContactSyncManager.sharedManager.profilePicDirectory
                 else {
                     return UITableViewCell()
             }
@@ -171,7 +170,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             guard
                 let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactRequestTableViewCell)) as? ContactRequestTableViewCell,
                 let contact = requestFetchedResultController?.objectAtIndexPath(indexPath) as? Contact,
-                let profilePicDirectory = ContactManager.sharedManager.profilePicDirectory
+                let profilePicDirectory = ContactSyncManager.sharedManager.profilePicDirectory
                 else {
                     return UITableViewCell()
             }
@@ -216,7 +215,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     }
     
     
-    // MARK: - NScontactFetchedResultControllerDelegate
+    // MARK: - NSFetchedResultControllerDelegate
     
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
         tableView.beginUpdates()
@@ -346,7 +345,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 else {
                     return
             }
-            ContactManager.sharedManager.deleteContact(contact.userId!)
+            ContactSyncManager.sharedManager.deleteContact(contact.userId!)
         }
         else if segmentedControl.selectedSegmentIndex == ContactSegment.Request.rawValue {
             guard
@@ -354,7 +353,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 else {
                     return
             }
-            ContactManager.sharedManager.deleteContact(contact.userId!)
+            ContactSyncManager.sharedManager.deleteContact(contact.userId!)
         }
     }
     
@@ -365,7 +364,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             else {
                 return
         }
-        ContactManager.sharedManager.acceptContactRequest(contact.userId!)
+        ContactSyncManager.sharedManager.acceptContactRequest(contact.userId!)
     }
 }
 

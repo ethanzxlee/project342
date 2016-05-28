@@ -13,9 +13,10 @@ import Foundation
 import CoreData
 import Firebase
 
-class ContactManager {
+class ContactSyncManager {
     
-    static var sharedManager = ContactManager()
+    static var sharedManager = ContactSyncManager()
+    
     var managedObjectContext: NSManagedObjectContext
     
     // MARK: Firebase ref
@@ -40,7 +41,7 @@ class ContactManager {
         return contactsRef
     }
     
-    // Firebase event handles
+    // MARK: Firebase event handles
     
     var contactValueChangedEventHandle: FirebaseHandle?
     var contactUserInfoValueChangedHandles: [String: FirebaseHandle]
@@ -71,7 +72,7 @@ class ContactManager {
     }
     
     
-    init() {
+    private init() {
         managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
         contactUserInfoValueChangedHandles = [String: FirebaseHandle]()
         firebaseRoot.authUser("zxlee618@gmail.com", password: "10Zhexian01") { (error, authData) in}
@@ -197,7 +198,6 @@ class ContactManager {
                 contact = existingContact[0]
                 
                 // If the contact is already up-to-date
-                print("\(firstName)   \(contact?.updatedAt) __ \(updatedAtString)")
                 if contact?.updatedAt?.timeIntervalSince1970 >= updatedAt.timeIntervalSince1970 && contact?.status == status {
                     return
                 }

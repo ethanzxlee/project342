@@ -14,4 +14,8 @@ extension UIColor {
         return UIColor(red: 0xFD / 255, green: 0x82 / 255, blue: 0x08 / 255, alpha: 1)
     }
     
+    static func searchBarBackgroundColor() -> UIColor {
+        return UIColor(red: 0xF7/255, green: 0xF7/255, blue: 0xF7/255, alpha: 1)
+    }
+    
 }
