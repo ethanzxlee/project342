@@ -11,7 +11,7 @@ import UIKit
 class ChatRoomCustomCell: UITableViewCell{
     
     // For message receiver from others
-    @IBOutlet weak var messageContent: UILabelSubClass!
+    @IBOutlet weak var messageContent: CustomLabel!
     @IBOutlet weak var profileView: UIImageView!
     
     @IBOutlet weak var contentLeading: NSLayoutConstraint!
@@ -27,7 +27,7 @@ class ChatRoomCustomCell: UITableViewCell{
         messageContent.layer.borderWidth = 1
         messageContent.layer.cornerRadius = 7
         messageContent.clipsToBounds = true
-        
+
     }
 
     override func setSelected(selected: Bool, animated: Bool) {

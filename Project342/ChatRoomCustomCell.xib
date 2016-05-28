@@ -12,7 +12,7 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="defaultPicture" translatesAutoresizingMaskIntoConstraints="NO" id="icr-l4-2mA">
@@ -22,7 +22,7 @@
                             <constraint firstAttribute="height" constant="24" id="d2P-qN-3c4"/>
                         </constraints>
                     </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="751" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nGT-DK-Nja" customClass="UILabelSubClass" customModule="Project342" customModuleProvider="target">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="751" text="Label" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000000000000004" translatesAutoresizingMaskIntoConstraints="NO" id="nGT-DK-Nja" customClass="CustomLabel" customModule="Project342" customModuleProvider="target">
                         <rect key="frame" x="48" y="6" width="42" height="28"/>
                         <rect key="contentStretch" x="0.0" y="0.0" width="1" height="0.90000000000000002"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -35,7 +35,7 @@
                     <constraint firstAttribute="bottomMargin" secondItem="nGT-DK-Nja" secondAttribute="bottom" constant="2" id="BID-Sw-8uq"/>
                     <constraint firstItem="nGT-DK-Nja" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" priority="751" constant="40" id="HPk-si-wLO"/>
                     <constraint firstAttribute="topMargin" secondItem="nGT-DK-Nja" secondAttribute="top" constant="2" id="Uro-Hw-wyY"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="nGT-DK-Nja" secondAttribute="trailing" priority="750" constant="40" id="VCg-9j-KGm"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="nGT-DK-Nja" secondAttribute="trailing" priority="750" constant="30" id="VCg-9j-KGm"/>
                     <constraint firstItem="icr-l4-2mA" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" priority="751" constant="5" id="YAe-aH-Owb"/>
                     <constraint firstAttribute="trailingMargin" secondItem="icr-l4-2mA" secondAttribute="trailing" priority="750" constant="5" id="bvN-uk-o9B"/>
                 </constraints>
@@ -43,7 +43,7 @@
             <connections>
                 <outlet property="contentLeading" destination="HPk-si-wLO" id="6Fr-yH-5OH"/>
                 <outlet property="contentTrailing" destination="VCg-9j-KGm" id="jUE-yK-puS"/>
-                <outlet property="messageContent" destination="nGT-DK-Nja" id="mGB-vS-3SK"/>
+                <outlet property="messageContent" destination="nGT-DK-Nja" id="yW6-IN-217"/>
                 <outlet property="profileLeading" destination="YAe-aH-Owb" id="zhU-SH-efJ"/>
                 <outlet property="profileTrailing" destination="bvN-uk-o9B" id="Ng0-9g-ail"/>
                 <outlet property="profileView" destination="icr-l4-2mA" id="qCz-OF-Ovn"/>
