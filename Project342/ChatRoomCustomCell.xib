@@ -12,7 +12,7 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="defaultPicture" translatesAutoresizingMaskIntoConstraints="NO" id="icr-l4-2mA">
@@ -29,20 +29,33 @@
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <view contentMode="scaleToFill" horizontalHuggingPriority="751" verticalHuggingPriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="ksp-d8-5RL">
+                        <rect key="frame" x="48" y="10" width="234" height="24"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="ksp-d8-5RL" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="2" id="21U-s4-Rcj"/>
                     <constraint firstItem="icr-l4-2mA" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="2kX-0s-NB1"/>
                     <constraint firstAttribute="bottomMargin" secondItem="nGT-DK-Nja" secondAttribute="bottom" constant="2" id="BID-Sw-8uq"/>
                     <constraint firstItem="nGT-DK-Nja" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" priority="751" constant="40" id="HPk-si-wLO"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="ksp-d8-5RL" secondAttribute="trailing" priority="750" constant="30" id="UnQ-od-cDI"/>
                     <constraint firstAttribute="topMargin" secondItem="nGT-DK-Nja" secondAttribute="top" constant="2" id="Uro-Hw-wyY"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="nGT-DK-Nja" secondAttribute="trailing" priority="750" constant="30" id="VCg-9j-KGm"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="nGT-DK-Nja" secondAttribute="trailing" priority="750" constant="40" id="VCg-9j-KGm"/>
                     <constraint firstItem="icr-l4-2mA" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" priority="751" constant="5" id="YAe-aH-Owb"/>
+                    <constraint firstItem="ksp-d8-5RL" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" priority="751" constant="40" id="YjQ-Zg-qgR"/>
                     <constraint firstAttribute="trailingMargin" secondItem="icr-l4-2mA" secondAttribute="trailing" priority="750" constant="5" id="bvN-uk-o9B"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="ksp-d8-5RL" secondAttribute="bottom" constant="2" id="ozX-7M-atY"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
+                <outlet property="attachmentBottom" destination="ozX-7M-atY" id="rwF-JF-npJ"/>
+                <outlet property="attachmentLeading" destination="YjQ-Zg-qgR" id="Al7-47-443"/>
+                <outlet property="attachmentTrailing" destination="UnQ-od-cDI" id="ZR0-0D-obO"/>
+                <outlet property="attachmentView" destination="ksp-d8-5RL" id="RDo-eL-cly"/>
                 <outlet property="contentLeading" destination="HPk-si-wLO" id="6Fr-yH-5OH"/>
                 <outlet property="contentTrailing" destination="VCg-9j-KGm" id="jUE-yK-puS"/>
+                <outlet property="contentViewCell" destination="H2p-sc-9uM" id="KpR-nU-SYp"/>
                 <outlet property="messageContent" destination="nGT-DK-Nja" id="yW6-IN-217"/>
                 <outlet property="profileLeading" destination="YAe-aH-Owb" id="zhU-SH-efJ"/>
                 <outlet property="profileTrailing" destination="bvN-uk-o9B" id="Ng0-9g-ail"/>

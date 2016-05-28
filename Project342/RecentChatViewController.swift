@@ -38,7 +38,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // TODO: MUST DELETE Load inital data for try
-        //willDeleteAfterFinish()
+        willDeleteAfterFinish()
         
         // Add edit button to navigation bar
         self.navigationItem.leftBarButtonItem = editButtonItem()

@@ -12,20 +12,21 @@ import CoreData
 import QuartzCore
 import CoreLocation
 import AVFoundation
+import MapKit
 
-class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePickerControllerDelegate, CLLocationManagerDelegate, AVAudioRecorderDelegate, UITableViewDataSource, UITableViewDelegate{
+class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePickerControllerDelegate, CLLocationManagerDelegate, AVAudioRecorderDelegate, UITableViewDataSource, UITableViewDelegate, MKMapViewDelegate{
         
-    @IBOutlet weak var microphoneButton: UIButton!
+    @IBOutlet weak var microphoneButton: UIButton!                              // For Voice Message
     
-    @IBOutlet weak var textView: UITextView!
+    @IBOutlet weak var textView: UITextView!                                    // Field to enter the content of message
     
-    @IBOutlet weak var hiddenButton: UIButton!
+    @IBOutlet weak var hiddenButton: UIButton!                                  // Button to start hidden msg feature
     
-    @IBOutlet weak var sendButton: UIButton!
+    @IBOutlet weak var sendButton: UIButton!                                    // Button to send msg
     
-    @IBOutlet weak var chatContentTableView: UITableView!
+    @IBOutlet weak var chatContentTableView: UITableView!                       // Table View show conversation
     
-    @IBOutlet weak var contentView: UIView!
+    @IBOutlet weak var contentView: UIView!                                     // Overall View that consist of TableView, TextView for enter message, and so on
     
     @IBOutlet weak var messageContentViewBottomConstraint: NSLayoutConstraint!
     
@@ -151,6 +152,9 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
         
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ChatRoomViewController.tapGestureFunc))
+        self.view.addGestureRecognizer(tapGesture)
+        
         let context = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
         let message1 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
         let message2 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
@@ -181,7 +185,6 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         
         messagesDisplay.append(message5)
         messagesDisplay.append(message6)
-        print(messagesDisplay.count)
         
     }
 
@@ -263,7 +266,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     // TODO: fix how to share in message
     func shareLocation(lat: CLLocationDegrees, lon: CLLocationDegrees){
-        print("dd")
+        
     }
     
     
@@ -294,10 +297,6 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("chatRoomCell", forIndexPath: indexPath) as! ChatRoomCustomCell
-        
-        cell.messageContent.text = messagesDisplay[indexPath.row].content
-        
-        cell.messageContent.sizeToFit()
         
         /**
          Change the priority of contraints according to the message sent by users or the friends
@@ -332,69 +331,72 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
 //            cell.contentTrailing.priority = 751
 //            cell.profileLeading.priority = 750
 //            cell.profileTrailing.priority = 751
+//            cell.attachmentLeading.priority = 750
+//            cell.attachmentTrailing.priority = 751
 //            cell.messageContent.backgroundColor = UIColor.init(red: 51/255, green: 1, blue: 153/255, alpha: 1.0)
 //        }else{
 //            cell.contentLeading.priority = 751
 //            cell.contentTrailing.priority = 750
 //            cell.profileLeading.priority = 751
 //            cell.profileTrailing.priority = 750
+//            cell.attachmentLeading.priority = 751
+//            cell.attachmentTrailing.priority = 750
 //            cell.messageContent.backgroundColor = UIColor.init(red: 102/255, green: 1, blue: 1, alpha: 1.0)
 //        }
         
-        switch(indexPath.row) {
-        case 0:
-            cell.contentLeading.priority = 750
-            cell.contentTrailing.priority = 751
-            cell.profileLeading.priority = 750
-            cell.profileTrailing.priority = 751
-            cell.messageContent.backgroundColor = UIColor.init(red: 51/255, green: 1, blue: 153/255, alpha: 1.0)
-            break
-        case 1:
-            cell.contentLeading.priority = 751
-            cell.contentTrailing.priority = 750
-            cell.profileLeading.priority = 751
-            cell.profileTrailing.priority = 750
-            cell.messageContent.backgroundColor = UIColor.init(red: 102/255, green: 1, blue: 1, alpha: 1.0)
-            break
-        case 2:
-            cell.contentLeading.priority = 750
-            cell.contentTrailing.priority = 751
-            cell.profileLeading.priority = 750
-            cell.profileTrailing.priority = 751
-            cell.messageContent.backgroundColor = UIColor.init(red: 51/255, green: 1, blue: 153/255, alpha: 1.0)
-            break
-        case 3:
-            cell.contentLeading.priority = 751
-            cell.contentTrailing.priority = 750
-            cell.profileLeading.priority = 751
-            cell.profileTrailing.priority = 750
-            cell.messageContent.backgroundColor = UIColor.init(red: 102/255, green: 1, blue: 1, alpha: 1.0)
-            break
-        case 4:
-            cell.contentLeading.priority = 750
-            cell.contentTrailing.priority = 751
-            cell.profileLeading.priority = 750
-            cell.profileTrailing.priority = 751
-            cell.messageContent.backgroundColor = UIColor.init(red: 51/255, green: 1, blue: 153/255, alpha: 1.0)
-            break
-        case 5:
-            cell.contentLeading.priority = 751
-            cell.contentTrailing.priority = 750
-            cell.profileLeading.priority = 751
-            cell.profileTrailing.priority = 750
-            cell.messageContent.backgroundColor = UIColor.init(red: 102/255, green: 1, blue: 1, alpha: 1.0)
-            break
-        default:
-            cell.contentLeading.priority = 750
-            cell.contentTrailing.priority = 751
-            cell.profileLeading.priority = 750
-            cell.profileTrailing.priority = 751
-            cell.messageContent.backgroundColor = UIColor.init(red: 51/255, green: 1, blue: 153/255, alpha: 1.0)
-            break
-        }
+        // Content 
+//        if message == normal message{
+//            cell.messageContent.text = self.messagesDisplay[indexPath.row].content
+//            cell.attachmentView.alpha = 0
+//        }else if message == mapView {
+//        
+//            cell.messageContent.alpha = 0;
+//            cell.contentView.addConstraint(NSLayoutConstraint(item: cell.contentView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 220))
+//            // From Friends
+//            let newFrame = CGRectMake(cell.attachmentView.frame.minX-40, cell.attachmentView.frame.minY-10, 150, 200)
+//            // User send it
+//            let newFrame = CGRectMake(cell.attachmentView.frame.minX+120, cell.attachmentView.frame.minY-10, 150, 200)
+//
+//            let map = MKMapView(frame:newFrame)
+//            
+//            map.userInteractionEnabled = false
+//            cell.attachmentView.alpha = 1
+//            cell.attachmentView.addSubview(map)
+//
+//        }else if message == phot {
+//            let img = UIImage(named: "pic.png")
+//            let imgView = UIImageView(image: img)
+//            imgView.contentMode = .ScaleAspectFit
+//            
+//            // From Friends
+//            imgView.frame = CGRectMake(10, 0, 200, 200)
+//            
+//            // User send it
+//            imgView.frame = CGRectMake(cell.contentView.frame.minX+115, 0, 200, 200)
+//            
+//            imgView.layer.borderColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.3).CGColor
+//            imgView.layer.borderWidth = 1
+//            imgView.layer.cornerRadius = 7
+//            imgView.clipsToBounds = true
+//            
+//            cell.attachmentView.alpha = 1
+//            cell.attachmentView.addSubview(imgView)
+//        }
         
         
+        //        let newFrame = CGRectMake(0, 0, 100, 100)
+////        cell.messageContent.drawRect(CGRect(x: 0, y: 0, width: 200, height: 400))
+////        cell.messageContent.sizeToFit()
+////        cell.contentView.frame = newFrame
+//        cell.messageContent.frame = newFrame
+//        cell.attachmentView.frame = newFrame
+//        let map = MKMapView()
+////        cell.messageContent.drawRect(newFrame)
+//        
+//      cell.messageContent.addSubview(UIImageView(image: UIImage(named: "pic.png")!))
+        cell.attachmentView.alpha = 0
         
+                
         
         return cell
     }
@@ -406,7 +408,22 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     }
     
 
+    // MARK: Gesture
+    func tapGestureFunc(){
+        self.textView.resignFirstResponder()
+    }
     
-    
+    // MARK: MapView
+    func mapViewDidFinishLoadingMap(mapView: MKMapView) {
+        let newFrame = CGRectMake(0, 0, 150, 200)
+        UIGraphicsBeginImageContext(newFrame.size)
+        mapView.layer.renderInContext(UIGraphicsGetCurrentContext()!)
+        let img = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        let lat = mapView.centerCoordinate.latitude
+        let lon = mapView.centerCoordinate.longitude
+
+    }
     
 }
