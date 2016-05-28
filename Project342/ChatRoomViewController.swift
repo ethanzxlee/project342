@@ -48,12 +48,9 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         }
         
         let shareLocationAction = UIAlertAction(title: "Share Location", style: .Default) { (_) in
-            
             self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
             self.locationManager.requestAlwaysAuthorization()
             self.locationManager.startUpdatingLocation()
-
-            
 
         }
         
