@@ -50,3 +50,11 @@ struct FirebaseRef {
     }
     
 }
+
+struct StorageRef {
+    
+    static var profilePicRef: FIRStorageReference {
+        return FIRStorage.storage().reference().child("ProfilePic")
+    }
+    
+}

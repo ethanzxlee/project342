@@ -45,6 +45,8 @@
 		A1A4DA631CE98D06006AA3CF /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA5D1CE98D06006AA3CF /* Message.swift */; };
 		A1B03D211CF97DAB00120565 /* FirebaseRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B03D201CF97DAB00120565 /* FirebaseRef.swift */; };
 		A1B03D271CFAB93800120565 /* ContactUserInfoObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B03D261CFAB93800120565 /* ContactUserInfoObserver.swift */; };
+		A1B03D291CFAB9FB00120565 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B03D281CFAB9FB00120565 /* MapKit.framework */; };
+		A1B03D2B1CFACC4100120565 /* Directories.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B03D2A1CFACC4100120565 /* Directories.swift */; };
 		DA1C40630E55B30B7B798DCC /* Pods_Project342.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BE727CD3B3F5D3CF1E85860 /* Pods_Project342.framework */; };
 /* End PBXBuildFile section */
 
@@ -114,6 +116,8 @@
 		A1A4DA5D1CE98D06006AA3CF /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		A1B03D201CF97DAB00120565 /* FirebaseRef.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseRef.swift; sourceTree = "<group>"; };
 		A1B03D261CFAB93800120565 /* ContactUserInfoObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactUserInfoObserver.swift; sourceTree = "<group>"; };
+		A1B03D281CFAB9FB00120565 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		A1B03D2A1CFACC4100120565 /* Directories.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Directories.swift; sourceTree = "<group>"; };
 		AA9C9396558ADA8F33E1D3DD /* Pods-Project342.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342.release.xcconfig"; path = "Pods/Target Support Files/Pods-Project342/Pods-Project342.release.xcconfig"; sourceTree = "<group>"; };
 		AC819E102F18403E9DE93F75 /* Pods-Project342.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Project342/Pods-Project342.debug.xcconfig"; sourceTree = "<group>"; };
 		ED9AD4F5E4D2EE230EAC45B7 /* Pods-Project342Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Project342Tests/Pods-Project342Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -124,6 +128,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1B03D291CFAB9FB00120565 /* MapKit.framework in Frameworks */,
 				DA1C40630E55B30B7B798DCC /* Pods_Project342.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -228,6 +233,7 @@
 				A1A4D9FA1CE871A9006AA3CF /* ViewController */,
 				A1A4DA481CE97974006AA3CF /* Project342.xcdatamodeld */,
 				A1083D2B1CEC1CFE00FFE32A /* CustomPresentationController.swift */,
+				A1B03D2A1CFACC4100120565 /* Directories.swift */,
 			);
 			path = Project342;
 			sourceTree = "<group>";
@@ -285,6 +291,7 @@
 		B66EC6B818540EAD0125964A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A1B03D281CFAB9FB00120565 /* MapKit.framework */,
 				5BE727CD3B3F5D3CF1E85860 /* Pods_Project342.framework */,
 				30B298289EF40F7674660A23 /* Pods_Project342Tests.framework */,
 				A0F73ADE18FAC502123383AC /* Pods_Project342UITests.framework */,
@@ -377,7 +384,7 @@
 								enabled = 1;
 							};
 							com.apple.Maps.iOS = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
@@ -590,6 +597,7 @@
 				A197BF771CF489DA00C7D40D /* UIColorExtensions.swift in Sources */,
 				A1083D251CEB34C600FFE32A /* ContactListTableViewCell.swift in Sources */,
 				A1A4DA5E1CE98D06006AA3CF /* Conversation+CoreDataProperties.swift in Sources */,
+				A1B03D2B1CFACC4100120565 /* Directories.swift in Sources */,
 				A1115A881CF869B300DD2CD1 /* AddContactTableViewCell.swift in Sources */,
 				A197BF791CF48C3300C7D40D /* TabBarController.swift in Sources */,
 				A1A4DA041CE87390006AA3CF /* ChatRoomSettingsViewController.swift in Sources */,

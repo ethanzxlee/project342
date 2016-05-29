@@ -22,6 +22,9 @@ class AddContactTableViewCell: UITableViewCell {
         addButton.layer.borderColor = UIColor.themeColor().CGColor
         addButton.layer.borderWidth = 1
         addButton.layer.cornerRadius = 4
+        
+        contactImageView.layer.cornerRadius = contactImageView.layer.frame.height / 2
+        contactImageView.layer.masksToBounds = true
     }
     
     

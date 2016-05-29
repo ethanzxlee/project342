@@ -58,17 +58,31 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         definesPresentationContext = true
         
         setupTableViewData()
+
     }
+    
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        ContactObserver.observer.observeContactsEvents()
+        
+        if let contacts = contactFetchedResultController?.fetchedObjects as? [Contact] {
+            for contact in contacts {
+                ContactUserObserver.observer.observeContactUserInfoForContactId(contact.userId!)
+            }
+        }
+        
+        if let requests = requestFetchedResultController?.fetchedObjects as? [Contact] {
+            for request in requests {
+                ContactUserObserver.observer.observeContactUserInfoForContactId(request.userId!)
+            }
+        }
     }
     
     
     override func viewDidDisappear(animated: Bool) {
-        super.viewDidAppear(animated)
-        ContactObserver.observer.stopObservingContactsEvents()
+        super.viewDidDisappear(animated)
+        
+        ContactUserObserver.observer.stopObservingAllContactUserInfo()
     }
     
     
@@ -154,14 +168,21 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             guard
                 let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactListTableViewCell)) as? ContactListTableViewCell,
                 let contact = contactFetchedResultController?.objectAtIndexPath(indexPath) as? Contact,
-                let profilePicDirectory = ContactObserver.observer.profilePicDirectory
+                let profilePicDirectory = Directories.profilePicDirectory
                 else {
                     return UITableViewCell()
             }
             
+            guard
+                let firstName = contact.firstName,
+                let lastName = contact.lastName
+                else {
+                    return cell
+            }
+            
             let profilePicFileURL = profilePicDirectory.URLByAppendingPathComponent(contact.userId!)
             cell.contactProfileImageView.image = UIImage(contentsOfFile: profilePicFileURL.path!)
-            cell.contactNameLabel.text = "\(contact.firstName!) \(contact.lastName!)"
+            cell.contactNameLabel.text = "\(firstName) \(lastName)"
             
             return cell
         }
@@ -169,14 +190,21 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             guard
                 let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactRequestTableViewCell)) as? ContactRequestTableViewCell,
                 let contact = requestFetchedResultController?.objectAtIndexPath(indexPath) as? Contact,
-                let profilePicDirectory = ContactObserver.observer.profilePicDirectory
+                let profilePicDirectory = Directories.profilePicDirectory
                 else {
                     return UITableViewCell()
             }
             
+            guard
+                let firstName = contact.firstName,
+                let lastName = contact.lastName
+                else {
+                    return cell
+            }
+            
             let profilePicFileURL = profilePicDirectory.URLByAppendingPathComponent(contact.userId!)
             cell.contactProfileImageView.image = UIImage(contentsOfFile: profilePicFileURL.path!)
-            cell.contactNameLabel.text = "\(contact.firstName!) \(contact.lastName!)"
+            cell.contactNameLabel.text = "\(firstName) \(lastName)"
             cell.didAcceptButtonPressedAction = { () -> (Void) in
                 self.acceptContactAt(indexPath)
             }
@@ -242,10 +270,25 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         switch type {
         case .Insert:
             tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
+            if let contact = anObject as? Contact {
+                if let userId = contact.userId {
+                    ContactUserObserver.observer.observeContactUserInfoForContactId(userId)
+                }
+            }
         case .Delete:
             tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
+            if let contact = anObject as? Contact {
+                if let userId = contact.userId {
+                    ContactUserObserver.observer.stopObservingContactUserInfoForContact(userId)
+                }
+            }
         case .Update:
             tableView.reloadRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
+            if let contact = anObject as? Contact {
+                if let userId = contact.userId {
+                    ContactUserObserver.observer.observeContactUserInfoForContactId(userId)
+                }
+            }
         case .Move:
             tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
             tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
@@ -279,7 +322,6 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         catch {
             print(error)
         }
-        
     }
     
     
@@ -332,8 +374,20 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             catch {
                 print(error)
             }
-            
         }
+        
+        if let contacts = contactFetchedResultController?.fetchedObjects as? [Contact] {
+            for contact in contacts {
+                ContactUserObserver.observer.observeContactUserInfoForContactId(contact.userId!)
+            }
+        }
+        
+        if let requests = requestFetchedResultController?.fetchedObjects as? [Contact] {
+            for request in requests {
+                ContactUserObserver.observer.observeContactUserInfoForContactId(request.userId!)
+            }
+        }
+
     }
     
     

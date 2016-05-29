@@ -209,14 +209,7 @@ class SearchContactObserver {
             guard
                 let userId = hit["_id"] as? String,
                 let firstName = contact["firstName"],
-                let lastName = contact["lastName"],
-                let profilePicBase64String = contact["profilePic"]
-                else {
-                    break
-            }
-            
-            guard
-                let profilePicData = NSData(base64EncodedString: profilePicBase64String, options: NSDataBase64DecodingOptions(rawValue: 0))
+                let lastName = contact["lastName"]
                 else {
                     break
             }
@@ -225,7 +218,6 @@ class SearchContactObserver {
                 "userId": userId,
                 "firstName": firstName,
                 "lastName": lastName,
-                "profilePicData": profilePicData
             ])
         }
         

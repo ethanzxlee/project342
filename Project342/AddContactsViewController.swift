@@ -15,6 +15,7 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
     var searchContactObserver: SearchContactObserver?
     var searchController: UISearchController!
     var searchResponse: [[String: AnyObject]]?
+    var cache: NSCache?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,6 +35,9 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
         definesPresentationContext = true
         
         tableView.tableHeaderView = searchController.searchBar
+        tableView.tableFooterView = UIView()
+        
+        cache = NSCache()
     }
     
     
@@ -66,7 +70,6 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
         guard
             let firstName = contact["firstName"] as? String,
             let lastName = contact["lastName"] as? String,
-            let profilePicData = contact["profilePicData"] as? NSData,
             let userId = contact["userId"] as? String
             else {
                 return cell
@@ -74,9 +77,51 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
         
         // Configure the table cell
         cell.contactNameLabel.text = "\(firstName) \(lastName)"
-        cell.contactImageView.image = UIImage(data: profilePicData)
         cell.addButton.alpha = 1
         cell.requestSentLabel.alpha = 0
+        cell.contactImageView.image = nil
+        
+        StorageRef.profilePicRef.child(userId).downloadURLWithCompletion { (url, error) in
+            guard
+                let url = url
+                where error == nil
+                else {
+                    print(error)
+                    return
+            }
+            
+            if let profilePicData = self.cache?.objectForKey(url.path!) as? NSData {
+                if tableView.cellForRowAtIndexPath(indexPath) == cell {
+                    dispatch_async(dispatch_get_main_queue(), { 
+                        cell.contactImageView.image = UIImage(data: profilePicData)
+                    })
+                }
+            }
+            else {
+                let downloadTask = NSURLSession.sharedSession().dataTaskWithURL(url, completionHandler: { (data, response, error) in
+                    guard
+                        let data = data,
+                        let response = response
+                        where error == nil
+                        else {
+                            print(error)
+                            return
+                    }
+                    
+                    if let httpResponse = response as? NSHTTPURLResponse {
+                        if httpResponse.statusCode == 200 {
+                            self.cache?.setObject(data, forKey: url.path!)
+                        }
+                        if tableView.cellForRowAtIndexPath(indexPath) == cell {
+                            dispatch_async(dispatch_get_main_queue(), {
+                                cell.contactImageView.image = UIImage(data: data)
+                            })
+                        }
+                    }
+                })
+                downloadTask.resume()
+            }
+        }
         
         cell.addButtonAction = {() -> Void in
             ContactObserver.observer.addContact(userId)
@@ -85,8 +130,8 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
                 cell.requestSentLabel.alpha = 1
             }, completion: { (complete) in
                 if complete {
-                self.searchResponse?.removeAtIndex(indexPath.row)
-                self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+                    self.searchResponse?.removeAtIndex(indexPath.row)
+                    self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
                 }
             })
         }
