@@ -13,14 +13,26 @@ class AddContactTableViewCell: UITableViewCell {
     @IBOutlet weak var contactImageView: UIImageView!
     @IBOutlet weak var contactNameLabel: UILabel!
     @IBOutlet weak var addButton: UIButton!
+    @IBOutlet weak var requestSentLabel: UILabel!
+    
+    var addButtonAction: (() -> Void)?
     
     
     override func awakeFromNib() {
-        
+        addButton.layer.borderColor = UIColor.themeColor().CGColor
+        addButton.layer.borderWidth = 1
+        addButton.layer.cornerRadius = 4
     }
     
     
     @IBAction func didTouchAddButton(sender: UIButton) {
+        guard
+            let addButtonAction = addButtonAction
+            else {
+                return
+        }
+        
+        addButtonAction()
     }
     
     

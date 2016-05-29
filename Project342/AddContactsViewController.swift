@@ -16,7 +16,6 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
     var searchController: UISearchController!
     var searchResponse: [[String: AnyObject]]?
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -67,7 +66,8 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
         guard
             let firstName = contact["firstName"] as? String,
             let lastName = contact["lastName"] as? String,
-            let profilePicData = contact["profilePicData"] as? NSData
+            let profilePicData = contact["profilePicData"] as? NSData,
+            let userId = contact["userId"] as? String
             else {
                 return cell
         }
@@ -75,10 +75,27 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
         // Configure the table cell
         cell.contactNameLabel.text = "\(firstName) \(lastName)"
         cell.contactImageView.image = UIImage(data: profilePicData)
+        cell.addButton.alpha = 1
+        cell.requestSentLabel.alpha = 0
+        
+        cell.addButtonAction = {() -> Void in
+            ContactObserver.observer.addContact(userId)
+            UIView.animateWithDuration(1, animations: {
+                cell.addButton.alpha = 0
+                cell.requestSentLabel.alpha = 1
+            }, completion: { (complete) in
+                if complete {
+                self.searchResponse?.removeAtIndex(indexPath.row)
+                self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+                }
+            })
+        }
         
         return cell
         
     }
+    
+   
     
     
     // MARK: - UISearchResultsUpdating

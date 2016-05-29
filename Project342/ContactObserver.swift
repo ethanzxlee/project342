@@ -12,6 +12,10 @@
 import CoreData
 import Firebase
 
+
+/// This singleton class will observe the user's contacts in Firebase and then
+/// synchronise the changes to CoreData. Besides, it handles the interactions
+/// between the app and Firebase
 class ContactObserver {
     
     static let observer = ContactObserver()
@@ -63,7 +67,7 @@ class ContactObserver {
         // Remove any existing observer
         stopObservingContactsEvents()
         
-        contactValueChangedEventHandle = FirebaseRef.contactsRef?.observeEventType(.Value, withBlock: { (contactsSnapshot) in
+        contactValueChangedEventHandle = FirebaseRef.userContactsRef?.observeEventType(.Value, withBlock: { (contactsSnapshot) in
             self.didFirebaseContactsValueChange(contactsSnapshot)
         })
     }
@@ -75,7 +79,7 @@ class ContactObserver {
             else {
                 return
         }
-        FirebaseRef.contactsRef?.removeObserverWithHandle(contactValueChangedEventHandle)
+        FirebaseRef.userContactsRef?.removeObserverWithHandle(contactValueChangedEventHandle)
         
         for handle in contactUserInfoValueChangedHandles {
             FirebaseRef.usersInfoRef?.child(handle.0).removeObserverWithHandle(handle.1)
@@ -162,9 +166,11 @@ class ContactObserver {
                     return
             }
             
+            let dateFormatter = NSDateFormatter.ISO8601DateFormatter()
+            
             guard
-                let createdAt = NSDateFormatter.dateFromISO8601String(createdAtString),
-                let updatedAt = NSDateFormatter.dateFromISO8601String(updatedAtString)
+                let createdAt = dateFormatter.dateFromString(createdAtString),
+                let updatedAt = dateFormatter.dateFromString(updatedAtString)
                 else {
                     return
             }
@@ -234,12 +240,31 @@ class ContactObserver {
     
     
     func deleteContact(contactId: String) {
-        FirebaseRef.contactsRef?.child(contactId).removeValue()
+        FirebaseRef.userContactsRef?.child(contactId).removeValue()
     }
     
     
     func acceptContactRequest(contactId: String) {
-        FirebaseRef.contactsRef?.child(contactId).setValue(ContactStatus.Added.rawValue)
+        guard
+            let userId = FIRAuth.auth()?.currentUser?.uid
+            else {
+                return
+        }
+        
+        FirebaseRef.contactsRef?.child(contactId).child(userId).setValue(ContactStatus.Added.rawValue)
+        FirebaseRef.userContactsRef?.child(contactId).setValue(ContactStatus.Added.rawValue)
+    }
+    
+    
+    func addContact(contactId: String) {
+        guard
+            let userId = FIRAuth.auth()?.currentUser?.uid
+            else {
+            return
+        }
+        
+        FirebaseRef.contactsRef?.child(contactId).child(userId).setValue(ContactStatus.Request.rawValue)
+        FirebaseRef.userContactsRef?.child(contactId).setValue(ContactStatus.Pending.rawValue)
     }
     
 }

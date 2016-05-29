@@ -10,6 +10,8 @@ import CoreData
 import Firebase
 import Foundation
 
+
+/// 
 protocol SearchContactObserverDelegate {
     /**
         Will be called when the search response is updated

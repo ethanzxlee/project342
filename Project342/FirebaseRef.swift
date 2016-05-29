@@ -8,13 +8,21 @@
 
 import Firebase
 
+/// All the Firebase References
 struct FirebaseRef {
     
+    /** Points to the node that contains all the users' info */
     static var usersInfoRef: FIRDatabaseReference? {
         return FIRDatabase.database().reference().child("users")
     }
     
+    /** Points to the node that contains all the users' contacts */
     static var contactsRef: FIRDatabaseReference? {
+        return FIRDatabase.database().reference().child("contacts")
+    }
+    
+    /** Points to the node that contains the logged in user's contacts */
+    static var userContactsRef: FIRDatabaseReference? {
         guard
             let currentUser = FIRAuth.auth()?.currentUser
             else {
@@ -22,20 +30,21 @@ struct FirebaseRef {
                 return nil
         }
         
-        let contactsRef = FIRDatabase.database().reference().child("contacts")
-            .child(currentUser.uid)
-        
-        return contactsRef
+        let userContactsRef = contactsRef?.child(currentUser.uid)
+        return userContactsRef
     }
     
+    /** Points to the node that stores all the searches */
     static var searchRef: FIRDatabaseReference? {
         return FIRDatabase.database().reference().child("search")
     }
     
+    /** Points to the node where search request is to be made to ElasticSearch  */
     static var searchRequestRef: FIRDatabaseReference? {
         return searchRef?.child("request")
     }
     
+    /** Points to the node where ElasticSearch returns the search response */
     static var searchResponseRef: FIRDatabaseReference? {
         return searchRef?.child("response")
     }
