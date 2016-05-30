@@ -47,6 +47,8 @@
 		A1B03D271CFAB93800120565 /* ContactUserInfoObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B03D261CFAB93800120565 /* ContactUserInfoObserver.swift */; };
 		A1B03D291CFAB9FB00120565 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B03D281CFAB9FB00120565 /* MapKit.framework */; };
 		A1B03D2B1CFACC4100120565 /* Directories.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B03D2A1CFACC4100120565 /* Directories.swift */; };
+		A1B03D2D1CFC5CAC00120565 /* TintedAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B03D2C1CFC5CAC00120565 /* TintedAlertViewController.swift */; };
+		A1B03D2F1CFC807F00120565 /* SearchContactObserverDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B03D2E1CFC807F00120565 /* SearchContactObserverDelegate.swift */; };
 		DA1C40630E55B30B7B798DCC /* Pods_Project342.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BE727CD3B3F5D3CF1E85860 /* Pods_Project342.framework */; };
 /* End PBXBuildFile section */
 
@@ -118,6 +120,8 @@
 		A1B03D261CFAB93800120565 /* ContactUserInfoObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactUserInfoObserver.swift; sourceTree = "<group>"; };
 		A1B03D281CFAB9FB00120565 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		A1B03D2A1CFACC4100120565 /* Directories.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Directories.swift; sourceTree = "<group>"; };
+		A1B03D2C1CFC5CAC00120565 /* TintedAlertViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TintedAlertViewController.swift; sourceTree = "<group>"; };
+		A1B03D2E1CFC807F00120565 /* SearchContactObserverDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchContactObserverDelegate.swift; sourceTree = "<group>"; };
 		AA9C9396558ADA8F33E1D3DD /* Pods-Project342.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342.release.xcconfig"; path = "Pods/Target Support Files/Pods-Project342/Pods-Project342.release.xcconfig"; sourceTree = "<group>"; };
 		AC819E102F18403E9DE93F75 /* Pods-Project342.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Project342/Pods-Project342.debug.xcconfig"; sourceTree = "<group>"; };
 		ED9AD4F5E4D2EE230EAC45B7 /* Pods-Project342Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Project342Tests/Pods-Project342Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -191,6 +195,7 @@
 				A13723651CED7C97002446F1 /* ContactObserver.swift */,
 				A1B03D261CFAB93800120565 /* ContactUserInfoObserver.swift */,
 				A1115A891CF956C900DD2CD1 /* SearchContactObserver.swift */,
+				A1B03D2E1CFC807F00120565 /* SearchContactObserverDelegate.swift */,
 			);
 			name = FirebaseObserver;
 			sourceTree = "<group>";
@@ -269,6 +274,7 @@
 				A1A4DA031CE87390006AA3CF /* ChatRoomSettingsViewController.swift */,
 				A1A4DA071CE879A1006AA3CF /* LoginViewController.swift */,
 				A197BF781CF48C3300C7D40D /* TabBarController.swift */,
+				A1B03D2C1CFC5CAC00120565 /* TintedAlertViewController.swift */,
 			);
 			name = ViewController;
 			sourceTree = "<group>";
@@ -578,6 +584,7 @@
 			files = (
 				A1A4DA571CE97AE5006AA3CF /* Contact.swift in Sources */,
 				A1A4DA561CE97AE5006AA3CF /* Contact+CoreDataProperties.swift in Sources */,
+				A1B03D2F1CFC807F00120565 /* SearchContactObserverDelegate.swift in Sources */,
 				A1083D2C1CEC1CFE00FFE32A /* CustomPresentationController.swift in Sources */,
 				A1A4DA601CE98D06006AA3CF /* Attachment+CoreDataProperties.swift in Sources */,
 				A1A4DA4A1CE97974006AA3CF /* Project342.xcdatamodeld in Sources */,
@@ -601,6 +608,7 @@
 				A1115A881CF869B300DD2CD1 /* AddContactTableViewCell.swift in Sources */,
 				A197BF791CF48C3300C7D40D /* TabBarController.swift in Sources */,
 				A1A4DA041CE87390006AA3CF /* ChatRoomSettingsViewController.swift in Sources */,
+				A1B03D2D1CFC5CAC00120565 /* TintedAlertViewController.swift in Sources */,
 				A1A4DA021CE87363006AA3CF /* SecretMessageViewController.swift in Sources */,
 				A1A4DA621CE98D06006AA3CF /* Message+CoreDataProperties.swift in Sources */,
 				A1A4D9C51CE86E74006AA3CF /* AppDelegate.swift in Sources */,

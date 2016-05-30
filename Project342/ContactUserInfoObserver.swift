@@ -9,6 +9,9 @@
 import Firebase
 import CoreData
 
+
+/// A singleton class that responsible to observe the contact's user information, such as
+/// first name, last name etc. Then, sync the changes to CoreData
 class ContactUserObserver {
     
     static let observer = ContactUserObserver()

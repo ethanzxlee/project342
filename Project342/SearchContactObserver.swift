@@ -11,18 +11,6 @@ import Firebase
 import Foundation
 
 
-/// 
-protocol SearchContactObserverDelegate {
-    /**
-        Will be called when the search response is updated
-        
-        - Parameters:
-            - observer: The observer that called this method
-            - searchResponse: The updated search response
-    */
-    func didSearchContactResponseUpdate(observer: SearchContactObserver, searchResponse: [[String: AnyObject]])
-}
-
 /// SearchContactObserver is responsible to prepare and send a search request to 
 /// our Firebase's search reference. It will observes the response for every request
 /// made.

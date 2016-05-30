@@ -35,11 +35,24 @@ class ContactObserver {
     }
     
     
+    /**
+        Delete a contact from the user's contact list. The current user will be removed from the specified
+        contact's contact list too.
+     
+        - Parameters:
+            contactId: The user ID of the contact to be deleted
+     */
     func deleteContact(contactId: String) {
         FirebaseRef.userContactsRef?.child(contactId).removeValue()
     }
     
     
+    /**
+        Accept a contact request, so that they can start communicating
+        
+        - Parameters:
+            contactId: The user ID of the contact to be accepted
+    */
     func acceptContactRequest(contactId: String) {
         guard
             let userId = FIRAuth.auth()?.currentUser?.uid
@@ -52,6 +65,13 @@ class ContactObserver {
     }
     
     
+    /**
+        Add the specified user ID as contact, however, the contact's status will still
+        be pending until the user accepts the contact request.
+     
+        - Parameters:
+            contactId: The user ID of the contact to be added
+     */
     func addContact(contactId: String) {
         guard
             let userId = FIRAuth.auth()?.currentUser?.uid
@@ -64,6 +84,10 @@ class ContactObserver {
     }
     
     
+    /**
+        Observe the current user's contact list on Firebase. This would be called in AppDelegate where the 
+        application becomes active.
+     */
     func observeContactsEvents() {
         // Remove any existing observer
         stopObservingContactsEvents()
@@ -74,6 +98,10 @@ class ContactObserver {
     }
     
     
+    /**
+        Stop observing the changes in the user's contact list on Firebase. This would be called in AppDelegate
+        where the application goes into background or inactive
+     */
     func stopObservingContactsEvents() {
         guard
             let contactValueChangedEventHandle = contactValueChangedEventHandle
@@ -84,6 +112,14 @@ class ContactObserver {
     }
     
     
+    /**
+        This method would be called when there's a change in the user's contact list, regardless of
+        addition or removal of a contact. Firebase will always give us the latest snapshot of the
+        contact list.
+     
+        - Parameters:
+            contactsSnapshot: The snapshot of the contacts that the user currently has
+     */
     private func didFirebaseContactsValueChange(contactsSnapshot: FIRDataSnapshot) {
         guard
             let contactsSnapshotValues = contactsSnapshot.value as? [String: String]
@@ -105,7 +141,7 @@ class ContactObserver {
             }
             
             for removedContact in removedContacts {
-                // Remove the contact from core data
+                // Remove the contact from CoreData
                 managedObjectContext.deleteObject(removedContact)
                 
                 // Remove their profile picture as well

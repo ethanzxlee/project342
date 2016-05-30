@@ -37,9 +37,8 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             fetchContactRequestRequest.sortDescriptors = [NSSortDescriptor(key: "status", ascending: false)]
             requestFetchedResultController = NSFetchedResultsController(fetchRequest: fetchContactRequestRequest, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         }
-        
+    
         // Setup tableView appearance
-        tableView.sectionIndexBackgroundColor = UIColor(white: 1, alpha: 0)
         tableView.backgroundView = UIView()
         
         // Hide the divider between empty cells
@@ -76,8 +75,21 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 ContactUserObserver.observer.observeContactUserInfoForContactId(request.userId!)
             }
         }
+        
+        self.tabBarController?.tabBar.hidden = false
+        UIView.animateWithDuration(0.25, animations: {
+            if let tabBarController = self.tabBarController,
+                let window = self.view.window {
+                tabBarController.tabBar.center.y = window.frame.height - (tabBarController.tabBar.frame.height/2)
+            
+            }
+        })
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+    }
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
@@ -338,8 +350,36 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         setupTableViewData()
     }
     
+    @IBAction func didTouchAddContactButton(sender: UIBarButtonItem) {
+        // Prepare the action sheet controller
+        let actionSheetTitle = NSLocalizedString("Add contact", comment: "Add contact")
+        let searchContactActionTitle = NSLocalizedString("From search", comment: "From search")
+        let facebookContactActionTitle = NSLocalizedString("From Facebbok", comment: "From Facebook")
+        let cancelActionTitle = NSLocalizedString("Cancel", comment: "Cancel")
+        
+        let actionSheetController = TintedAlertViewController(title: actionSheetTitle, message: nil, preferredStyle: .ActionSheet)
+        
+        let searchContactAction = UIAlertAction(title: searchContactActionTitle, style: .Default) { (_) in
+            self.performSegueWithIdentifier("ShowAddContactViewController", sender: nil)
+        }
+        
+        let facebookContactAction = UIAlertAction(title: facebookContactActionTitle, style: .Default) { (_) in
+            // self.performSegueWithIdentifier()
+        }
+        
+        let cancelAction = UIAlertAction(title: cancelActionTitle, style: .Cancel, handler: nil)
+        
+        actionSheetController.addAction(searchContactAction)
+        actionSheetController.addAction(facebookContactAction)
+        actionSheetController.addAction(cancelAction)
+        actionSheetController.popoverPresentationController?.barButtonItem = sender
+        
+        // Present the action sheet controller
+        presentViewController(actionSheetController, animated: true, completion: nil)
+    }
     
-    // MARK: - Function
+    
+    // MARK: - Functions
     
     func setupTableViewData()  {
         if (segmentedControl.selectedSegmentIndex == ContactSegment.AllContacts.rawValue) {
