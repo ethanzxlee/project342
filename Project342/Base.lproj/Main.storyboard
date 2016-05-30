@@ -290,7 +290,7 @@
                         <outlet property="shareLocationButton" destination="jwQ-h4-jyz" id="4Nk-O8-muX"/>
                         <outlet property="textView" destination="xCP-Tv-fHP" id="hfj-g3-ElZ"/>
                         <segue destination="WbM-ww-BFi" kind="show" id="YqH-qb-7dK"/>
-                        <segue destination="B3A-Ju-v7V" kind="show" id="IHh-48-hqk"/>
+                        <segue destination="B3A-Ju-v7V" kind="show" identifier="goToAttachmentView" id="IHh-48-hqk"/>
                         <segue destination="6cw-7O-20E" kind="show" id="HdW-WG-NvO"/>
                     </connections>
                 </viewController>
@@ -464,7 +464,7 @@
                     <connections>
                         <outlet property="contentView" destination="eM4-7e-wfg" id="wi8-mF-QrH"/>
                         <outlet property="secretImg" destination="WCP-Ys-nsn" id="YRf-Ni-jpm"/>
-                        <outlet property="secretMessage" destination="NWh-Np-qtd" id="jEc-Vg-Ad5"/>
+                        <outlet property="secretMessageTitle" destination="NWh-Np-qtd" id="Yts-sD-Afh"/>
                         <outlet property="textViewHeight" destination="04Q-kt-wCY" id="bo0-7u-3br"/>
                     </connections>
                 </viewController>

@@ -15,11 +15,12 @@ class SecretMessageViewController: UIViewController {
     
     @IBOutlet weak var textViewHeight: NSLayoutConstraint!
     
-    @IBOutlet weak var secretMessage: UITextView!
+    @IBOutlet weak var secretMessageTitle: UITextView!
     
     @IBOutlet weak var secretImg: UIImageView!
     
     @IBOutlet weak var contentView: UIView!
+    
     var msg: Message?
     
     var timer = NSTimer()
@@ -35,19 +36,22 @@ class SecretMessageViewController: UIViewController {
         
         // Load the message content into the text view. if it iis empty, hide the view
         // If gt message MEAN it is not voice message
-        print(msg?.content)
+
         let type = msg?.type
+        print(type)
         if type == MessageType.NormalMessage.rawValue {
-            secretMessage.text = msg?.content
-            secretMessage.font = UIFont(name: "HelveticaNeue", size: 16)
+            self.secretMessageTitle.text = "Secret Message"
             
-            dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)){
-                dispatch_async(dispatch_get_main_queue()){
-                    self.adjustTextViewHeight()
-                }
-            }
+            let content = UILabel()
+            content.text = msg?.content
+            content.font = UIFont(name: "HelveticaNeue", size: 16)
+            content.numberOfLines = 0
+            content.lineBreakMode = .ByWordWrapping
+            content.sizeToFit()
             
-            secretImg.removeFromSuperview()
+            content.frame = CGRect(x: 0, y: 0, width: self.view.frame.width-20, height: self.view.frame.height/3)
+            
+            secretImg.addSubview(content)
         }else if type == MessageType.Image.rawValue{
             dispatch_async(dispatch_get_main_queue()){()-> Void in
                 
@@ -58,13 +62,15 @@ class SecretMessageViewController: UIViewController {
                 let img = UIImage(named: "\(documentDirectory)/\(attachments[0].filePath!)")
                 print("img: \(documentDirectory)/\(attachments[0].filePath!)")
                 let imgView = UIImageView(image: img!)
+                let newFrame = CGRect(x: 0, y: 0, width: self.secretImg.frame.size.width, height: self.secretImg.frame.size.height-10)
                 imgView.contentMode = .ScaleAspectFit
-                self.secretImg = imgView
+                imgView.frame = newFrame
+                if self.secretImg.subviews.count > 0{
+                    self.secretImg.willRemoveSubview(self.secretImg.subviews[0])
+                }
+                self.secretImg.addSubview(imgView)
                 
-                self.secretMessage.text = "Secret Image"
-                self.secretMessage.font = UIFont(descriptor: UIFontDescriptor(name: "AmericanTypewriter-Bold", size: 20)  , size: 30)
-                self.secretMessage.textColor = UIColor.whiteColor()
-                self.secretMessage.textAlignment = .Center
+                self.secretMessageTitle.text = "Secret Image"
             }
         }else{
          
@@ -82,9 +88,12 @@ class SecretMessageViewController: UIViewController {
             map.addAnnotation(dropPin)
             
             self.secretImg.addSubview(map)
-            self.secretMessage.text = "Secret Map"
-            print("\(lat), \(lon)")
+            self.secretMessageTitle.text = "Secret Map"
         }
+        
+        self.secretMessageTitle.font = UIFont(descriptor: UIFontDescriptor(name: "AmericanTypewriter-Bold", size: 20)  , size: 30)
+        self.secretMessageTitle.textColor = UIColor.whiteColor()
+        self.secretMessageTitle.textAlignment = .Center
         
         
         
@@ -108,17 +117,6 @@ class SecretMessageViewController: UIViewController {
     }
     */
     
-    // MARK: Text View 
-    func adjustTextViewHeight(){
-        var adjustment = secretMessage.bounds.size.height - secretMessage.contentSize.height
-        if adjustment < 0{
-            adjustment = 0
-        }
-        
-        secretMessage.contentOffset = CGPoint(x: 0, y: -adjustment)
-        let newSize = secretMessage.sizeThatFits(CGSize(width: secretMessage.frame.size.width, height: CGFloat.max))
-        self.textViewHeight.constant = newSize.height
-    }
     
     //TODO: MUST DELETE
     func loadInitialDataFortry(){

@@ -132,15 +132,17 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         
         self.imagePicker.delegate = self
         
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ChatRoomViewController.tapGestureFunc))
+        self.view.addGestureRecognizer(tapGesture)
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ChatRoomViewController.longPressGestureFunc))
         self.chatContentTableView.addGestureRecognizer(longPressGesture)
-
+        let tapGestureCell = UITapGestureRecognizer(target: self, action: #selector(ChatRoomViewController.tapGestureCellFunc))
+        self.chatContentTableView.addGestureRecognizer(tapGestureCell)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ChatRoomViewController.tapGestureFunc))
-        self.view.addGestureRecognizer(tapGesture)
+        
         
         let context = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
         let message1 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
@@ -150,15 +152,20 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
 
         message2.content = "hello world. It is so fucking cold a=even though i just open a small gap of my door. The wind still flow from my living room to my bed room. What the fuck. This is so fuck. I just have one day to do 342 project. Tmr i still need to do revision for my quiz meanwhile I have touch my 321 documentation."
         message2.shouldCover = 1
-        messagesDisplay.append(message2)
+         message1.shouldCover = 0
         messagesDisplay.append(message1)
-        
+        messagesDisplay.append(message2)
+        message1.senderID="1234"
+        message2.senderID="888"
         let message3 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
         let message4 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
         
         message3.content = "hello world.\nhello world.\nwhy right s"
         
         message4.content = "hello "
+        
+        message3.senderID="888"
+        message4.senderID="888"
         
         messagesDisplay.append(message3)
         messagesDisplay.append(message4)
@@ -169,6 +176,10 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         message6.content = "hello world.\nhello world.\nwhy right"
         
         message5.content = "ht  "
+        
+        
+        message5.senderID="1234"
+        message6.senderID="888"
         
         messagesDisplay.append(message5)
         messagesDisplay.append(message6)
@@ -181,16 +192,21 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     }
     
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "goToAttachmentView"{
+            if let goToNavigationController = segue.destinationViewController as? UINavigationController {
+                if let destination = goToNavigationController.topViewController as? AttachmentViewerViewController{
+                    destination.message = sender as? Message
+                }
+            }
+        }
     }
-    */
     
+
     // MARK: TextView
     func textViewDidChange(textView: UITextView) {
         if textView.text == "" {
@@ -335,11 +351,32 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let userInfo = NSUserDefaults()
         userInfo.setObject("wko232", forKey: "userID")
+        userInfo.setObject("coverCode", forKey: "coverCode")
         let userID = userInfo.stringForKey("userID")
         if messagesDisplay[indexPath.row].senderID != userID! {
             
+            
             // MARK: User Receive Message
             let cell = tableView.dequeueReusableCellWithIdentifier("leftChatRoomCell", forIndexPath: indexPath) as! LeftChatRoomCustomCell
+            
+            // If cover message
+            // FIXME: get cover code from NSUSERdefault??
+            if messagesDisplay[indexPath.row].shouldCover == 1{
+                cell.messageContent.text = userInfo.stringForKey("coverCode")
+                cell.messageContent.sizeToFit()
+                return cell
+            }
+            
+            
+            // Check for display avatar
+            if indexPath.row != 0 {
+                if messagesDisplay[indexPath.row].senderID == messagesDisplay[indexPath.row-1].senderID{
+                    cell.profileView.hidden = true
+                }else{
+                    cell.profileView.hidden = false
+                }
+            }
+            
             let type = messagesDisplay[indexPath.row].type!
             print(type)
             if type == MessageType.NormalMessage.rawValue {
@@ -379,6 +416,25 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         }else{
             // MARK: User Send Message
             let cell = tableView.dequeueReusableCellWithIdentifier("rightChatRoomCell", forIndexPath: indexPath) as! RightChatRoomCustomCell
+            
+            
+            // If cover message
+            // FIXME: get cover code from NSUSERdefault??
+            if messagesDisplay[indexPath.row].shouldCover == 1{
+                cell.messageContent.text = userInfo.stringForKey("coverCode")
+                cell.messageContent.sizeToFit()
+                return cell
+            }
+            
+            // Check for display avatar
+            if indexPath.row != 0 {
+                if messagesDisplay[indexPath.row].senderID == messagesDisplay[indexPath.row-1].senderID{
+                    cell.profileView.hidden = true
+                }else{
+                    cell.profileView.hidden = false
+                }
+            }
+            
             let type = messagesDisplay[indexPath.row].type!
             print(type)
             if type == MessageType.NormalMessage.rawValue {
@@ -429,6 +485,18 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     // MARK: Gesture
     func tapGestureFunc(){
         self.textView.resignFirstResponder()
+    }
+    
+    func tapGestureCellFunc(gesture: UITapGestureRecognizer){
+        let locationInView = gesture.locationInView(self.chatContentTableView)
+        let indexPath = self.chatContentTableView.indexPathForRowAtPoint(locationInView)
+        guard let _indexPath = indexPath else{
+            return
+        }
+        
+        if messagesDisplay[_indexPath.row].shouldCover == 0{
+            self.performSegueWithIdentifier("goToAttachmentView", sender: messagesDisplay[_indexPath.row])
+        }
     }
     
     func longPressGestureFunc(longPressGestureRecognizer: UILongPressGestureRecognizer){

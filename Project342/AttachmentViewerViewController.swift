@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MapKit
 
 class AttachmentViewerViewController: UIViewController, UIScrollViewDelegate {
 
@@ -27,26 +28,61 @@ class AttachmentViewerViewController: UIViewController, UIScrollViewDelegate {
         self.performSegueWithIdentifier("backToChatRoom", sender: self)
     }
     
-    var attachment : Attachment?
+    var message : Message?
     
     var img:UIImage?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-        let documentDirectory = documentPath[0]
-        
-        img = UIImage(named: "\(documentDirectory)/\(attachment!.filePath!)")
-        imgView.image = img
-        imgView.contentMode = .ScaleAspectFit
+        if message?.type == MessageType.Image.rawValue{
+            let attachment = (message?.attachements!.allObjects as! [Attachment])[0]
+            
+            let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+            let documentDirectory = documentPath[0]
+            
+            img = UIImage(named: "\(documentDirectory)/\(attachment.filePath!)")
+            
+            imgView.image = img
+            imgView.contentMode = .ScaleAspectFit
+            
+            let longPressGesture = UILongPressGestureRecognizer(target: self, action:#selector(AttachmentViewerViewController.longPressFunc(_:)))
+            longPressGesture.minimumPressDuration = 0.4
+            self.view.addGestureRecognizer(longPressGesture)
+            
+            scrollView.delegate = self
+            scrollView.maximumZoomScale = CGFloat.infinity
+        }else if message?.type == MessageType.Map.rawValue{
+            let coordinates = message!.content?.componentsSeparatedByString(",")
+            let lat = (coordinates![0] as NSString).doubleValue
+            let lon = (coordinates![1] as NSString).doubleValue
+            
+            let newFrame = CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height)
+            let map = MKMapView(frame: newFrame)
+            let location = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+            let regionRadius = 200.0
+            map.setRegion(MKCoordinateRegionMakeWithDistance(location, regionRadius*2 , regionRadius*2) , animated: true)
+            let dropPin = MKPointAnnotation()
+            dropPin.coordinate = location
+            map.addAnnotation(dropPin)
+            
+            self.view.addSubview(map)
+            self.imgView.removeFromSuperview()
 
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action:#selector(AttachmentViewerViewController.longPressFunc(_:)))
-        longPressGesture.minimumPressDuration = 0.4
-        self.view.addGestureRecognizer(longPressGesture)
+        }else{
+            let content = UILabel()
+            content.text = message?.content
+            content.font = UIFont(name: "HelveticaNeue", size: 16)
+            content.numberOfLines = 0
+            content.lineBreakMode = .ByWordWrapping
+            content.sizeToFit()
+            
+            content.frame = CGRect(x: 0, y: 0, width: self.view.frame.width-20, height: self.view.frame.height)
+            
+            self.view.addSubview(content)
+            self.imgView.removeFromSuperview()
+        }
         
-        scrollView.delegate = self
-        scrollView.maximumZoomScale = CGFloat.infinity
     }
 
     override func didReceiveMemoryWarning() {
