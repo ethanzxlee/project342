@@ -14,9 +14,9 @@ import CoreLocation
 import AVFoundation
 import MapKit
 
-class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePickerControllerDelegate, CLLocationManagerDelegate, AVAudioRecorderDelegate, UITableViewDataSource, UITableViewDelegate, MKMapViewDelegate{
+class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate, UITableViewDataSource, UITableViewDelegate, MKMapViewDelegate{
         
-    @IBOutlet weak var microphoneButton: UIButton!                              // For Voice Message
+    @IBOutlet weak var shareLocationButton: UIButton!                           // For Share Location
     
     @IBOutlet weak var textView: UITextView!                                    // Field to enter the content of message
     
@@ -33,6 +33,8 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     @IBOutlet weak var messageContentViewHeightConstraint: NSLayoutConstraint!
     
     @IBAction func multiSelectionButtonFunc(sender: AnyObject) {
+        self.textView.resignFirstResponder()
+        
         let alertDialog = UIAlertController()
         
         let takePhotoVideoAction = UIAlertAction(title: "Take Photo/Video", style: .Default) { (_) in
@@ -47,43 +49,19 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             self.presentViewController(self.imagePicker, animated: true, completion: nil)
         }
         
-        let shareLocationAction = UIAlertAction(title: "Share Location", style: .Default) { (_) in
-            self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
-            self.locationManager.requestAlwaysAuthorization()
-            self.locationManager.startUpdatingLocation()
-
-        }
-        
         let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
         
         alertDialog.addAction(cancelAction)
         alertDialog.addAction(takePhotoVideoAction)
         alertDialog.addAction(choosePhotoVideoAction)
-        alertDialog.addAction(shareLocationAction)
-        
         self.presentViewController(alertDialog, animated: true, completion: nil)
         
     }
     
-    @IBAction func microphoneButtonFunc(sender: AnyObject) {
-        let settings = [
-            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-            AVSampleRateKey: 12000.0,
-            AVNumberOfChannelsKey: 1 as NSNumber,
-            AVEncoderAudioQualityKey: AVAudioQuality.High.rawValue
-        ]
-        let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true) as [String]
-        let documentsDirectory = paths[0]
-        let audioFilename = documentsDirectory.stringByAppendingString("whistle.m4a")
-        let audioURL = NSURL(fileURLWithPath: audioFilename)
-        do {
-            // 5
-            recorder = try AVAudioRecorder(URL: audioURL, settings: settings)
-            recorder.delegate = self
-            recorder.record()
-        } catch {
-
-        }
+    @IBAction func shareLocationButtonFunc(sender: AnyObject) {
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.locationManager.requestAlwaysAuthorization()
+        self.locationManager.startUpdatingLocation()
     }
     
     @IBAction func hiddenButtonFunc(sender: AnyObject) {
@@ -98,18 +76,20 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     @IBAction func sendButtonFunc(sender: AnyObject) {
         if self.textView.text != "" {
-            self.appModel.sendMessage(self.textView.text, conversation:  self.conversation!)
+            let messsge = self.appModel.sendMessage(self.textView.text, conversation:  self.conversation!, isCover: self.hiddenMessageSign)
+            if messsge.sentDate != nil {
+                messagesDisplay.append(messsge)
+            }
             self.textView.text = ""
+
+            self.addRowToTableView()
+            self.textView.resignFirstResponder()
         }
         sendButton.hidden = true
-        microphoneButton.hidden = false
+        shareLocationButton.hidden = false
         hiddenButton.hidden = false
         adjustTextViewHeight()
     }
-    
-    var recordingSession: AVAudioSession!
-    
-    var recorder: AVAudioRecorder!
     
     var imagePicker = UIImagePickerController()
     
@@ -119,13 +99,17 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     let appModel = AppModel()
     
-    var message: Message?
-    
     var conversation: Conversation?
     
-    var img : [UIImage] = []
-    
     var messagesDisplay : [Message] = []
+    
+    var secretViewer: SecretMessageViewController?
+    
+    var attachmentViewer: AttachmentViewerViewController?
+    
+    var constraint = NSLayoutConstraint()
+    
+    var location: CLLocationCoordinate2D?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -135,15 +119,21 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         self.textView.delegate = self
         self.textView.layer.cornerRadius = 5
         
-        self.recordingSession = AVAudioSession.sharedInstance()
         
         self.locationManager.delegate = self
         
 
-        self.chatContentTableView.registerNib(UINib(nibName: "ChatRoomCustomCell", bundle: nil), forCellReuseIdentifier: "chatRoomCell")
+        self.chatContentTableView.registerNib(UINib(nibName: "RightChatRoomCustomCell", bundle: nil), forCellReuseIdentifier: "rightChatRoomCell")
+        
+        self.chatContentTableView.registerNib(UINib(nibName: "LeftChatRoomCustomCell", bundle: nil), forCellReuseIdentifier: "leftChatRoomCell")
         
         self.chatContentTableView.rowHeight = UITableViewAutomaticDimension
-        self.chatContentTableView.estimatedRowHeight = 500
+        self.chatContentTableView.estimatedRowHeight = 300
+        
+        self.imagePicker.delegate = self
+        
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ChatRoomViewController.longPressGestureFunc))
+        self.chatContentTableView.addGestureRecognizer(longPressGesture)
 
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
@@ -157,9 +147,9 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         let message2 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
         
         message1.content = "hello world. It is so fucking cold a=even though i just open a small gap of my door. The wind still flow from my living room to my bed room. What the fuck. This is so fuck. I just have one day to do 342 project. Tmr i still need to do revision for my quiz meanwhile I have touch my 321 documentation."
-        
+
         message2.content = "hello world. It is so fucking cold a=even though i just open a small gap of my door. The wind still flow from my living room to my bed room. What the fuck. This is so fuck. I just have one day to do 342 project. Tmr i still need to do revision for my quiz meanwhile I have touch my 321 documentation."
-        
+        message2.shouldCover = 1
         messagesDisplay.append(message2)
         messagesDisplay.append(message1)
         
@@ -178,7 +168,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         
         message6.content = "hello world.\nhello world.\nwhy right"
         
-        message5.content = "hello "
+        message5.content = "ht  "
         
         messagesDisplay.append(message5)
         messagesDisplay.append(message6)
@@ -205,11 +195,11 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     func textViewDidChange(textView: UITextView) {
         if textView.text == "" {
             sendButton.hidden = true
-            microphoneButton.hidden = false
+            shareLocationButton.hidden = false
             hiddenButton.hidden = false
         }else{
             sendButton.hidden = false
-            microphoneButton.hidden = true
+            shareLocationButton.hidden = true
             hiddenButton.hidden = true
         }
         adjustTextViewHeight()
@@ -254,29 +244,79 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     // MARK: Location & Share Location feature
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let location = locations.last
-        let lat = location?.coordinate.latitude
-        let lon = location?.coordinate.longitude
         self.locationManager.stopUpdatingLocation()
-        self.shareLocation(lat!, lon: lon!)
+        self.location = location!.coordinate
+        self.shareLocation()
     }
     
-    
-    // TODO: fix how to share in message
-    func shareLocation(lat: CLLocationDegrees, lon: CLLocationDegrees){
+    func shareLocation(){
+        let newFrame = CGRect(x: 0, y: 0, width: 100, height: 100)
+        let map = MKMapView(frame: newFrame)
+        let regionRadius : CLLocationDistance = 200
+
+        let coordinateRegion = MKCoordinateRegionMakeWithDistance(self.location!, regionRadius*2, regionRadius*2)
+        map.setRegion(coordinateRegion, animated: true)
         
+        
+        
+        let options = MKMapSnapshotOptions()
+        options.region = map.region
+        options.size = map.frame.size
+        options.scale = UIScreen.mainScreen().scale
+        
+        let snapshotter = MKMapSnapshotter(options: options)
+        snapshotter.startWithCompletionHandler { snapshot, error in
+            guard let snapshot = snapshot else {
+                print("Snapshot error: \(error)")
+                return
+            }
+            
+            
+            let dropPin = MKPinAnnotationView(annotation: nil, reuseIdentifier: nil)
+            let img = snapshot.image
+            
+            UIGraphicsBeginImageContextWithOptions(img.size, true, img.scale)
+            img.drawAtPoint(CGPoint.zero)
+            var point = snapshot.pointForCoordinate(self.location!)
+            
+            let rect = CGRect(origin: CGPoint.zero, size: img.size)
+            if rect.contains(point){
+                
+                point.x = point.x + dropPin.centerOffset.x - (dropPin.bounds.size.width/2)
+                point.y = point.y + dropPin.centerOffset.y - (dropPin.bounds.size.height/2)
+                dropPin.image?.drawAtPoint(point)
+            }
+            
+            let mapPin = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            
+            let msg = self.appModel.sendMessageMap(mapPin, conversation: self.conversation!, isCover: self.hiddenMessageSign, lat: self.location!.latitude.description, lon: self.location!.longitude.description)
+            self.messagesDisplay.append(msg)
+            self.addRowToTableView()
+        }
+
     }
     
     
     // MARK: ImagePicker
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+  
         if let imgSelected = info[UIImagePickerControllerOriginalImage] as? UIImage{
-            img.append(imgSelected)
-        }
-        
-        // TODO: Do something to send video url
-        if let video = info[UIImagePickerControllerMediaURL] as? NSURL{
+            let message = self.appModel.sendMessageImage(imgSelected, conversation: self.conversation!, isCover: self.hiddenMessageSign)
+            self.messagesDisplay.append(message)
+            self.dismissViewControllerAnimated(true, completion: nil)
+
+            self.addRowToTableView()
+            
+            
             
         }
+   
+        
+//        // TODO: Do something to send video url
+//        if let video = info[UIImagePickerControllerMediaURL] as? NSURL{
+//            
+//        }
     }
     
     // MARK: TableView
@@ -293,134 +333,161 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("chatRoomCell", forIndexPath: indexPath) as! ChatRoomCustomCell
-        
-        /**
-         Change the priority of contraints according to the message sent by users or the friends
-         The constant of Leading and Trailing of label message: 40
-         The constant of Leading and Trailing of imageView: 5
-         
-         The priority will be different will change according to below:
-         LEFT SIDE:
-         cell.contentLeading.priority = 751
-         cell.contentTrailing.priority = 750
-         ** The content will move toward left side as the Leading contraint priority is higher
-         
-         cell.profileLeading.priority = 751
-         cell.profileTrailing.priority = 750
-         ** The image view will move toward left side as the Leading contraint priority is higher
-         
-         RIGHT SIDE:
-         cell.contentLeading.priority = 750
-         cell.contentTrailing.priority = 751
-         ** The content will move toward right side as the Trailing contraint priority is higher
-         
-         cell.profileLeading.priority = 750
-         cell.profileTrailing.priority = 751
-         ** The image view will move toward right side as the Trailing contraint priority is higher
-         */
-        
-        // TODO: FIXME when merge
-//        let userInfo = NSUserDefaults()
-//        let userID = userInfo.stringForKey("userID")
-//        if messagesDisplay[indexPath.row].senderID == userID!{
-//            cell.contentLeading.priority = 750
-//            cell.contentTrailing.priority = 751
-//            cell.profileLeading.priority = 750
-//            cell.profileTrailing.priority = 751
-//            cell.attachmentLeading.priority = 750
-//            cell.attachmentTrailing.priority = 751
-//            cell.messageContent.backgroundColor = UIColor.init(red: 51/255, green: 1, blue: 153/255, alpha: 1.0)
-//        }else{
-//            cell.contentLeading.priority = 751
-//            cell.contentTrailing.priority = 750
-//            cell.profileLeading.priority = 751
-//            cell.profileTrailing.priority = 750
-//            cell.attachmentLeading.priority = 751
-//            cell.attachmentTrailing.priority = 750
-//            cell.messageContent.backgroundColor = UIColor.init(red: 102/255, green: 1, blue: 1, alpha: 1.0)
-//        }
-        
-        // Content 
-//        if message == normal message{
-//            cell.messageContent.text = self.messagesDisplay[indexPath.row].content
-//            cell.attachmentView.alpha = 0
-//        }else if message == mapView {
-//        
-//            cell.messageContent.alpha = 0;
-//            cell.contentView.addConstraint(NSLayoutConstraint(item: cell.contentView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 220))
-//            // From Friends
-//            let newFrame = CGRectMake(cell.attachmentView.frame.minX-40, cell.attachmentView.frame.minY-10, 150, 200)
-//            // User send it
-//            let newFrame = CGRectMake(cell.attachmentView.frame.minX+120, cell.attachmentView.frame.minY-10, 150, 200)
-//
-//            let map = MKMapView(frame:newFrame)
-//            
-//            map.userInteractionEnabled = false
-//            cell.attachmentView.alpha = 1
-//            cell.attachmentView.addSubview(map)
-//
-//        }else if message == phot {
-//            let img = UIImage(named: "pic.png")
-//            let imgView = UIImageView(image: img)
-//            imgView.contentMode = .ScaleAspectFit
-//            
-//            // From Friends
-//            imgView.frame = CGRectMake(10, 0, 200, 200)
-//            
-//            // User send it
-//            imgView.frame = CGRectMake(cell.contentView.frame.minX+115, 0, 200, 200)
-//            
-//            imgView.layer.borderColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.3).CGColor
-//            imgView.layer.borderWidth = 1
-//            imgView.layer.cornerRadius = 7
-//            imgView.clipsToBounds = true
-//            
-//            cell.attachmentView.alpha = 1
-//            cell.attachmentView.addSubview(imgView)
-//        }
-        
-        
-        //        let newFrame = CGRectMake(0, 0, 100, 100)
-////        cell.messageContent.drawRect(CGRect(x: 0, y: 0, width: 200, height: 400))
-////        cell.messageContent.sizeToFit()
-////        cell.contentView.frame = newFrame
-//        cell.messageContent.frame = newFrame
-//        cell.attachmentView.frame = newFrame
-//        let map = MKMapView()
-////        cell.messageContent.drawRect(newFrame)
-//        
-//      cell.messageContent.addSubview(UIImageView(image: UIImage(named: "pic.png")!))
-        cell.attachmentView.alpha = 0
-        
+        let userInfo = NSUserDefaults()
+        userInfo.setObject("wko232", forKey: "userID")
+        let userID = userInfo.stringForKey("userID")
+        if messagesDisplay[indexPath.row].senderID != userID! {
+            
+            // MARK: User Receive Message
+            let cell = tableView.dequeueReusableCellWithIdentifier("leftChatRoomCell", forIndexPath: indexPath) as! LeftChatRoomCustomCell
+            let type = messagesDisplay[indexPath.row].type!
+            print(type)
+            if type == MessageType.NormalMessage.rawValue {
+                cell.imageView!.image = nil
+                cell.messageContent.text = self.messagesDisplay[indexPath.row].content
+                cell.messageContent.sizeToFit()
+            }else if type == MessageType.Image.rawValue || type == MessageType.Map.rawValue{
+                let attachments = self.messagesDisplay[indexPath.row].attachements!.allObjects as! [Attachment]
+                let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+                let documentDirectory = documentPath[0]
                 
-        
-        return cell
+                // Crop the image
+                let img = UIImage(named: "\(documentDirectory)/\(attachments[0].filePath!)")!
+                var cropRect = CGRectMake(0, 0, img.size.width, img.size.height)
+                if img.size.height > 300 {
+                    cropRect = CGRectMake(img.size.width/4, img.size.height/4, 200, 200)
+                }
+                let cgImage = CGImageCreateWithImageInRect(img.CGImage, cropRect)
+                
+                // Put the image as attchment and put into uilabel
+                let attachmentLabel = NSTextAttachment()
+                attachmentLabel.image = UIImage(CGImage: cgImage!)
+                
+                let stringWithImg = NSAttributedString(attachment: attachmentLabel)
+                
+                let attributedString = NSMutableAttributedString(string: "Preview\n ")
+                attributedString.replaceCharactersInRange(NSMakeRange(8, 1), withAttributedString: stringWithImg)
+                
+                cell.messageContent.attributedText = attributedString
+                
+            }else{
+                print("Error Message of Attachments/Messages from core data")
+            }
+            
+            
+            return cell
+        }else{
+            // MARK: User Send Message
+            let cell = tableView.dequeueReusableCellWithIdentifier("rightChatRoomCell", forIndexPath: indexPath) as! RightChatRoomCustomCell
+            let type = messagesDisplay[indexPath.row].type!
+            print(type)
+            if type == MessageType.NormalMessage.rawValue {
+                cell.imageView!.image = nil
+                cell.messageContent.text = self.messagesDisplay[indexPath.row].content
+                cell.messageContent.sizeToFit()
+            }else if type == MessageType.Image.rawValue || type == MessageType.Map.rawValue{
+                let attachments = self.messagesDisplay[indexPath.row].attachements!.allObjects as! [Attachment]
+                let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+                let documentDirectory = documentPath[0]
+                
+                // Crop the image
+                let img = UIImage(named: "\(documentDirectory)/\(attachments[0].filePath!)")!
+                var cropRect = CGRectMake(0, 0, img.size.width, img.size.height)
+                if img.size.height > 300 {
+                    cropRect = CGRectMake(img.size.width/4, img.size.height/4, 200, 200)
+                }
+                let cgImage = CGImageCreateWithImageInRect(img.CGImage, cropRect)
+                
+                // Put the image as attchment and put into uilabel
+                let attachmentLabel = NSTextAttachment()
+                attachmentLabel.image = UIImage(CGImage: cgImage!)
+                
+                let stringWithImg = NSAttributedString(attachment: attachmentLabel)
+                
+                let attributedString = NSMutableAttributedString(string: "Preview\n ")
+                attributedString.replaceCharactersInRange(NSMakeRange(8, 1), withAttributedString: stringWithImg)
+                
+                cell.messageContent.attributedText = attributedString
+
+            }else{
+                print("Error Message of Attachments/Messages from core data")
+            }
+
+            
+            return cell
+        }
     }
     
-    func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let cell = tableView.dequeueReusableCellWithIdentifier("chatRoomCell", forIndexPath: indexPath) as! ChatRoomCustomCell
+    func addRowToTableView(){
+        self.chatContentTableView.beginUpdates()
+        self.chatContentTableView.insertRowsAtIndexPaths([NSIndexPath(forRow: self.messagesDisplay.count-1, inSection:0)] , withRowAnimation: UITableViewRowAnimation.Automatic)
+        self.chatContentTableView.endUpdates()
         
-        return cell.messageContent.frame.size.height
+        self.chatContentTableView.scrollToRowAtIndexPath(NSIndexPath(forRow: self.messagesDisplay.count-1, inSection:0), atScrollPosition: .Middle, animated: true)
     }
-    
 
     // MARK: Gesture
     func tapGestureFunc(){
         self.textView.resignFirstResponder()
     }
     
-    // MARK: MapView
-    func mapViewDidFinishLoadingMap(mapView: MKMapView) {
-        let newFrame = CGRectMake(0, 0, 150, 200)
-        UIGraphicsBeginImageContext(newFrame.size)
-        mapView.layer.renderInContext(UIGraphicsGetCurrentContext()!)
-        let img = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
+    func longPressGestureFunc(longPressGestureRecognizer: UILongPressGestureRecognizer){
         
-        let lat = mapView.centerCoordinate.latitude
-        let lon = mapView.centerCoordinate.longitude
+        let locationInView = longPressGestureRecognizer.locationInView(self.chatContentTableView)
+        let indexPath = self.chatContentTableView.indexPathForRowAtPoint(locationInView)
+        guard let _indexPath = indexPath else{
+            return
+        }
+        let msgIsCover = messagesDisplay[_indexPath.row].shouldCover
+        switch (longPressGestureRecognizer.state) {
+        case .Began:
+            print("Began")
+            
+            // msgIsCover == 1 mean yes
+            if msgIsCover == 1{
+                secretViewer = self.storyboard?.instantiateViewControllerWithIdentifier("SecretMessageViewController")as? SecretMessageViewController
+                secretViewer?.msg = messagesDisplay[_indexPath.row]
+                
+                guard let _secretViewer = secretViewer else{
+                    return
+                }
+                
+                self.addChildViewController(_secretViewer)
+                _secretViewer.view.frame = CGRect(x: 10, y: 10, width: self.view.frame.size.width-20, height: self.view.frame.size.height/2)
+                _secretViewer.view.center = self.view.center
+
+                self.view.addSubview(_secretViewer.view)
+                _secretViewer.didMoveToParentViewController(self)
+            }else{
+                
+            }
+            
+        case .Cancelled:
+            print("Cancelled")
+        case .Changed:
+            print("Changed")
+        case .Ended:
+            print("Ended")
+            
+            if msgIsCover == 1{
+                guard let _secretViewer = secretViewer else {
+                    return
+                }
+                
+                _secretViewer.view.removeFromSuperview()
+                _secretViewer.removeFromParentViewController()
+            }else{
+                
+            }
+            
+            
+        case .Failed:
+            print("Failed")
+        case .Possible:
+            print("Possible")
+        }
 
     }
+    
     
 }

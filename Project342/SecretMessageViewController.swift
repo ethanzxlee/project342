@@ -9,17 +9,9 @@
 import UIKit
 import AVFoundation
 import CoreData
+import MapKit
 
-class SecretMessageViewController: UIViewController, AVAudioPlayerDelegate {
-    
-    /**
-     allocate from stakeoverflow.com
-     Audio playback progress as UISlider in Swift
-     http://stackoverflow.com/questions/29542001/audio-playback-progress-as-uislider-in-swift
-     User for: Put the sliders to indicate the amount of length of sound play
-     */
-    var updaterForProgressSlider : CADisplayLink! = nil
-    var progressBarSlider = UISlider()
+class SecretMessageViewController: UIViewController {
     
     @IBOutlet weak var textViewHeight: NSLayoutConstraint!
     
@@ -27,74 +19,75 @@ class SecretMessageViewController: UIViewController, AVAudioPlayerDelegate {
     
     @IBOutlet weak var secretImg: UIImageView!
     
+    @IBOutlet weak var contentView: UIView!
     var msg: Message?
     
     var timer = NSTimer()
     
     let line = CAShapeLayer()
     
-    var attachmentIndexShown: Int = 0        // Used to control the transition of image
-    
-    var audioPlayer : AVAudioPlayer?
-    
-    var attachmentContentObject = [Attachment]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.progressBarSlider.frame.width = self.view.frame.width/2
-        self.progressBarSlider.center = self.view.center
-        self.view.addSubview(progressBarSlider)
-        
+
         //TODO: MUST DELETE
-        loadInitialDataFortry()
+//        loadInitialDataFortry()
         
         // Load the message content into the text view. if it iis empty, hide the view
         // If gt message MEAN it is not voice message
-        if msg?.content != "" {
+        print(msg?.content)
+        let type = msg?.type
+        if type == MessageType.NormalMessage.rawValue {
             secretMessage.text = msg?.content
             secretMessage.font = UIFont(name: "HelveticaNeue", size: 16)
+            
             dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)){
                 dispatch_async(dispatch_get_main_queue()){
-                    if self.audioPlayer?.duration <= 0{
-                        self.adjustTextViewHeight()
-                        self.textViewBorder()
-                    }
+                    self.adjustTextViewHeight()
                 }
             }
-        }else{
-            secretMessage.hidden = true
-        }
-        
-        //Load the image attchement
-        attachmentContentObject = msg?.attachements?.allObjects as! [Attachment]
-        
-        // When it is a voice message, it just has one voice attachment for each message
-        if attachmentContentObject.count > 0{
-            // Get the filePath form attachement and detect it is voice message or not
-            let componentsOfAttachment = attachmentContentObject[0].filePath!.componentsSeparatedByString(".")
-            if componentsOfAttachment[componentsOfAttachment.endIndex-1] == "mp3" || componentsOfAttachment[componentsOfAttachment.endIndex-1] == "m4a"{
+            
+            secretImg.removeFromSuperview()
+        }else if type == MessageType.Image.rawValue{
+            dispatch_async(dispatch_get_main_queue()){()-> Void in
+                
+                let attachments = self.msg!.attachements!.allObjects as! [Attachment]
                 let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
                 let documentDirectory = documentPath[0]
-                let destinationPath = NSURL(fileURLWithPath: documentDirectory).URLByAppendingPathComponent(attachmentContentObject[0].filePath!)
                 
-                secretImg.removeFromSuperview()
-                secretMessage.removeFromSuperview()
+                let img = UIImage(named: "\(documentDirectory)/\(attachments[0].filePath!)")
+                print("img: \(documentDirectory)/\(attachments[0].filePath!)")
+                let imgView = UIImageView(image: img!)
+                imgView.contentMode = .ScaleAspectFit
+                self.secretImg = imgView
                 
-                playVoiceMessage(destinationPath)
-         
-            }else{
-                // Load the first image before another image continue by using timer
-                self.transitionImgAttachment()
-                // Load the image by interval timer if consist more than 1 image attachment
-                if attachmentContentObject.count > 1{
-                    timer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(SecretMessageViewController.transitionImgAttachment), userInfo: nil, repeats: true)
-                }
+                self.secretMessage.text = "Secret Image"
+                self.secretMessage.font = UIFont(descriptor: UIFontDescriptor(name: "AmericanTypewriter-Bold", size: 20)  , size: 30)
+                self.secretMessage.textColor = UIColor.whiteColor()
+                self.secretMessage.textAlignment = .Center
             }
+        }else{
+         
+            let coordinates = msg!.content?.componentsSeparatedByString(",")
+            let lat = (coordinates![0] as NSString).doubleValue
+            let lon = (coordinates![1] as NSString).doubleValue
+            
+            let newFrame = CGRect(x: 0, y: 0, width: self.contentView.frame.size.width, height: self.contentView.frame.size.height)
+            let map = MKMapView(frame: newFrame)
+            let location = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+            let regionRadius = 200.0
+            map.setRegion(MKCoordinateRegionMakeWithDistance(location, regionRadius*2 , regionRadius*2) , animated: true)
+            let dropPin = MKPointAnnotation()
+            dropPin.coordinate = location
+            map.addAnnotation(dropPin)
+            
+            self.secretImg.addSubview(map)
+            self.secretMessage.text = "Secret Map"
+            print("\(lat), \(lon)")
         }
         
-        if audioPlayer?.duration <= 0 {
-            self.progressBarSlider.removeFromSuperview()
-        }
+        
+        
         
         
     }
@@ -125,75 +118,6 @@ class SecretMessageViewController: UIViewController, AVAudioPlayerDelegate {
         secretMessage.contentOffset = CGPoint(x: 0, y: -adjustment)
         let newSize = secretMessage.sizeThatFits(CGSize(width: secretMessage.frame.size.width, height: CGFloat.max))
         self.textViewHeight.constant = newSize.height
-    }
-    
-    func textViewBorder(){
-        
-        let path = UIBezierPath()
-        
-        path.moveToPoint(CGPoint(x: self.secretMessage.frame.minX, y: self.secretMessage.frame.maxY+15))
-        path.addLineToPoint(CGPoint(x: self.secretMessage.frame.maxX, y: self.secretMessage.frame.maxY+15))
-        
-        line.path = path.CGPath
-        line.strokeColor = UIColor.grayColor().CGColor
-        self.view.layer.addSublayer(line)
-    }
-    
-    // MARK: Voice Message
-    func playVoiceMessage(path: NSURL){
-        
-        do{
-            updaterForProgressSlider = CADisplayLink(target: self, selector: #selector(SecretMessageViewController.trackVoiceMessage))
-            updaterForProgressSlider.frameInterval = 1
-            updaterForProgressSlider.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSRunLoopCommonModes)
-            
-           
-            try audioPlayer = AVAudioPlayer(contentsOfURL: path)
-            audioPlayer?.numberOfLoops = 0      // -1 if wan infinity loop
-            audioPlayer?.delegate = self
-            audioPlayer?.play()
-    
-            progressBarSlider.minimumValue = 0
-            progressBarSlider.maximumValue = 100
-        }catch{}
-        
-    }
-    
-    // Track the amount of sound been played
-    func trackVoiceMessage() {
-        let progressPercentage = Float(audioPlayer!.currentTime * 100 / audioPlayer!.duration)
-        progressBarSlider.value = progressPercentage
-    }
-    
-    // MARK: Img Attachment
-    func transitionImgAttachment(){
-        dispatch_async(dispatch_get_main_queue()){()-> Void in
-            
-//            let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-//            let documentDirectory = documentPath[0]
-//            let destinationPath = NSURL(fileURLWithPath: documentDirectory).URLByAppendingPathComponent(self.attachmentContentObject[self.attachmentIndexShown].filePath!)
-//            self.secretImg.image = UIImage(contentsOfFile: destinationPath.absoluteString)
-            
-            // TODO: MUST DELETE JUST FOR TRYING : image get  from assest
-            self.secretImg.image = UIImage(named: self.attachmentContentObject[self.attachmentIndexShown].filePath!)!
-            
-            self.secretImg.contentMode = .ScaleAspectFit
-            // Create Transition
-            let slideTransition = CATransition()
-            
-            slideTransition.type = kCATransitionPush
-            slideTransition.subtype = kCATransitionFromRight
-            slideTransition.duration = 1
-            slideTransition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
-            slideTransition.fillMode = kCAFillModeRemoved
-            
-            self.secretImg.layer.addAnimation(slideTransition, forKey: "SliderFromRightToLeft")
-            
-            self.attachmentIndexShown += 1
-            if self.attachmentIndexShown == self.msg?.attachements?.count{
-                self.attachmentIndexShown = 0
-            }
-        }
     }
     
     //TODO: MUST DELETE
@@ -257,6 +181,20 @@ class SecretMessageViewController: UIViewController, AVAudioPlayerDelegate {
 //            
 //        }
     }
+    
+    //
+    //    func textViewBorder(){
+    //
+    //        let path = UIBezierPath()
+    //
+    //        path.moveToPoint(CGPoint(x: self.secretMessage.frame.minX, y: self.secretMessage.frame.maxY+15))
+    //        path.addLineToPoint(CGPoint(x: self.secretMessage.frame.maxX, y: self.secretMessage.frame.maxY+15))
+    //
+    //        line.path = path.CGPath
+    //        line.strokeColor = UIColor(red: 128/255, green: 128/255, blue: 128/255, alpha: 0.5).CGColor
+    //        self.view.layer.addSublayer(line)
+    //    }
+
     
 
     

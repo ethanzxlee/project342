@@ -34,13 +34,10 @@ class AttachmentViewerViewController: UIViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-//        let documentDirectory = documentPath[0]
-//        let destinationPath = NSURL(fileURLWithPath: documentDirectory).URLByAppendingPathComponent(attachment!.filePath!)
-//        img = UIImage(named: destinationPath.absoluteString)!
+        let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+        let documentDirectory = documentPath[0]
         
-        img = UIImage(named: "pic.png")
-        
+        img = UIImage(named: "\(documentDirectory)/\(attachment!.filePath!)")
         imgView.image = img
         imgView.contentMode = .ScaleAspectFit
 

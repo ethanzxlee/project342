@@ -177,9 +177,164 @@ class AppModel:NSManagedObjectModel{
         return []
     }
     
-    func sendMessage(msg: String, conversation: Conversation){
-        
+    // FIXME: apply to user default
+    func sendMessage(msg: String, conversation: Conversation, isCover: Bool)-> Message{
+        let userInfo = NSUserDefaults()
+        userInfo.setObject("wko232", forKey: "userID")
+        if let message = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedContext) as? Message{
+            message.type = MessageType.NormalMessage.rawValue
+            message.content = "\(msg)   "
+
+            message.senderID = userInfo.stringForKey("userID")!
+            message.conversation = conversation
+            message.sentDate = NSDate()
+            if isCover {
+                message.shouldCover = 1
+            }else{
+                message.shouldCover = 0
+            }
+            
+            do {
+                try managedContext.save()
+            }catch{
+                print("Error saving new message")
+            }
+            return message
+        }
+        return Message()
     }
+    // FIXME: apply to user default
+    func sendMessageImage(img: UIImage, conversation: Conversation, isCover: Bool)-> Message{
+        let userInfo = NSUserDefaults()
+        userInfo.setObject("wko232", forKey: "userID")
+        
+        // Save the image first
+        // save img to Document Directory
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "yyyy_MM_ddHHmm"
+        let imgName = "\(dateFormatter.stringFromDate(NSDate())).png"
+        
+        let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+        let documentDirectory = documentPath[0]
+        let url = NSURL(fileURLWithPath: documentDirectory).URLByAppendingPathComponent(imgName)
+        if let data = UIImagePNGRepresentation(img){
+            data.writeToURL(url, atomically: true)
+            print("Success save image to\n\(url)")
+        }
+
+        let attachment = NSEntityDescription.insertNewObjectForEntityForName("Attachment", inManagedObjectContext: managedContext) as! Attachment
+        
+        attachment.sentDate = NSDate()
+        attachment.filePath = imgName
+        
+        do {
+            
+            try managedContext.save()
+        }catch{
+            do{
+                let fileManager = NSFileManager.defaultManager()
+                try fileManager.removeItemAtURL(url)
+            }catch{
+                
+                print("Failure to delete image")
+            }
+            print("Failure to save attachment")
+            return Message()
+        }
+        
+        // if success
+        if let message = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedContext) as? Message{
+            
+            
+            attachment.message = message
+            message.type = MessageType.Image.rawValue
+            message.attachements = NSSet(array: [attachment])
+            message.senderID = userInfo.stringForKey("userID")!
+            message.conversation = conversation
+            message.sentDate = NSDate()
+            
+            if isCover {
+                message.shouldCover = 1
+            }else{
+                message.shouldCover = 0
+            }
+            
+            do {
+                try managedContext.save()
+            }catch{
+                print("Error saving new message")
+            }
+            return message
+        }
+        return Message()
+    }
+    // FIXME: apply to user default
+    func sendMessageMap(img: UIImage, conversation: Conversation, isCover: Bool, lat: String, lon: String)-> Message{
+        let userInfo = NSUserDefaults()
+        userInfo.setObject("wko232", forKey: "userID")
+        
+        // Save the image first
+        // save img to Document Directory
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "yyyy_MM_ddHHmm"
+        let imgName = "\(dateFormatter.stringFromDate(NSDate())).png"
+        
+        let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+        let documentDirectory = documentPath[0]
+        let url = NSURL(fileURLWithPath: documentDirectory).URLByAppendingPathComponent(imgName)
+        if let data = UIImagePNGRepresentation(img){
+            data.writeToURL(url, atomically: true)
+            print("Success save image to\n\(url)")
+        }
+        
+        let attachment = NSEntityDescription.insertNewObjectForEntityForName("Attachment", inManagedObjectContext: managedContext) as! Attachment
+        
+        attachment.sentDate = NSDate()
+        attachment.filePath = imgName
+        
+        do {
+            
+            try managedContext.save()
+        }catch{
+            do{
+                let fileManager = NSFileManager.defaultManager()
+                try fileManager.removeItemAtURL(url)
+            }catch{
+                
+                print("Failure to delete image")
+            }
+            print("Failure to save attachment")
+            return Message()
+        }
+        
+        // if success
+        if let message = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedContext) as? Message{
+            
+            
+            attachment.message = message
+            message.type = MessageType.Map.rawValue
+            message.content = "\(lat), \(lon)"
+            message.attachements = NSSet(array: [attachment])
+            message.senderID = userInfo.stringForKey("userID")!
+            message.conversation = conversation
+            message.sentDate = NSDate()
+            
+            if isCover {
+                message.shouldCover = 1
+            }else{
+                message.shouldCover = 0
+            }
+            
+            do {
+                try managedContext.save()
+            }catch{
+                print("Error saving new message")
+            }
+            return message
+        }
+        return Message()
+    }
+
     
     
     // MARK: -Contact

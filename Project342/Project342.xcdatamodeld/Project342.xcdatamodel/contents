@@ -25,6 +25,7 @@
         <attribute name="senderID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="sentDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="shouldCover" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <relationship name="attachements" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Attachment" inverseName="message" inverseEntity="Attachment" syncable="YES"/>
         <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="messages" inverseEntity="Conversation" syncable="YES"/>
     </entity>
@@ -32,6 +33,6 @@
         <element name="Attachment" positionX="-405" positionY="126" width="128" height="88"/>
         <element name="Contact" positionX="241" positionY="90" width="128" height="118"/>
         <element name="Conversation" positionX="18" positionY="108" width="128" height="135"/>
-        <element name="Message" positionX="-216" positionY="108" width="128" height="133"/>
+        <element name="Message" positionX="-216" positionY="108" width="128" height="150"/>
     </elements>
 </model>
