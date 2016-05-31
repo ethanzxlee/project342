@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import Firebase
 
-class AddContactsViewController: UITableViewController, UISearchResultsUpdating, SearchContactObserverDelegate {
+class AddContactsViewController: UITableViewController, UISearchResultsUpdating, UISearchControllerDelegate, SearchContactObserverDelegate {
     
     var searchContactObserver: SearchContactObserver?
     var searchController: UISearchController!
@@ -24,6 +24,7 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
         
         // Setup the search bar
         searchController = UISearchController(searchResultsController: nil)
+        searchController.delegate = self
         searchController.searchResultsUpdater = self
         searchController.searchBar.translucent = true
         searchController.searchBar.searchBarStyle = .Prominent
@@ -36,14 +37,16 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
         
         tableView.tableHeaderView = searchController.searchBar
         tableView.tableFooterView = UIView()
-        
         cache = NSCache()
+        
+        searchController.active = true
     }
-    
+
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
+
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
@@ -141,6 +144,16 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
     }
     
    
+    // MARK: - UISearchControllerDelegate
+    
+    func didPresentSearchController(searchController: UISearchController) {
+        searchController.searchBar.becomeFirstResponder()
+    }
+    
+    
+    func didDismissSearchController(searchController: UISearchController) {
+        performSegueWithIdentifier("UnwindToContactsViewController", sender: nil)
+    }
     
     
     // MARK: - UISearchResultsUpdating

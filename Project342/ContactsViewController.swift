@@ -57,7 +57,6 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         definesPresentationContext = true
         
         setupTableViewData()
-
     }
     
     
@@ -75,15 +74,6 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 ContactUserObserver.observer.observeContactUserInfoForContactId(request.userId!)
             }
         }
-        
-        self.tabBarController?.tabBar.hidden = false
-        UIView.animateWithDuration(0.25, animations: {
-            if let tabBarController = self.tabBarController,
-                let window = self.view.window {
-                tabBarController.tabBar.center.y = window.frame.height - (tabBarController.tabBar.frame.height/2)
-            
-            }
-        })
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -335,12 +325,16 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             print(error)
         }
     }
-    
+
     
     // MARK: - Navigation
     
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        segue.destinationViewController.hidesBottomBarWhenPushed = true
+    }
+    
+    
     @IBAction func unwindToContactsViewController(segue: UIStoryboardSegue) {
-        
     }
     
     
@@ -394,6 +388,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 tableView.tableHeaderView = searchController.searchBar
                 tableView.reloadData()
                 searchController.searchBar.sizeToFit()
+                tableView.allowsSelection = true
             }
             catch {
                 print(error)
@@ -410,6 +405,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 try requestFetchedResultController?.performFetch()
                 tableView.tableHeaderView = nil
                 tableView.reloadData()
+                tableView.allowsSelection = false
             }
             catch {
                 print(error)

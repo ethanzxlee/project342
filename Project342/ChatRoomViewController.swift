@@ -15,19 +15,7 @@ class ChatRoomViewController: UITableViewController {
         
     }
 
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        UIView.animateWithDuration(0.25, animations: {
-            if let tabBarController = self.tabBarController {
-                tabBarController.tabBar.center.y += tabBarController.tabBar.frame.height
-            }
-        }) { (complete) in
-            self.tabBarController?.tabBar.hidden = true
-        }
-    }
     
-       
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
