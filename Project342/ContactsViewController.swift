@@ -8,7 +8,6 @@
 
 import UIKit
 import CoreData
-import Firebase
 
 class ContactsViewController: UITableViewController, NSFetchedResultsControllerDelegate, UISearchResultsUpdating {
     
@@ -20,7 +19,6 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     var contactFetchedResultController: NSFetchedResultsController?
     var requestFetchedResultController: NSFetchedResultsController?
     var searchController: UISearchController!
-    var contactRequestsSnapshot: FDataSnapshot?
     
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     
@@ -39,9 +37,8 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             fetchContactRequestRequest.sortDescriptors = [NSSortDescriptor(key: "status", ascending: false)]
             requestFetchedResultController = NSFetchedResultsController(fetchRequest: fetchContactRequestRequest, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         }
-        
+    
         // Setup tableView appearance
-        tableView.sectionIndexBackgroundColor = UIColor(white: 1, alpha: 0)
         tableView.backgroundView = UIView()
         
         // Hide the divider between empty cells
@@ -52,9 +49,9 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         searchController.searchResultsUpdater = self
         searchController.searchBar.translucent = true
         searchController.searchBar.searchBarStyle = .Prominent
-        searchController.searchBar.barTintColor = UIColor(red: 0xF7/255, green: 0xF7/255, blue: 0xF7/255, alpha: 1)
+        searchController.searchBar.barTintColor = UIColor.searchBarBackgroundColor()
         searchController.searchBar.tintColor = UIColor.themeColor()
-        searchController.searchBar.backgroundColor = UIColor(red: 0xF7/255, green: 0xF7/255, blue: 0xF7/255, alpha: 1)
+        searchController.searchBar.backgroundColor = UIColor.searchBarBackgroundColor()
         searchController.searchBar.backgroundImage = UIImage()
         searchController.dimsBackgroundDuringPresentation = false
         definesPresentationContext = true
@@ -62,15 +59,32 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         setupTableViewData()
     }
     
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        ContactManager.sharedManager.observeContactsEvents()
+        
+        if let contacts = contactFetchedResultController?.fetchedObjects as? [Contact] {
+            for contact in contacts {
+                ContactUserObserver.observer.observeContactUserInfoForContactId(contact.userId!)
+            }
+        }
+        
+        if let requests = requestFetchedResultController?.fetchedObjects as? [Contact] {
+            for request in requests {
+                ContactUserObserver.observer.observeContactUserInfoForContactId(request.userId!)
+            }
+        }
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+    }
     
     override func viewDidDisappear(animated: Bool) {
-        super.viewDidAppear(animated)
-        ContactManager.sharedManager.stopObservingContactsEvents()
+        super.viewDidDisappear(animated)
+        
+        ContactUserObserver.observer.stopObservingAllContactUserInfo()
     }
     
     
@@ -156,14 +170,21 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             guard
                 let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactListTableViewCell)) as? ContactListTableViewCell,
                 let contact = contactFetchedResultController?.objectAtIndexPath(indexPath) as? Contact,
-                let profilePicDirectory = ContactManager.sharedManager.profilePicDirectory
+                let profilePicDirectory = Directories.profilePicDirectory
                 else {
                     return UITableViewCell()
             }
             
+            guard
+                let firstName = contact.firstName,
+                let lastName = contact.lastName
+                else {
+                    return cell
+            }
+            
             let profilePicFileURL = profilePicDirectory.URLByAppendingPathComponent(contact.userId!)
             cell.contactProfileImageView.image = UIImage(contentsOfFile: profilePicFileURL.path!)
-            cell.contactNameLabel.text = "\(contact.firstName!) \(contact.lastName!)"
+            cell.contactNameLabel.text = "\(firstName) \(lastName)"
             
             return cell
         }
@@ -171,14 +192,21 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             guard
                 let cell = tableView.dequeueReusableCellWithIdentifier(String(ContactRequestTableViewCell)) as? ContactRequestTableViewCell,
                 let contact = requestFetchedResultController?.objectAtIndexPath(indexPath) as? Contact,
-                let profilePicDirectory = ContactManager.sharedManager.profilePicDirectory
+                let profilePicDirectory = Directories.profilePicDirectory
                 else {
                     return UITableViewCell()
             }
             
+            guard
+                let firstName = contact.firstName,
+                let lastName = contact.lastName
+                else {
+                    return cell
+            }
+            
             let profilePicFileURL = profilePicDirectory.URLByAppendingPathComponent(contact.userId!)
             cell.contactProfileImageView.image = UIImage(contentsOfFile: profilePicFileURL.path!)
-            cell.contactNameLabel.text = "\(contact.firstName!) \(contact.lastName!)"
+            cell.contactNameLabel.text = "\(firstName) \(lastName)"
             cell.didAcceptButtonPressedAction = { () -> (Void) in
                 self.acceptContactAt(indexPath)
             }
@@ -216,7 +244,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     }
     
     
-    // MARK: - NScontactFetchedResultControllerDelegate
+    // MARK: - NSFetchedResultControllerDelegate
     
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
         tableView.beginUpdates()
@@ -244,10 +272,25 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         switch type {
         case .Insert:
             tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
+            if let contact = anObject as? Contact {
+                if let userId = contact.userId {
+                    ContactUserObserver.observer.observeContactUserInfoForContactId(userId)
+                }
+            }
         case .Delete:
             tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
+            if let contact = anObject as? Contact {
+                if let userId = contact.userId {
+                    ContactUserObserver.observer.stopObservingContactUserInfoForContact(userId)
+                }
+            }
         case .Update:
             tableView.reloadRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
+            if let contact = anObject as? Contact {
+                if let userId = contact.userId {
+                    ContactUserObserver.observer.observeContactUserInfoForContactId(userId)
+                }
+            }
         case .Move:
             tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
             tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
@@ -281,14 +324,17 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         catch {
             print(error)
         }
-        
     }
-    
+
     
     // MARK: - Navigation
     
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        segue.destinationViewController.hidesBottomBarWhenPushed = true
+    }
+    
+    
     @IBAction func unwindToContactsViewController(segue: UIStoryboardSegue) {
-        
     }
     
     
@@ -298,8 +344,36 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         setupTableViewData()
     }
     
+    @IBAction func didTouchAddContactButton(sender: UIBarButtonItem) {
+        // Prepare the action sheet controller
+        let actionSheetTitle = NSLocalizedString("Add contact", comment: "Add contact")
+        let searchContactActionTitle = NSLocalizedString("From search", comment: "From search")
+        let facebookContactActionTitle = NSLocalizedString("From Facebbok", comment: "From Facebook")
+        let cancelActionTitle = NSLocalizedString("Cancel", comment: "Cancel")
+        
+        let actionSheetController = TintedAlertViewController(title: actionSheetTitle, message: nil, preferredStyle: .ActionSheet)
+        
+        let searchContactAction = UIAlertAction(title: searchContactActionTitle, style: .Default) { (_) in
+            self.performSegueWithIdentifier("ShowAddContactViewController", sender: nil)
+        }
+        
+        let facebookContactAction = UIAlertAction(title: facebookContactActionTitle, style: .Default) { (_) in
+            // self.performSegueWithIdentifier()
+        }
+        
+        let cancelAction = UIAlertAction(title: cancelActionTitle, style: .Cancel, handler: nil)
+        
+        actionSheetController.addAction(searchContactAction)
+        actionSheetController.addAction(facebookContactAction)
+        actionSheetController.addAction(cancelAction)
+        actionSheetController.popoverPresentationController?.barButtonItem = sender
+        
+        // Present the action sheet controller
+        presentViewController(actionSheetController, animated: true, completion: nil)
+    }
     
-    // MARK: - Function
+    
+    // MARK: - Functions
     
     func setupTableViewData()  {
         if (segmentedControl.selectedSegmentIndex == ContactSegment.AllContacts.rawValue) {
@@ -314,6 +388,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 tableView.tableHeaderView = searchController.searchBar
                 tableView.reloadData()
                 searchController.searchBar.sizeToFit()
+                tableView.allowsSelection = true
             }
             catch {
                 print(error)
@@ -330,12 +405,25 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 try requestFetchedResultController?.performFetch()
                 tableView.tableHeaderView = nil
                 tableView.reloadData()
+                tableView.allowsSelection = false
             }
             catch {
                 print(error)
             }
-            
         }
+        
+        if let contacts = contactFetchedResultController?.fetchedObjects as? [Contact] {
+            for contact in contacts {
+                ContactUserObserver.observer.observeContactUserInfoForContactId(contact.userId!)
+            }
+        }
+        
+        if let requests = requestFetchedResultController?.fetchedObjects as? [Contact] {
+            for request in requests {
+                ContactUserObserver.observer.observeContactUserInfoForContactId(request.userId!)
+            }
+        }
+
     }
     
     
@@ -346,7 +434,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 else {
                     return
             }
-            ContactManager.sharedManager.deleteContact(contact.userId!)
+            ContactObserver.observer.deleteContact(contact.userId!)
         }
         else if segmentedControl.selectedSegmentIndex == ContactSegment.Request.rawValue {
             guard
@@ -354,7 +442,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
                 else {
                     return
             }
-            ContactManager.sharedManager.deleteContact(contact.userId!)
+            ContactObserver.observer.deleteContact(contact.userId!)
         }
     }
     
@@ -365,7 +453,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             else {
                 return
         }
-        ContactManager.sharedManager.acceptContactRequest(contact.userId!)
+        ContactObserver.observer.acceptContactRequest(contact.userId!)
     }
 }
 

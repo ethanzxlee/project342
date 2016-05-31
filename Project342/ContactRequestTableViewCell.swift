@@ -21,7 +21,10 @@ class ContactRequestTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         acceptButton.layer.borderWidth = 1
         acceptButton.layer.borderColor = UIColor.themeColor().CGColor
-        acceptButton.layer.cornerRadius = 4   
+        acceptButton.layer.cornerRadius = 4
+        
+        contactProfileImageView.layer.cornerRadius = contactProfileImageView.layer.frame.height / 2
+        contactProfileImageView.layer.masksToBounds = true
     }
     
     

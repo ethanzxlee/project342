@@ -17,4 +17,5 @@ class Contact: NSManagedObject {
 enum ContactStatus: String {
     case Added = "added"
     case Request = "request"
+    case Pending = "pending"
 }

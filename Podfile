@@ -8,8 +8,12 @@ target 'Project342' do
   use_frameworks!
 
   # Pods for Project342
-  pod 'Firebase', '>= 2.5.1'
-  pod 'FBSDKLoginKit', '>= 4.1'
+  pod 'Firebase/Core'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Crash'
+  pod 'Firebase/Database'
+  pod 'Firebase/Storage'
+  pod 'FBSDKLoginKit'
 
   target 'Project342Tests' do
     inherit! :search_paths
