@@ -83,7 +83,7 @@ class AppModel:NSManagedObjectModel{
             conversation.conversationName = self.getConversationName(members)
             
             //Default conversation isUnlocked
-            conversation.isLocked = 1
+            conversation.isLocked = 0
             
             do{
                 try managedContext.save()

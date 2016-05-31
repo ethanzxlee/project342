@@ -127,6 +127,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         }
         else{
             isLocked = 0
+            self.emptyView.removeFromSuperview()
         }
         
         self.title = conversation?.conversationName!
@@ -149,14 +150,13 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ChatRoomViewController.tapGestureFunc))
         self.view.addGestureRecognizer(tapGesture)
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ChatRoomViewController.authenticateUser))
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ChatRoomViewController.viewSecretMessage))
         self.chatContentTableView.addGestureRecognizer(longPressGesture)
         let tapGestureCell = UITapGestureRecognizer(target: self, action: #selector(ChatRoomViewController.tapGestureCellFunc))
         self.chatContentTableView.addGestureRecognizer(tapGestureCell)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
-        
         
         
         let context = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
@@ -573,7 +573,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     }
     
     // MARK: TouchID authenticate
-    func authenticateUser(longPressGestureRecognizer: UILongPressGestureRecognizer){
+    func viewSecretMessage(longPressGestureRecognizer: UILongPressGestureRecognizer){
         if firstTimeViewSecret == 1{
             
             let context = LAContext()
