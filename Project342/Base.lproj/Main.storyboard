@@ -261,16 +261,24 @@
                                     <outlet property="delegate" destination="iAg-cx-Yx1" id="jIn-ut-bgG"/>
                                 </connections>
                             </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MGw-1A-qup">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="MGw-1A-qup" firstAttribute="width" secondItem="2qg-AK-QMB" secondAttribute="width" id="2T9-GH-TCR"/>
                             <constraint firstItem="gR7-b3-wsM" firstAttribute="top" secondItem="q6g-JM-iWO" secondAttribute="bottom" id="46E-UZ-m43"/>
                             <constraint firstItem="dXL-yq-icw" firstAttribute="width" secondItem="2qg-AK-QMB" secondAttribute="width" id="BUM-WK-HDh"/>
                             <constraint firstItem="5Zo-Dj-0LP" firstAttribute="top" secondItem="dXL-yq-icw" secondAttribute="bottom" id="O0O-sN-IkO"/>
                             <constraint firstItem="gR7-b3-wsM" firstAttribute="centerX" secondItem="2qg-AK-QMB" secondAttribute="centerX" id="UAC-gn-saQ"/>
+                            <constraint firstItem="MGw-1A-qup" firstAttribute="centerX" secondItem="2qg-AK-QMB" secondAttribute="centerX" id="fxQ-Qm-gOe"/>
+                            <constraint firstItem="MGw-1A-qup" firstAttribute="height" secondItem="2qg-AK-QMB" secondAttribute="height" id="hbA-mn-uWY"/>
                             <constraint firstItem="dXL-yq-icw" firstAttribute="top" secondItem="gR7-b3-wsM" secondAttribute="bottom" id="iTo-oA-l5x"/>
                             <constraint firstItem="dXL-yq-icw" firstAttribute="centerX" secondItem="2qg-AK-QMB" secondAttribute="centerX" id="uoV-cG-QOs"/>
                             <constraint firstItem="gR7-b3-wsM" firstAttribute="width" secondItem="2qg-AK-QMB" secondAttribute="width" id="vez-cm-TWi"/>
+                            <constraint firstItem="MGw-1A-qup" firstAttribute="centerY" secondItem="2qg-AK-QMB" secondAttribute="centerY" id="xcs-2A-E4I"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Chat" id="J06-Jy-D85">
@@ -283,6 +291,7 @@
                     <connections>
                         <outlet property="chatContentTableView" destination="gR7-b3-wsM" id="kER-mV-fal"/>
                         <outlet property="contentView" destination="dXL-yq-icw" id="dKF-4L-mXh"/>
+                        <outlet property="emptyView" destination="MGw-1A-qup" id="kcE-G1-HjH"/>
                         <outlet property="hiddenButton" destination="Oj7-Lg-iZr" id="SvV-4L-gv6"/>
                         <outlet property="messageContentViewBottomConstraint" destination="O0O-sN-IkO" id="pwr-Kk-ixT"/>
                         <outlet property="messageContentViewHeightConstraint" destination="xVS-Ei-Ogu" id="lnJ-hq-KYv"/>

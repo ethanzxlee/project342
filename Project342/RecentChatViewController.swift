@@ -76,6 +76,13 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewDidAppear(animated: Bool) {
+        if contactsForNewConversation?.count > 0 {
+            let newConversation = self.appModel.createNewConversation(contactsForNewConversation!)
+            self.performSegueWithIdentifier("toChatRoom", sender: newConversation)
+        }
+    }
+    
     // MARK: - Table view data source
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -284,14 +291,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
      }
  
     // MARK: Segue
-    // FIXME: segue to chat room
-    @IBAction func getBackFromCreateNewChat(sender: UIStoryboardSegue){
-        // FIXME: segue perform to ChatRoom
-        if contactsForNewConversation?.count > 0 {
-            let newConversation = self.appModel.createNewConversation(contactsForNewConversation!)
-            self.performSegueWithIdentifier("toChatRoom", sender: newConversation)
-        }
-    }
+    @IBAction func getBackFromCreateNewChat(sender: UIStoryboardSegue){}
     
     @IBAction func unwindFromChatRoom(sender: UIStoryboardSegue){}
     

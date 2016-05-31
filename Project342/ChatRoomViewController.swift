@@ -28,6 +28,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     @IBOutlet weak var chatContentTableView: UITableView!                       // Table View show conversation
     
     @IBOutlet weak var contentView: UIView!                                     // Overall View that consist of TableView, TextView for enter message, and so on
+    @IBOutlet weak var emptyView: UIView!
     
     @IBOutlet weak var messageContentViewBottomConstraint: NSLayoutConstraint!
     
@@ -114,11 +115,19 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     var firstTimeViewSecret = 1  // Detect user first tym to see the secret message or not; 1: Yes, 0:No
     
+    var isLocked = 1  // Detect user lock the conversation or not; 1: Yes, 0:No
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         firstTimeViewSecret = 1
+        
+        if self.conversation!.isLocked == 1{
+            self.authenticateUserForConversation()
+        }
+        else{
+            isLocked = 0
+        }
         
         self.title = conversation?.conversationName!
         
@@ -580,7 +589,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
                         self.firstTimeViewSecret = 0
                         dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), { 
                             dispatch_async(dispatch_get_main_queue(), { 
-                                self.successAlert()
+                                self.successAlert("Password matched. You able to see the secret message by Long Press feature.")
                             })
                         })
 
@@ -594,7 +603,11 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
                             break
                         case LAError.UserFallback.rawValue:
                             print("User would like to enter the password")
-                            self.showAuthenticationPasswordAlert("Please type the password to access the secret message.")
+                            dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+                                dispatch_async(dispatch_get_main_queue(), {
+                                        self.showAuthenticationPasswordAlert("Please type the password to access the secret message.")
+                                    })
+                                })
                             break
                         default:
                             print("Authentication Failed")
@@ -610,6 +623,52 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         }
     }
     
+    func authenticateUserForConversation(){
+        let context = LAContext()
+        
+        var error: NSError?
+        
+        let reasonToldUser = "Authentication is needed to access the conversation"
+        
+        // check the device can support or not
+        if context.canEvaluatePolicy(LAPolicy.DeviceOwnerAuthenticationWithBiometrics, error: &error){
+            context.evaluatePolicy(LAPolicy.DeviceOwnerAuthenticationWithBiometrics, localizedReason: reasonToldUser, reply: { (success, errorPolicy) in
+                if success{
+                    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+                        dispatch_async(dispatch_get_main_queue(), {
+                            self.emptyView.removeFromSuperview()
+                        })
+                    })
+                    
+                }else{
+                    switch (errorPolicy!.code){
+                    case LAError.SystemCancel.rawValue:
+                        print("Authentication was cancelled by system")
+                        break
+                    case LAError.UserCancel.rawValue:
+                        print("Authentication was cancelled by user")
+                        break
+                    case LAError.UserFallback.rawValue:
+                        print("User would like to enter the password")
+                        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+                            dispatch_async(dispatch_get_main_queue(), {
+                                    self.showAuthenticationPasswordAlert("Please type the password to access the conversation.")
+                                })
+                            })
+                        break
+                    default:
+                        print("Authentication Failed")
+                        break
+                    }
+                }
+            })
+        }else{
+            self.showAuthenticationPasswordAlert("Press enter the password to access the conversation")
+        }
+       
+    }
+    
+    
     func showAuthenticationPasswordAlert(msg: String){
         let alertPassword = UIAlertController(title: "Touch ID", message: msg, preferredStyle: .Alert)
         
@@ -621,12 +680,18 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             user.setObject("123456", forKey: "password")
             let password = (alertPassword.textFields![0] as UITextField).text
             if password == user.stringForKey("password"){
-                self.firstTimeViewSecret = 0
-                dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
-                    dispatch_async(dispatch_get_main_queue(), {
-                        self.successAlert()
+                if self.isLocked == 0{
+                    self.firstTimeViewSecret = 0
+                    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+                        dispatch_async(dispatch_get_main_queue(), {
+                                self.successAlert("Password matched. You able to see the secret message by 'Long Press'.")
+                        })
                     })
-                })
+
+                }else{
+                    self.isLocked = 0
+                    self.emptyView.removeFromSuperview()
+                }
             }else{
                 self.showAuthenticationPasswordAlert("Password not matching. Please re-enter the password.")
             }
@@ -648,9 +713,9 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         self.presentViewController(alertPassword, animated: true, completion: nil)
     }
     
-    func successAlert(){
+    func successAlert(msg: String){
         
-        let informAlert = UIAlertController(title: "Information", message: "Password matched. You able to see the secret message by Long Press feature.", preferredStyle: .Alert)
+        let informAlert = UIAlertController(title: "Information", message: msg, preferredStyle: .Alert)
         let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
         informAlert.addAction(cancelAction)
         self.presentViewController(informAlert, animated: true, completion: nil)
