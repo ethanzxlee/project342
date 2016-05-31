@@ -11,7 +11,10 @@ import CoreData
 
 
 class Contact: NSManagedObject {
+    
+}
 
-// Insert code here to add functionality to your managed object subclass
-
+enum ContactStatus: String {
+    case Added = "added"
+    case Request = "request"
 }

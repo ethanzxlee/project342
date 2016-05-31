@@ -2,7 +2,7 @@
 //  Contact+CoreDataProperties.swift
 //  Project342
 //
-//  Created by Zhe Xian Lee on 16/05/2016.
+//  Created by Zhe Xian Lee on 26/05/2016.
 //  Copyright © 2016 UOW. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
@@ -14,10 +14,15 @@ import CoreData
 
 extension Contact {
 
-    @NSManaged var lastName: String?
     @NSManaged var firstName: String?
     @NSManaged var imagePath: String?
+    @NSManaged var lastName: String?
+    @NSManaged var sectionTitleFirstName: String?
+    @NSManaged var sectionTitleLastName: String?
     @NSManaged var userId: String?
+    @NSManaged var updatedAt: NSDate?
+    @NSManaged var createdAt: NSDate?
+    @NSManaged var status: String?
     @NSManaged var conversations: NSSet?
 
 }
