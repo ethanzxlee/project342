@@ -23,9 +23,3 @@ extension Message {
     @NSManaged var conversation: Conversation?
 
 }
-
-enum MessageType: Int{
-    case NormalMessage
-    case Map
-    case Image
-}

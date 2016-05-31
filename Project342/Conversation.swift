@@ -8,10 +8,33 @@
 
 import Foundation
 import CoreData
+import Firebase
 
-
-class Conversation: NSManagedObject {
+final class Conversation: NSManagedObject {
 
 // Insert code here to add functionality to your managed object subclass
+    
+
+}
+
+extension Conversation{
+    func dictionary()-> [String: AnyObject] {
+        // FIXME: NSUSERDEFAULT
+        let membersTempList = members?.allObjects as! [Contact]
+        var membersList = [String: String]()
+        for eachMember in membersTempList{
+            membersList[eachMember.userId!] = eachMember.userId!
+        }
+        let currentUser = FIRAuth.auth()?.currentUser
+        membersList[currentUser!.uid] = currentUser!.uid
+        
+        return [
+            "coverCode": coverCode!,
+            "isLocked": isLocked!,
+            "conversationName": conversationName!,
+            "membersID": membersList
+        ]
+        
+    }
 
 }

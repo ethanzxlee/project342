@@ -158,7 +158,9 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
         
+        messagesDisplay = self.conversation?.messages?.allObjects as! [Message]
         
+        // TODO:Delete below unwanted part
         let context = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
         let message1 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
         let message2 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
@@ -521,13 +523,9 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         guard let _indexPath = indexPath else{
             return
         }
-        let msgIsCover = messagesDisplay[_indexPath.row].shouldCover
         switch (longPressGestureRecognizer.state) {
         case .Began:
             print("Began")
-            
-            // msgIsCover == 1 mean yes
-            if msgIsCover == 1{
                 secretViewer = self.storyboard?.instantiateViewControllerWithIdentifier("SecretMessageViewController")as? SecretMessageViewController
                 secretViewer?.msg = messagesDisplay[_indexPath.row]
                 
@@ -541,9 +539,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
 
                 self.view.addSubview(_secretViewer.view)
                 _secretViewer.didMoveToParentViewController(self)
-            }else{
-                
-            }
+
             
         case .Cancelled:
             print("Cancelled")
@@ -552,16 +548,13 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         case .Ended:
             print("Ended")
             
-            if msgIsCover == 1{
                 guard let _secretViewer = secretViewer else {
                     return
                 }
                 
                 _secretViewer.view.removeFromSuperview()
                 _secretViewer.removeFromParentViewController()
-            }else{
-                
-            }
+    
             
             
         case .Failed:
@@ -574,6 +567,15 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     // MARK: TouchID authenticate
     func viewSecretMessage(longPressGestureRecognizer: UILongPressGestureRecognizer){
+        let locationInView = longPressGestureRecognizer.locationInView(self.chatContentTableView)
+        let indexPath = self.chatContentTableView.indexPathForRowAtPoint(locationInView)
+        guard let _indexPath = indexPath else{
+            return
+        }
+        let msgIsCover = messagesDisplay[_indexPath.row].shouldCover
+        if msgIsCover == 0{
+            return
+        }
         if firstTimeViewSecret == 1{
             
             let context = LAContext()

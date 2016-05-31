@@ -11,22 +11,10 @@
 
 import Foundation
 import CoreData
-import UIKit
 extension Attachment {
 
     @NSManaged var filePath: String?
     @NSManaged var sentDate: NSDate?
     @NSManaged var message: Message?
-    
-    func dictionary()-> NSDictionary{
-        let dateformater = NSDateFormatter()
-        dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-        let img = UIImage(named: "pic.png")!
-        let imgData:NSData = UIImagePNGRepresentation(img)!
-        return [
-            "item": imgData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength) ,
-            "sentDate": dateformater.stringFromDate(self.sentDate!)
-        ]
-    }
     
 }

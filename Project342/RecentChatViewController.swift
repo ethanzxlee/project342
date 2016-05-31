@@ -37,8 +37,9 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         // TODO: MUST DELETE Load inital data for try
-//        willDeleteAfterFinish()
+        //willDeleteAfterFinish()
         
         // Add edit button to navigation bar
         self.navigationItem.leftBarButtonItem = editButtonItem()
@@ -79,7 +80,19 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     override func viewDidAppear(animated: Bool) {
         if contactsForNewConversation?.count > 0 {
             let newConversation = self.appModel.createNewConversation(contactsForNewConversation!)
+            
+            ConversationObserver.observer.conversationCreate(newConversation)
+            contactsForNewConversation?.removeAll(keepCapacity: false)
+            print(contactsForNewConversation?.count)
             self.performSegueWithIdentifier("toChatRoom", sender: newConversation)
+        }else{
+            dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.conversationList = self.appModel.getConversationList(self.numberOfLoading * self.defaultLimit)
+                    self.tableView.reloadData()
+
+                })
+            })
         }
     }
     
@@ -116,14 +129,16 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         // FIXME: temporay set user name
         let members = conversation!.members?.allObjects as! [Contact]
         
-        // FIXME: get the image from Directory
-        let image = UIImage(named: members[0].imagePath!)!
         
-//        let imgName = contact.imagePath
+        // FIXME: Temporary use first members picture
+//        let imgName = members[0].imagePath!
+//        
 //        let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
 //        let documentDirectory = documentPath[0]
-//        let destinationPath = NSURL(fileURLWithPath: documentDirectory).URLByAppendingPathComponent(imgName!)
-//        let image = UIImage(named: destinationPath.absoluteString)
+//        
+//        let image = UIImage(named: "\(documentDirectory)/\(imgName)")!
+        
+        let image = UIImage(named: "pic.png")!
         
         let size = CGSize(width: 50, height: 50)
         let hasAlpha = false
@@ -392,6 +407,11 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
                     contact.firstName = "kkkk \(a)"
                     contact.lastName = "hello"
                     contact.imagePath = "pic.png"
+                    let dateFormater = NSDateFormatter()
+                    dateFormater.dateFormat = "yyyy-MM-dd"
+                    let date = dateFormater.stringFromDate(NSDate())
+                    let rand = Int(arc4random_uniform(9999))
+                    contact.userId = "kkkk\(a)_\(date)_\(rand)"
                     // Try to save
                     do {
                         try context.save()
@@ -403,14 +423,14 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
             }
         }
         
-        let contactList = appModel.getContactList()
-        for a in 0...30{
-                       var contactArry = [Contact]()
-            contactArry.append(contactList[a])
-contactArry.append(contactList[3])
-            contactArry.append(contactList[2])
-            let success = self.appModel.createNewConversation(contactArry)
-        }
+//        let contactList = appModel.getContactList()
+//        for a in 0...30{
+//                       var contactArry = [Contact]()
+//            contactArry.append(contactList[a])
+//contactArry.append(contactList[3])
+//            contactArry.append(contactList[2])
+//            let success = self.appModel.createNewConversation(contactArry)
+//        }
         
 //        if let msg = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedContext) as? Message {
 //            msg.content = "whatever"

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0901B0D81CFD77F5007635C4 /* ConversationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0901B0D71CFD77F5007635C4 /* ConversationObserver.swift */; };
+		0901B0DA1CFD782F007635C4 /* FirebaseRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0901B0D91CFD782F007635C4 /* FirebaseRef.swift */; };
+		0901B0DC1CFD8483007635C4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0901B0DB1CFD8483007635C4 /* GoogleService-Info.plist */; };
+		0901B0DE1CFDE003007635C4 /* MessageObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0901B0DD1CFDE003007635C4 /* MessageObserver.swift */; };
 		090BED031CED454800534DC0 /* CreateNewChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090BED021CED454800534DC0 /* CreateNewChatViewController.swift */; };
 		090E00EA1CFB240000E110A5 /* LeftChatRoomCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E00E61CFB240000E110A5 /* LeftChatRoomCustomCell.swift */; };
 		090E00EB1CFB240000E110A5 /* LeftChatRoomCustomCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 090E00E71CFB240000E110A5 /* LeftChatRoomCustomCell.xib */; };
@@ -62,6 +66,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0901B0D71CFD77F5007635C4 /* ConversationObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationObserver.swift; sourceTree = "<group>"; };
+		0901B0D91CFD782F007635C4 /* FirebaseRef.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseRef.swift; sourceTree = "<group>"; };
+		0901B0DB1CFD8483007635C4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		0901B0DD1CFDE003007635C4 /* MessageObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageObserver.swift; sourceTree = "<group>"; };
 		090BED021CED454800534DC0 /* CreateNewChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateNewChatViewController.swift; sourceTree = "<group>"; };
 		090E00E61CFB240000E110A5 /* LeftChatRoomCustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeftChatRoomCustomCell.swift; sourceTree = "<group>"; };
 		090E00E71CFB240000E110A5 /* LeftChatRoomCustomCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LeftChatRoomCustomCell.xib; sourceTree = "<group>"; };
@@ -140,6 +148,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0901B0D51CFD77B4007635C4 /* Storyboard */ = {
+			isa = PBXGroup;
+			children = (
+				090E00E71CFB240000E110A5 /* LeftChatRoomCustomCell.xib */,
+				090E00E91CFB240000E110A5 /* RightChatRoomCustomCell.xib */,
+				A1A4D9CA1CE86E74006AA3CF /* Main.storyboard */,
+				A1A4D9CF1CE86E74006AA3CF /* LaunchScreen.storyboard */,
+			);
+			name = Storyboard;
+			sourceTree = "<group>";
+		};
+		0901B0D61CFD77C6007635C4 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				0901B0DB1CFD8483007635C4 /* GoogleService-Info.plist */,
+				090E00E61CFB240000E110A5 /* LeftChatRoomCustomCell.swift */,
+				090E00E81CFB240000E110A5 /* RightChatRoomCustomCell.swift */,
+				0932D0E61CF9F569005FC6DF /* CustomLabel.swift */,
+				0901B0D91CFD782F007635C4 /* FirebaseRef.swift */,
+				0901B0D71CFD77F5007635C4 /* ConversationObserver.swift */,
+				0901B0DD1CFDE003007635C4 /* MessageObserver.swift */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
 		093F20E61CEC7C4300F111AB /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -187,20 +220,15 @@
 		A1A4D9C31CE86E74006AA3CF /* Project342 */ = {
 			isa = PBXGroup;
 			children = (
-				090E00E61CFB240000E110A5 /* LeftChatRoomCustomCell.swift */,
-				090E00E71CFB240000E110A5 /* LeftChatRoomCustomCell.xib */,
-				090E00E81CFB240000E110A5 /* RightChatRoomCustomCell.swift */,
-				090E00E91CFB240000E110A5 /* RightChatRoomCustomCell.xib */,
 				A1A4D9C41CE86E74006AA3CF /* AppDelegate.swift */,
-				A1A4D9CA1CE86E74006AA3CF /* Main.storyboard */,
-				A1A4D9CF1CE86E74006AA3CF /* LaunchScreen.storyboard */,
 				A1A4D9D21CE86E74006AA3CF /* Info.plist */,
-				0932D0E61CF9F569005FC6DF /* CustomLabel.swift */,
+				A1A4DA481CE97974006AA3CF /* Project342.xcdatamodeld */,
+				093F20EB1CEC7D6A00F111AB /* Assets.xcassets */,
+				0901B0D51CFD77B4007635C4 /* Storyboard */,
+				0901B0D61CFD77C6007635C4 /* View */,
 				093F20E61CEC7C4300F111AB /* Model */,
 				A1A4DA531CE97ABB006AA3CF /* CoreData */,
 				A1A4D9FA1CE871A9006AA3CF /* ViewController */,
-				A1A4DA481CE97974006AA3CF /* Project342.xcdatamodeld */,
-				093F20EB1CEC7D6A00F111AB /* Assets.xcassets */,
 			);
 			path = Project342;
 			sourceTree = "<group>";
@@ -396,6 +424,7 @@
 				090E00ED1CFB240000E110A5 /* RightChatRoomCustomCell.xib in Resources */,
 				A1A4D9CC1CE86E74006AA3CF /* Main.storyboard in Resources */,
 				090E00EB1CFB240000E110A5 /* LeftChatRoomCustomCell.xib in Resources */,
+				0901B0DC1CFD8483007635C4 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -549,11 +578,13 @@
 				090BED031CED454800534DC0 /* CreateNewChatViewController.swift in Sources */,
 				A1A4DA4A1CE97974006AA3CF /* Project342.xcdatamodeld in Sources */,
 				A1A4DA5F1CE98D06006AA3CF /* Conversation.swift in Sources */,
+				0901B0D81CFD77F5007635C4 /* ConversationObserver.swift in Sources */,
 				A1A4DA061CE873CD006AA3CF /* AddContactsViewController.swift in Sources */,
 				A1A4DA611CE98D06006AA3CF /* Attachment.swift in Sources */,
 				A1A4DA631CE98D06006AA3CF /* Message.swift in Sources */,
 				A1A4D9FC1CE8724E006AA3CF /* UserSettingsViewController.swift in Sources */,
 				A1A4D9C91CE86E74006AA3CF /* ContactsViewController.swift in Sources */,
+				0901B0DE1CFDE003007635C4 /* MessageObserver.swift in Sources */,
 				A1A4D9FE1CE872A4006AA3CF /* ChatRoomViewController.swift in Sources */,
 				09A19FE81CF02978006E410E /* AppModel.swift in Sources */,
 				A1A4DA001CE87351006AA3CF /* AttachmentViewerViewController.swift in Sources */,
@@ -564,6 +595,7 @@
 				A1A4DA021CE87363006AA3CF /* SecretMessageViewController.swift in Sources */,
 				090E00EA1CFB240000E110A5 /* LeftChatRoomCustomCell.swift in Sources */,
 				A1A4DA621CE98D06006AA3CF /* Message+CoreDataProperties.swift in Sources */,
+				0901B0DA1CFD782F007635C4 /* FirebaseRef.swift in Sources */,
 				A1A4D9C51CE86E74006AA3CF /* AppDelegate.swift in Sources */,
 				A1A4DA081CE879A1006AA3CF /* LoginViewController.swift in Sources */,
 				A1A4D9C71CE86E74006AA3CF /* RecentChatViewController.swift in Sources */,

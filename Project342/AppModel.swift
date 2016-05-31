@@ -12,7 +12,6 @@ import CoreData
 class AppModel:NSManagedObjectModel{
     let managedContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
     
-    
     // MARK: -Conversation
     // Get the max range of conversation in Core Data
     func getConversationMaxRange()->Int{
@@ -37,6 +36,9 @@ class AppModel:NSManagedObjectModel{
                 if getConversationList.count > 1 {
                     let sortResult = getConversationList.sort(sortBasedOnLastMessage)
                     return sortResult
+                }else{
+                    
+                    return getConversationList
                 }
                 
             }
@@ -52,6 +54,8 @@ class AppModel:NSManagedObjectModel{
                 if getConversationList.count > 1 {
                     let sortResult = getConversationList.sort(sortBasedOnLastMessage)
                     return sortResult
+                }else{
+                    return getConversationList
                 }
             }
         }catch{}
@@ -81,7 +85,7 @@ class AppModel:NSManagedObjectModel{
              */
             conversation.members = NSSet(array: members)
             conversation.conversationName = self.getConversationName(members)
-            
+            conversation.coverCode = ""
             //Default conversation isUnlocked
             conversation.isLocked = 0
             
@@ -89,6 +93,7 @@ class AppModel:NSManagedObjectModel{
                 try managedContext.save()
                 
                 // TODO: Upload to Firebase with members needed to include current users
+                
                 return conversation
             }catch{
             
@@ -134,6 +139,10 @@ class AppModel:NSManagedObjectModel{
     // Delete particular conversation
     func deleteConversation(conversation: Conversation){
         do{
+            if conversation.members?.count > 1 {
+                ConversationObserver.observer.deleteGroupConversationID(conversation.conversationID!)
+            }
+            ConversationObserver.observer.deleteConversationFromUser(conversation.conversationID!)
             managedContext.deleteObject(conversation)
             try managedContext.save()
         }catch{}
@@ -147,6 +156,7 @@ class AppModel:NSManagedObjectModel{
                 do{
                     let conversationList = self.getAllConversationList()
                     for conversation in conversationList{
+                        ConversationObserver.observer.deleteConversationFromUser(conversation.conversationID!)
                         self.managedContext.deleteObject(conversation)
                     }
                     try self.managedContext.save()
@@ -199,6 +209,7 @@ class AppModel:NSManagedObjectModel{
             
             do {
                 try managedContext.save()
+                ConversationObserver.observer.sendMessage(conversation, message: message)
             }catch{
                 print("Error saving new message")
             }
@@ -264,6 +275,7 @@ class AppModel:NSManagedObjectModel{
             
             do {
                 try managedContext.save()
+                ConversationObserver.observer.sendMessage(conversation, message: message)
             }catch{
                 print("Error saving new message")
             }
@@ -330,6 +342,7 @@ class AppModel:NSManagedObjectModel{
             
             do {
                 try managedContext.save()
+                ConversationObserver.observer.sendMessage(conversation, message: message)
             }catch{
                 print("Error saving new message")
             }
