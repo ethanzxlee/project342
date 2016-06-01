@@ -39,7 +39,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         super.viewDidLoad()
         
         // TODO: MUST DELETE Load inital data for try
-//        willDeleteAfterFinish()
+        willDeleteAfterFinish()
         
         // Add edit button to navigation bar
         self.navigationItem.leftBarButtonItem = editButtonItem()
@@ -157,8 +157,6 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         cell.imageView?.layer.masksToBounds = true
         cell.imageView?.contentMode = .ScaleAspectFit
         cell.textLabel?.text = conversationDict!["conversationName"] as? String
-        print(conversationDict!["conversationName"])
-        
         return cell
      }
 

@@ -472,6 +472,24 @@ class AppModel:NSManagedObjectModel{
 
     }
     
+    func getCoverCode(conversationID: String)->String{
+        let fetchRequest = NSFetchRequest(entityName: "Conversation")
+        fetchRequest.propertiesToFetch = ["coverCode"]
+        fetchRequest.resultType = .DictionaryResultType
+        fetchRequest.fetchLimit = 1
+        fetchRequest.predicate = NSPredicate(format: "conversationID = %@", conversationID)
+        do{
+            if let result = try managedContext.executeFetchRequest(fetchRequest) as? [[String:AnyObject]]{
+                return result[0]["coverCode"] as! String
+            }
+        }catch{
+            print(error)
+        }
+        
+        return ""
+
+    }
+    
     
     // MARK: -Contact
     /**

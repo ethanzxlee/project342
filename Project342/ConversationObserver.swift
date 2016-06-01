@@ -251,60 +251,83 @@ class ConversationObserver {
     }
     
     private func didFirebaseConversationValueChange(snapshot: FIRDataSnapshot) {
-            var conversation: Conversation?
-            
-            
-            // Check if the cxonversation exists
-            let fetchRequest = NSFetchRequest(entityName: "Conversation")
-            fetchRequest.predicate = NSPredicate(format: "conversationID = %@", snapshot.key)
+        var conversation: Conversation?
+        
+        
+        // Check if the cxonversation exists
+        let fetchRequest = NSFetchRequest(entityName: "Conversation")
+        fetchRequest.predicate = NSPredicate(format: "conversationID = %@", snapshot.key)
+        
+        do {
+            conversation = (try managedObjectContext.executeFetchRequest(fetchRequest) as? [Conversation])?.first
+        }
+        catch {
+            print(error)
+        }
+        
+        // Create a new Conversation in CoreData if it doesn't exists
+        if conversation == nil {
+            return
+        }
+    
+        // Update their statuses
+        conversation?.conversationName = snapshot.value!["conversationName"] as? String
+        conversation?.coverCode = snapshot.value!["coverCode"] as? String
+        conversation?.type = snapshot.value!["type"] as? Int
+        conversation?.lastMessageTimestamp = snapshot.value!["lastMessageTimestamp"] as? String
+
+
+        let memberList = snapshot.value!["membersID"] as? [String:String]
+        
+        var memberArray = [Contact]()
+        for member in memberList!{
+            let fetchRequest = NSFetchRequest(entityName: "Contact")
+            fetchRequest.predicate = NSPredicate(format: "userId = %@", member.0)
             
             do {
-                conversation = (try managedObjectContext.executeFetchRequest(fetchRequest) as? [Conversation])?.first
+                if let contact = (try self.managedObjectContext.executeFetchRequest(fetchRequest) as? [Contact])?.first {
+                    memberArray.append(contact)
+                }
+                
             }
             catch {
                 print(error)
             }
             
-            // Create a new Conversation in CoreData if it doesn't exists
-            if conversation == nil {
-                return
+        }
+        conversation?.members = NSSet(array: memberArray)
+        
+        
+        if conversation?.type == ConversationType.Personal.rawValue{
+                conversation?.conversationPhotoPath = memberArray[0].imagePath
+        }else{
+            if snapshot.value!["conversationPhotoPath"] as? String == "" {
+                conversation?.conversationPhotoPath = "group.png"
+            }else{
+                // Create img Path
+                let dateFormatter = NSDateFormatter()
+                dateFormatter.dateFormat = "yyyy_MM_ddHHmm"
+                let imgName = "\(dateFormatter.stringFromDate(NSDate())).png"
+                
+                let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+                let documentDirectory = documentPath[0]
+                let url = NSURL(fileURLWithPath: documentDirectory).URLByAppendingPathComponent(imgName)
+                
+                if let data = snapshot.value!["conversationPhotoPath"] as? NSData{
+                    data.writeToURL(url, atomically: true)
+                    print("Success save image to\n\(url)")
+                }
+                 conversation?.conversationPhotoPath = imgName
             }
-        
-                // Update their statuses
-                conversation?.conversationName = snapshot.value!["conversationName"] as? String
-                
-                
-                conversation?.coverCode = snapshot.value!["coverCode"] as? String
-                conversation?.type = snapshot.value!["type"] as? Int
-                conversation?.lastMessageTimestamp = snapshot.value!["lastMessageTimestamp"] as? String
-                
-                let memberList = snapshot.value!["membersID"] as? [String:String]
-                
-                var memberArray = [Contact]()
-                for member in memberList!{
-                    let fetchRequest = NSFetchRequest(entityName: "Contact")
-                    fetchRequest.predicate = NSPredicate(format: "userId = %@", member.0)
-                    
-                    do {
-                        if let contact = (try self.managedObjectContext.executeFetchRequest(fetchRequest) as? [Contact])?.first {
-                            memberArray.append(contact)
-                        }
-                        
-                    }
-                    catch {
-                        print(error)
-                    }
-                    
-                }
-                conversation?.members = NSSet(array: memberArray)
-        
-                // Save it
-                do {
-                    try self.managedObjectContext.save()
-                }
-                catch {
-                    print(error)
-                }
+        }
+
+        // Save it
+        do {
+            try self.managedObjectContext.save()
+        }
+        catch {
+            print(error)
+        }
         
     }
 

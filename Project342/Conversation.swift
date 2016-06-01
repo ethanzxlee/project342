@@ -32,6 +32,16 @@ extension Conversation{
         }
         let currentUser = FIRAuth.auth()?.currentUser
         membersList[currentUser!.uid] = currentUser!.uid
+        var photoPath = ""
+        if conversationPhotoPath != "group.png" && type == ConversationType.Group.rawValue{
+            let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+            let documentDirectory = documentPath[0]
+            
+            let img = UIImage(named: "\(documentDirectory)/\(conversationPhotoPath!)")!
+            let imgData:NSData = UIImagePNGRepresentation(img)!
+
+            photoPath = imgData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        }
         
         return [
             "coverCode": coverCode!,
@@ -39,6 +49,7 @@ extension Conversation{
             "type": type!,
             "conversationName": conversationName!,
             "membersID": membersList,
+            "conversationPhotoPath": photoPath
         ]
         
     }

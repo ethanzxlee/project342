@@ -39,13 +39,13 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         
         let alertDialog = UIAlertController()
         
-        let takePhotoVideoAction = UIAlertAction(title: "Take Photo/Video", style: .Default) { (_) in
+        let takePhotoAction = UIAlertAction(title: "Take Photo", style: .Default) { (_) in
             self.imagePicker.allowsEditing = false
             self.imagePicker.sourceType = .Camera
             self.presentViewController(self.imagePicker, animated: true, completion: nil)
         }
         
-        let choosePhotoVideoAction = UIAlertAction(title: "Choose Photo/Video", style: .Default){(_) in
+        let choosePhotoAction = UIAlertAction(title: "Choose Photo", style: .Default){(_) in
             self.imagePicker.allowsEditing = false
             self.imagePicker.sourceType = .PhotoLibrary
             self.presentViewController(self.imagePicker, animated: true, completion: nil)
@@ -54,8 +54,8 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
         
         alertDialog.addAction(cancelAction)
-        alertDialog.addAction(takePhotoVideoAction)
-        alertDialog.addAction(choosePhotoVideoAction)
+        alertDialog.addAction(takePhotoAction)
+        alertDialog.addAction(choosePhotoAction)
         self.presentViewController(alertDialog, animated: true, completion: nil)
         
     }
@@ -119,6 +119,8 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     var refreshControl:UIRefreshControl?
     
+    var coverCode = ""
+    
     // Set the number of loading needed for query data from core data
     // Set the default values needed add for the increasing of number of loading
     var numberOfLoading = 1
@@ -130,6 +132,8 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         firstTimeViewSecret = 1
         
         isLocked = self.appModel.getIsLocked(conversationID!)
+        
+        coverCode = self.appModel.getCoverCode(conversationID!)
         
         if isLocked == 1{
             self.authenticateUserForConversation()
@@ -318,12 +322,6 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             
             
         }
-   
-        
-//        // TODO: Do something to send video url
-//        if let video = info[UIImagePickerControllerMediaURL] as? NSURL{
-//            
-//        }
     }
     
     // MARK: TableView
@@ -343,7 +341,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         if indexPath.row > messagesDisplay.count {
             return UITableViewCell()
         }
-        
+        // FIXME: NSUserDefault
         let userInfo = NSUserDefaults()
         userInfo.setObject("wko232", forKey: "userID")
         userInfo.setObject("coverCode", forKey: "coverCode")
@@ -357,7 +355,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             // If cover message
             // FIXME: get cover code from NSUSERdefault??
             if messagesDisplay[indexPath.row].shouldCover == 1{
-                cell.messageContent.text = userInfo.stringForKey("coverCode")
+                cell.messageContent.text = self.coverCode
                 cell.messageContent.sizeToFit()
                 return cell
             }

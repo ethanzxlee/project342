@@ -67,6 +67,9 @@ class MessageObserver {
         for index in 0..<count!{
             let key = "message\(index+1)"
             let message = snapshotValues[key] as? [String: AnyObject]
+            if message == nil {
+                return
+            }
             let dateFormatter = NSDateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
 
@@ -114,25 +117,26 @@ class MessageObserver {
                     attachment.sentDate = dateFormatter.dateFromString(snapshotValues["sentDate"] as! String)
                     attachment.filePath = imgName
                     msg.attachements = NSSet(array: [attachment])
-                    
-                    msg.senderID = message!["senderID"] as? String
-                    msg.shouldCover = message!["shouldCover"] as? Int
-                    msg.content = message!["content"] as? String
-                    msg.sentDate = date
-                    
-                    memberArray.append(msg)
-                    conversation?.messages = NSSet(array: memberArray)
-                    
-                    // Save it
-                    do {
-                        try self.managedObjectContext.save()
-                    }
-                    catch {
-                        print(error)
-                    }
                 }
                 
                 
+                msg.senderID = message!["senderID"] as? String
+                msg.shouldCover = message!["shouldCover"] as? Int
+                msg.content = message!["content"] as? String
+                print(msg.content)
+                msg.sentDate = date
+                
+                memberArray.append(msg)
+                conversation?.messages = NSSet(array: memberArray)
+                
+                // Save it
+                do {
+                    try self.managedObjectContext.save()
+                }
+                catch {
+                    print(error)
+                }
+   
                 
                 
 
