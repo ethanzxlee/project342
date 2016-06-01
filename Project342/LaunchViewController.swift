@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FBSDKLoginKit
 
 class LaunchViewController: UIViewController {
 
@@ -15,5 +16,17 @@ class LaunchViewController: UIViewController {
 
         navigationController?.navigationBarHidden = true
     }
-
+    
+    override func viewWillAppear(animated: Bool) {
+        if(FBSDKAccessToken.currentAccessToken() != nil) {
+            // Users are logged in
+            // We set the view similar to launch screen
+            
+            
+        } else {
+            //They need to log in
+            
+        }
+    }
+    
 }

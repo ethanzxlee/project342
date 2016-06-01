@@ -7,22 +7,26 @@
 //
 
 import UIKit
+import FBSDKCoreKit
 import FBSDKLoginKit
 import FirebaseAuth
 
-class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
+class LoginViewController: UIViewController {
 
-    
-    @IBOutlet weak var btnFacebook: FBSDKLoginButton!
+    @IBOutlet weak var facebookButton: UIButton!
     @IBOutlet weak var usernameField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        configureFacebook()
+    
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
         
-        // Add icon in username UITextField
+        // Add user icon in username UITextField
         let userIcon = UIImageView()
         let user = UIImage(named: "username.png")
         userIcon.image = user
@@ -33,8 +37,8 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
         usernameField.leftViewMode = UITextFieldViewMode.Always
         
         
-        // Add icon in password UITextField
-        let passwordIcon = UIImageView();
+        // Add lock icon in password UITextField
+        let passwordIcon = UIImageView()
         let password = UIImage(named: "password.png")
         passwordIcon.image = password
         passwordIcon.frame = CGRect(x: 15, y: 12, width: 18, height: 18)
@@ -42,12 +46,13 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
         let leftView2 = UIView.init(frame: CGRectMake(0, 0, 35, 30))
         passwordField.leftView = leftView2
         passwordField.leftViewMode = UITextFieldViewMode.Always
-    
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        
+        // Add facebook icon to button
+//        let facebookIcon = UIImageView()
+//        let facebook = UIImage(named: "facebook.png")
+//        facebookIcon.image = facebook
+//        facebookIcon.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+//        facebookButton.addSubview(facebookIcon)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -60,16 +65,40 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    // MARK: Functions
+    // MARK: Actions
     
-    func configureFacebook()
-    {
-        //btnFacebook.readPermissions = ["public_profile", "email", "user_friends"];
-        btnFacebook.delegate = self
+    @IBAction func facebookLogin(sender: AnyObject) {
+        let facebookLogin = FBSDKLoginManager()
+        
+        facebookLogin.logInWithReadPermissions(["public_profile", "email", "user_friends"], fromViewController: self, handler: {
+            (facebookResult, facebookError) -> Void in
+            if facebookError != nil {
+                print("Facebook login failed. Error \(facebookError)")
+            } else if facebookResult.isCancelled {
+                print("Facebook login was cancelled.")
+            } else {
+                print("Logged in)")
+                
+                let accessToken = FBSDKAccessToken.currentAccessToken().tokenString
+                let credential = FIRFacebookAuthProvider.credentialWithAccessToken(accessToken)
+                
+                FIRAuth.auth()?.signInWithCredential(credential, completion: { (user, error) in
+                    if error != nil {
+                        print(error)
+                    } else {
+                        print("Signed in firebase")
+                        
+                        
+                        let nextView = (self.storyboard?.instantiateViewControllerWithIdentifier("TabBarController"))! as! UITabBarController
+                        self.presentViewController(nextView, animated: true, completion: nil)
+                    }
+                })
+            }
+        });
     }
     
-    func loginButton(loginButton: FBSDKLoginButton!, didCompleteWithResult result: FBSDKLoginManagerLoginResult!, error: NSError!)
-    {
+//    func loginButton(loginButton: FBSDKLoginButton!, didCompleteWithResult result: FBSDKLoginManagerLoginResult!, error: NSError!)
+//    {
 //        FBSDKGraphRequest.init(graphPath: "me", parameters: ["fields":"first_name, last_name, picture.type(large)"]).startWithCompletionHandler { (connection, result, error) -> Void in
 //             
 //            let strFirstName: String = (result.objectForKey("first_name") as? String)!
@@ -78,47 +107,45 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
 //            
 //        }
         //let ref = Firebase(url: "https://fiery-fire-3992.firebaseio.com/")
-        let facebookLogin = FBSDKLoginManager()
-        
-        facebookLogin.logInWithReadPermissions(["email"], handler: {
-            (facebookResult, facebookError) -> Void in
-            if facebookError != nil {
-                print("Facebook login failed. Error \(facebookError)")
-                
-//            } else if facebookResult.isCancelled {
-//                print("Facebook login was cancelled.")
-            } else {
-                let accessToken = FBSDKAccessToken.currentAccessToken().tokenString
-                let credential = FIRFacebookAuthProvider.credentialWithAccessToken(accessToken)
-                
-                FIRAuth.auth()?.signInWithCredential(credential, completion: { (user, error) in
-                    if error != nil {
-                        print(error)
-                    }
-                    else {
-                        print(user?.uid)
-                    }
-                })
-                
-//                ref.authWithOAuthProvider("facebook", token: accessToken,
-//                    withCompletionBlock: { error, authData in
-//                        if error != nil {
-//                            print("Login failed. \(error)")
-//                        } else {
-//                            print("Logged in! \(authData)")
-//                            print(authData.uid)
-//                            print(authData.providerData["email"])
-//                        }
-//                })
-            }
-        })
-    }
     
-    func loginButtonDidLogOut(loginButton: FBSDKLoginButton!)
-    {
-        let loginManager: FBSDKLoginManager = FBSDKLoginManager()
-        loginManager.logOut()
-    }
+
+        
+//        loginManager!.logInWithReadPermissions(["email"], handler: {
+//            (facebookResult, facebookError) -> Void in
+//            if facebookError != nil {
+//                print("Facebook login failed. Error \(facebookError)")
+//                
+////            } else if facebookResult.isCancelled {
+////                print("Facebook login was cancelled.")
+//            } else {
+////                self.performSegueWithIdentifier("ShowTabBarViewController2", sender: nil)
+//                let accessToken = FBSDKAccessToken.currentAccessToken().tokenString
+//                let credential = FIRFacebookAuthProvider.credentialWithAccessToken(accessToken)
+//                
+//                FIRAuth.auth()?.signInWithCredential(credential, completion: { (user, error) in
+//                    if error != nil {
+//                        print(error)
+//                    }
+//                    else {
+//                        print(user?.providerData["email"])
+//                        print("Hello")
+//                    }
+//                })
+//                
+////                ref.authWithOAuthProvider("facebook", token: accessToken,
+////                    withCompletionBlock: { error, authData in
+////                        if error != nil {
+////                            print("Login failed. \(error)")
+////                        } else {
+////                            print("Logged in! \(authData)")
+////                            print(authData.uid)
+////                            print(authData.providerData["email"])
+////                        }
+////                })
+//            }
+//        })
+    //}
+
     /*
     // MARK: - Navigation
 
