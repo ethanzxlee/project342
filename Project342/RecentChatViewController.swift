@@ -38,8 +38,6 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TODO: MUST DELETE Load inital data for try
-        willDeleteAfterFinish()
         
         // Add edit button to navigation bar
         self.navigationItem.leftBarButtonItem = editButtonItem()
@@ -378,68 +376,5 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         return true
     }
     
-    
-    // TODO: MUST DELETE
-    func willDeleteAfterFinish(){
-//        let contactList = appModel.getContactList()
-//        var contactArry = [Contact]()
-//        contactArry.append(contactList[1])
-//        contactArry.append(contactList[3])
-//        contactArry.append(contactList[2])
-//        contactArry.append(contactList[4])
-//        contactArry.append(contactList[5])
-//        contactArry.append(contactList[6])
-//        contactArry.append(contactList[7])
-//        contactArry.append(contactList[8])
-//        contactArry.append(contactList[9])
-//        contactArry.append(contactList[10])
-//        contactArry.append(contactList[11])
-//        contactArry.append(contactList[12])
-//        let success = self.appModel.createNewConversation(contactArry)
-//        
-        if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
-            let context = appDelegate.managedObjectContext
-            for a in 0...30{
-                if let contact = NSEntityDescription.insertNewObjectForEntityForName("Contact", inManagedObjectContext: context) as? Contact {
-                    contact.firstName = "kkkk \(a)"
-                    contact.lastName = "hello"
-                    contact.imagePath = "pic.png"
-                    let dateFormater = NSDateFormatter()
-                    dateFormater.dateFormat = "yyyy-MM-dd"
-                    let date = dateFormater.stringFromDate(NSDate())
-                    let rand = Int(arc4random_uniform(9999))
-                    contact.userId = "kkkk\(a)_\(date)_\(rand)"
-                    // Try to save
-                    do {
-                        try context.save()
-                    }
-                    catch {
-                        
-                    }
-                }
-            }
-        }
-        
-//        let contactList = appModel.getContactList()
-//        for a in 0...30{
-//                       var contactArry = [Contact]()
-//            contactArry.append(contactList[a])
-//contactArry.append(contactList[3])
-//            contactArry.append(contactList[2])
-//            let success = self.appModel.createNewConversation(contactArry)
-//        }
-        
-//        if let msg = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedContext) as? Message {
-//            msg.content = "whatever"
-//            msg.sentDate = NSDate()
-//            msg.conversation = conversation
-//            var msgArray = [Message]()
-//            msgArray.append(msg)
-//            conversation.messages = NSSet(array: msgArray)
-//        }
-
-    }
-
-
 }
 
