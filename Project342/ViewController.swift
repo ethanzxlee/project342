@@ -13,15 +13,20 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.navigationController?.navigationBarHidden = true
         // Do any additional setup after loading the view.
     }
-
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.navigationBarHidden = false
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-
     /*
     // MARK: - Navigation
 
@@ -31,10 +36,5 @@ class ViewController: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
-    
-    // Exit model view
-    @IBAction func backButtonPressed(sender: UIStoryboardSegue){
-        
-    }
 
 }
