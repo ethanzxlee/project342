@@ -15,10 +15,12 @@
     <entity name="Conversation" representedClassName=".Conversation" syncable="YES">
         <attribute name="conversationID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="conversationName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="conversationPhotoPath" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="coverCode" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isLocked" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="message" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastMessageTimestamp" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="startIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <relationship name="members" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Contact" inverseName="conversations" inverseEntity="Contact" syncable="YES"/>
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="conversation" inverseEntity="Message" syncable="YES"/>
     </entity>
@@ -34,7 +36,7 @@
     <elements>
         <element name="Attachment" positionX="-405" positionY="126" width="128" height="88"/>
         <element name="Contact" positionX="241" positionY="90" width="128" height="118"/>
-        <element name="Conversation" positionX="18" positionY="108" width="128" height="163"/>
+        <element name="Conversation" positionX="18" positionY="108" width="128" height="193"/>
         <element name="Message" positionX="-216" positionY="108" width="128" height="150"/>
     </elements>
 </model>

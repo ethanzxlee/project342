@@ -1,4 +1,4 @@
-//
+////
 //  AppModel.swift
 //  Project342
 //
@@ -27,37 +27,51 @@ class AppModel:NSManagedObjectModel{
     /**
      Get a list of conversation for display in 'Recently Contact' tab with limit
      */
-    func getConversationList(limit: Int)->[Conversation]{
+    func getConversationList(limit: Int)->[[String: AnyObject]]{
         
         let getConversationRequest = NSFetchRequest(entityName: "Conversation")
         do{
             getConversationRequest.fetchLimit = limit
-            if let getConversationList = try managedContext.executeFetchRequest(getConversationRequest) as? [Conversation]{
-                if getConversationList.count > 1 {
-                    let sortResult = getConversationList.sort(sortBasedOnLastMessage)
-                    return sortResult
-                }else{
-                    
-                    return getConversationList
-                }
-                
+            getConversationRequest.propertiesToFetch = ["conversationID","conversationName", "conversationPhotoPath", "type"]
+            getConversationRequest.resultType = .DictionaryResultType
+            let sortDescriptor = NSSortDescriptor(key: "lastMessageTimestamp", ascending: false)
+            getConversationRequest.sortDescriptors = [sortDescriptor]
+            if let getConversationList = try managedContext.executeFetchRequest(getConversationRequest) as? [[String: AnyObject]]{
+                return getConversationList
             }
+
+                
+            
         }catch{}
         return []
+    }
+    
+    func getConversation(conversationID: String)->Conversation{
+        
+        let getConversationRequest = NSFetchRequest(entityName: "Conversation")
+        getConversationRequest.predicate = NSPredicate(format: "conversationID = %@", conversationID)
+        var result : Conversation?
+        do{
+            
+            if let getConversation = try managedContext.executeFetchRequest(getConversationRequest).first as? Conversation{
+                result = getConversation
+            }
+            
+        }catch{
+            print(error)
+        }
+        return result!
     }
     
     func getAllConversationList()->[Conversation]{
         
         let getConversationRequest = NSFetchRequest(entityName: "Conversation")
         do{
+            
             if let getConversationList = try managedContext.executeFetchRequest(getConversationRequest) as? [Conversation]{
-                if getConversationList.count > 1 {
-                    let sortResult = getConversationList.sort(sortBasedOnLastMessage)
-                    return sortResult
-                }else{
-                    return getConversationList
-                }
+                return getConversationList
             }
+
         }catch{}
         return []
     }
@@ -80,14 +94,27 @@ class AppModel:NSManagedObjectModel{
                 memberConversationList.append(conversation)
                 eachMember.conversations = NSSet(array: memberConversationList)
             }
+            
+            if members.count > 1 {
+                // Set group photo
+                conversation.conversationPhotoPath = "group.png"
+                conversation.type = ConversationType.Group.rawValue
+            }else{
+                conversation.conversationPhotoPath = members[0].imagePath
+                conversation.type = ConversationType.Personal.rawValue
+            }
+            
             /**
              Add the members into conversation list
              */
             conversation.members = NSSet(array: members)
-            conversation.conversationName = self.getConversationName(members)
+            conversation.conversationName = self.createConversationName(members)
             conversation.coverCode = ""
             //Default conversation isUnlocked
             conversation.isLocked = 0
+            let dateformater = NSDateFormatter()
+            dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+            conversation.lastMessageTimestamp = dateformater.stringFromDate(NSDate())
             
             do{
                 try managedContext.save()
@@ -103,8 +130,8 @@ class AppModel:NSManagedObjectModel{
         return Conversation()
     }
     
-    // Get name of conversation
-    func getConversationName(members: [Contact])->String{
+    // Create name of conversation for first tym
+    func createConversationName(members: [Contact])->String{
         var name: String = ""
         if members.count > 2 {
             // Load first 2 people name, the rest with will be ignore and add number
@@ -136,16 +163,41 @@ class AppModel:NSManagedObjectModel{
         return name
     }
     
-    // Delete particular conversation
-    func deleteConversation(conversation: Conversation){
+    func getConversationName(conversationID: String) -> String{
+        
+        let fetchRequest = NSFetchRequest(entityName: "Conversation")
+        fetchRequest.propertiesToFetch = ["conversationName"]
+        fetchRequest.resultType = .DictionaryResultType
+        fetchRequest.predicate = NSPredicate(format: "conversationID = %@", conversationID)
+        fetchRequest.fetchLimit = 1
         do{
-            if conversation.members?.count > 1 {
-                ConversationObserver.observer.deleteGroupConversationID(conversation.conversationID!)
+            if let result = try managedContext.executeFetchRequest(fetchRequest) as? [[String:AnyObject]] {
+                return result[0]["conversationName"] as! String
             }
-            ConversationObserver.observer.deleteConversationFromUser(conversation.conversationID!)
-            managedContext.deleteObject(conversation)
+        }catch{
+            print(error)
+        }
+        return ""
+    }
+    
+    
+    
+    // Delete particular conversation
+    func deleteConversation(conversationID: String){
+        let getConversationRequest = NSFetchRequest(entityName: "Conversation")
+        getConversationRequest.predicate = NSPredicate(format: "conversationID = %@", conversationID)
+        var conversation: Conversation?
+        do{
+            conversation = try managedContext.executeFetchRequest(getConversationRequest).first as? Conversation
+            
+            if conversation?.type == ConversationType.Group.rawValue {
+                ConversationObserver.observer.deleteGroupConversationID(conversation!.conversationID!)
+            }
+            ConversationObserver.observer.deleteConversationFromUser(conversation!.conversationID!)
+            managedContext.deleteObject(conversation!)
             try managedContext.save()
         }catch{}
+        
         
     }
     
@@ -166,7 +218,7 @@ class AppModel:NSManagedObjectModel{
     }
     
     // Do predicate search
-    func searchResult(str: String)->[Conversation]{
+    func searchResult(str: String)->[[String:AnyObject]]{
         // Change the target and searchTerm to lowercaseString to enable get insensitice result
         // Any used for NSArray or NSSet
         let predicate = NSPredicate(format:
@@ -178,20 +230,27 @@ class AppModel:NSManagedObjectModel{
             "(ANY messages.content.lowercaseString IN %@)",
                                     str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString)
         
-        var resultArray = [Conversation]()
+
         do{
             // Get the conversation list from Core Data and filter it using the name
             let fetchRequest = NSFetchRequest(entityName: "Conversation")
+            fetchRequest.predicate = predicate
+            fetchRequest.propertiesToFetch = ["conversationID","conversationName", "conversationPhotoPath", "type"]
+            fetchRequest.resultType = .DictionaryResultType
+            
             // Sorted by conversationName, members.lastName, members.firstName
-            let conversationList = try managedContext.executeFetchRequest(fetchRequest) as NSArray
-            resultArray = conversationList.filteredArrayUsingPredicate(predicate) as! [Conversation]
-            return resultArray
+            let conversationList = try managedContext.executeFetchRequest(fetchRequest) as? [[String:AnyObject]]
+
+            return conversationList!
         }catch{}
         return []
     }
     
     // FIXME: apply to user default
-    func sendMessage(msg: String, conversation: Conversation, isCover: Bool)-> Message{
+    func sendMessage(msg: String, conversationID: String, isCover: Bool)-> Message{
+        
+        let conversation = self.getConversation(conversationID)
+        
         let userInfo = NSUserDefaults()
         userInfo.setObject("wko232", forKey: "userID")
         if let message = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedContext) as? Message{
@@ -201,6 +260,11 @@ class AppModel:NSManagedObjectModel{
             message.senderID = userInfo.stringForKey("userID")!
             message.conversation = conversation
             message.sentDate = NSDate()
+            
+            let dateformater = NSDateFormatter()
+            dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+            conversation.lastMessageTimestamp = dateformater.stringFromDate(NSDate())
+            
             if isCover {
                 message.shouldCover = 1
             }else{
@@ -218,7 +282,10 @@ class AppModel:NSManagedObjectModel{
         return Message()
     }
     // FIXME: apply to user default
-    func sendMessageImage(img: UIImage, conversation: Conversation, isCover: Bool)-> Message{
+    func sendMessageImage(img: UIImage, conversationID: String, isCover: Bool)-> Message{
+        
+        let conversation = self.getConversation(conversationID)
+        
         let userInfo = NSUserDefaults()
         userInfo.setObject("wko232", forKey: "userID")
         
@@ -267,6 +334,11 @@ class AppModel:NSManagedObjectModel{
             message.conversation = conversation
             message.sentDate = NSDate()
             
+            
+            let dateformater = NSDateFormatter()
+            dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+            conversation.lastMessageTimestamp = dateformater.stringFromDate(NSDate())
+            
             if isCover {
                 message.shouldCover = 1
             }else{
@@ -284,7 +356,11 @@ class AppModel:NSManagedObjectModel{
         return Message()
     }
     // FIXME: apply to user default
-    func sendMessageMap(img: UIImage, conversation: Conversation, isCover: Bool, lat: String, lon: String)-> Message{
+    func sendMessageMap(img: UIImage, conversationID: String, isCover: Bool, lat: String, lon: String)-> Message{
+        
+        
+        let conversation = self.getConversation(conversationID)
+        
         let userInfo = NSUserDefaults()
         userInfo.setObject("wko232", forKey: "userID")
         
@@ -334,6 +410,11 @@ class AppModel:NSManagedObjectModel{
             message.conversation = conversation
             message.sentDate = NSDate()
             
+            
+            let dateformater = NSDateFormatter()
+            dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+            conversation.lastMessageTimestamp = dateformater.stringFromDate(NSDate())
+            
             if isCover {
                 message.shouldCover = 1
             }else{
@@ -350,7 +431,46 @@ class AppModel:NSManagedObjectModel{
         }
         return Message()
     }
+    
+    func getMessage(limit: Int, conversationID: String)->[Message]{
+        let fetchRequest = NSFetchRequest(entityName: "Message")
+        fetchRequest.predicate = NSPredicate(format: "conversation.conversationID = %@", conversationID)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "sentDate", ascending: false)]
+        fetchRequest.fetchLimit = limit
+        
+        do{
+            if let getMessageList = try managedContext.executeFetchRequest(fetchRequest) as? [Message]{
+                let getMessageListSorted = getMessageList.sort({ (msg1, msg2) -> Bool in
+                    
+                        let date1 = msg1.sentDate
+                        let date2 = msg2.sentDate
+                        
+                        return date1?.compare(date2!) == NSComparisonResult.OrderedAscending
+                })
+                return getMessageListSorted
+            }
+        }catch{}
+        
+        return []
+    }
+    
+    func getIsLocked(conversationID:String)-> Int{
+        let fetchRequest = NSFetchRequest(entityName: "Conversation")
+        fetchRequest.propertiesToFetch = ["isLocked"]
+        fetchRequest.resultType = .DictionaryResultType
+        fetchRequest.fetchLimit = 1
+        fetchRequest.predicate = NSPredicate(format: "conversationID = %@", conversationID)
+        do{
+            if let result = try managedContext.executeFetchRequest(fetchRequest) as? [[String:AnyObject]]{
+                return result[0]["isLocked"] as! Int
+            }
+        }catch{
+            print(error)
+        }
+        
+        return 0
 
+    }
     
     
     // MARK: -Contact
@@ -379,6 +499,7 @@ class AppModel:NSManagedObjectModel{
         
         let fetchRequest = NSFetchRequest(entityName: "Contact")
         let firstNameSort = NSSortDescriptor(key: "firstName", ascending: true)
+        
         fetchRequest.sortDescriptors = [firstNameSort]
         var resultArray = [Contact]()
         do{

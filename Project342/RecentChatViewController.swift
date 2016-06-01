@@ -23,10 +23,10 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     var nextPage = 0
     
     // Recently conversation list
-    var conversationList = [Conversation]()
+    var conversationListDic = [[String: AnyObject]]()
     
     // Filtered result when use search
-    var filteredConversationList = [Conversation]()
+    var filteredConversationList = [[String: AnyObject]]()
     
     // members for creation of new char
     // get from CreateNewChat
@@ -52,7 +52,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
          Catch the recent conservation form the cored data and assign to an arry variable
          The limit of result is based on the number of loading * defaultLimit
          */
-        conversationList = appModel.getConversationList(numberOfLoading * defaultLimit)
+        conversationListDic = appModel.getConversationList(numberOfLoading * defaultLimit)
         numberOfLoading += 1
         
         
@@ -84,11 +84,11 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
             ConversationObserver.observer.conversationCreate(newConversation)
             contactsForNewConversation?.removeAll(keepCapacity: false)
             print(contactsForNewConversation?.count)
-            self.performSegueWithIdentifier("toChatRoom", sender: newConversation)
+            self.performSegueWithIdentifier("toChatRoom", sender: newConversation.conversationID)
         }else{
             dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
                 dispatch_async(dispatch_get_main_queue(), {
-                    self.conversationList = self.appModel.getConversationList(self.numberOfLoading * self.defaultLimit)
+                    self.conversationListDic = self.appModel.getConversationList(self.numberOfLoading * self.defaultLimit)
                     self.tableView.reloadData()
 
                 })
@@ -106,46 +106,43 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         if self.searchActive{
             return filteredConversationList.count
         }
-        return conversationList.count
+        return conversationListDic.count
     }
     
     
      override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCellWithIdentifier("recentContactReuseCell", forIndexPath: indexPath)
-        var conversation : Conversation?
+        var conversationDict : [String: AnyObject]?
         if searchActive{
-            conversation = self.filteredConversationList[indexPath.row]
+            conversationDict = self.filteredConversationList[indexPath.row]
         }else{
-            conversation = self.conversationList[indexPath.row]
+            conversationDict = self.conversationListDic[indexPath.row]
         }
-        
-        /** 
+
+        /**
          NSHipster.com
          Image Resizing Techniques
          http://nshipster.com/image-resizing/
         */
         
-        // FIXME: temporay set user name
-        let members = conversation!.members?.allObjects as! [Contact]
-        
-        
-        // FIXME: Temporary use first members picture
-//        let imgName = members[0].imagePath!
-//        
-//        let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-//        let documentDirectory = documentPath[0]
-//        
-//        let image = UIImage(named: "\(documentDirectory)/\(imgName)")!
-        
-        let image = UIImage(named: "pic.png")!
+        let image : UIImage?
+        if conversationDict!["conversationPhotoPath"] as? String == "group.png"{
+            image = UIImage(named: "group.png")!
+        }else{
+            let imgName = conversationDict!["conversationPhotoPath"] as? String
+            let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+            let documentDirectory = documentPath[0]
+            image = UIImage(named: "\(documentDirectory)/\(imgName)")
+        }
+
         
         let size = CGSize(width: 50, height: 50)
         let hasAlpha = false
         let scale:CGFloat = 0.0
         
         UIGraphicsBeginImageContextWithOptions(size, hasAlpha, scale)
-        image.drawInRect(CGRect(origin: CGPointZero, size: size))
+        image!.drawInRect(CGRect(origin: CGPointZero, size: size))
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
@@ -160,7 +157,8 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         cell.imageView?.layer.cornerRadius = scaledImage.size.width/2
         cell.imageView?.layer.masksToBounds = true
         cell.imageView?.contentMode = .ScaleAspectFit
-        cell.textLabel?.text = conversation?.conversationName!
+        cell.textLabel?.text = conversationDict!["conversationName"] as? String
+        print(conversationDict!["conversationName"])
         
         return cell
      }
@@ -175,11 +173,13 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
      override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
              // Delete the row from the data source
-            if conversationList[indexPath.row].members?.count > 1{
+            let conversationDict = conversationListDic[indexPath.row]
+            if conversationDict["type"] as? Int == ConversationType.Group.rawValue{
                 let alertDialog = UIAlertController(title: "Delete Group Message", message: "You will be assume left the group if you delete the group message. Do you would like to continue carry out the deletion process?", preferredStyle: .Alert)
                 let yesAction = UIAlertAction(title: "Leave and Delete", style: .Default, handler: { (_) in
-                    self.appModel.deleteConversation(self.conversationList[indexPath.row])
-                    self.conversationList.removeAtIndex(indexPath.row)
+                    
+                    self.appModel.deleteConversation(conversationDict["conversationID"] as! String)
+                    self.conversationListDic.removeAtIndex(indexPath.row)
                     tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
                 })
                 
@@ -190,8 +190,8 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
                 
                 self.presentViewController(alertDialog, animated: true, completion: nil)
             }else{
-                self.appModel.deleteConversation(self.conversationList[indexPath.row])
-                self.conversationList.removeAtIndex(indexPath.row)
+                self.appModel.deleteConversation(conversationDict["conversationID"] as! String)
+                self.conversationListDic.removeAtIndex(indexPath.row)
                 tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
             }
             
@@ -208,10 +208,10 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     // Function for Swipe-up to load more information
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         //if the row reach max, it will remain at the max number of conversation in core data else it will load the data
-        if conversationList.count == appModel.getConversationMaxRange() {
-            nextPage = conversationList.count
+        if conversationListDic.count == appModel.getConversationMaxRange() {
+            nextPage = conversationListDic.count
         }else{
-            nextPage = conversationList.count - 3
+            nextPage = conversationListDic.count - 3
         }
         if indexPath.row == nextPage{
             loadingConservationFromCoreData()
@@ -221,9 +221,9 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if searchActive {
-            self.performSegueWithIdentifier("toChatRoom", sender: filteredConversationList[indexPath.row])
+            self.performSegueWithIdentifier("toChatRoom", sender: filteredConversationList[indexPath.row]["conversationID"] as! String)
         }else{
-            self.performSegueWithIdentifier("toChatRoom", sender: conversationList[indexPath.row])
+            self.performSegueWithIdentifier("toChatRoom", sender: conversationListDic[indexPath.row]["conversationID"] as! String)
         }
     }
     
@@ -238,12 +238,12 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
                 dispatch_async(dispatch_get_main_queue()) {
                 
-                self.nextPage = self.conversationList.count - 3
+                self.nextPage = self.conversationListDic.count - 3
                 // this runs on the main queue
-                self.conversationList.removeAll(keepCapacity: true)
-                self.conversationList = self.appModel.getConversationList(self.numberOfLoading * self.defaultLimit)
-                if self.conversationList.count == self.appModel.getConversationMaxRange() {
-                    self.nextPage = self.conversationList.count
+                self.conversationListDic.removeAll(keepCapacity: true)
+                self.conversationListDic = self.appModel.getConversationList(self.numberOfLoading * self.defaultLimit)
+                if self.conversationListDic.count == self.appModel.getConversationMaxRange() {
+                    self.nextPage = self.conversationListDic.count
                 }
                 self.numberOfLoading += 1
                 self.tableView.reloadData()
@@ -269,7 +269,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     
     // Function for Pull to refresh
     func refreshToGetNewFunction(sender:AnyObject) {
-        self.conversationList = self.appModel.getConversationList(numberOfLoading*defaultLimit)
+        self.conversationListDic = self.appModel.getConversationList(numberOfLoading*defaultLimit)
         self.tableView.reloadData()
         self.refreshControl?.endRefreshing()
     }
@@ -299,7 +299,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         if segue.identifier == "toChatRoom" {
             if let navigationController = segue.destinationViewController as? UINavigationController{
                 if let destionation = navigationController.topViewController as? ChatRoomViewController{
-                    destionation.conversation = sender as? Conversation
+                    destionation.conversationID = sender as? String
                 }
             }
         }
@@ -322,7 +322,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         let alertDialog = UIAlertController(title: "Delete All Chats", message: "The group chats setting will assume you leave the group once delete the conversation. Dou you would like to carry out the deletions? ", preferredStyle: .Alert)
         let yesAction = UIAlertAction(title: "Delete All", style: .Default) { (_) in
             self.appModel.deleteAllConversations()
-            self.conversationList.removeAll()
+            self.conversationListDic.removeAll()
             self.tableView.reloadData()
         }
         let noAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)

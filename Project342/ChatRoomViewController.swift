@@ -78,7 +78,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     @IBAction func sendButtonFunc(sender: AnyObject) {
         if self.textView.text != "" {
-            let messsge = self.appModel.sendMessage(self.textView.text, conversation:  self.conversation!, isCover: self.hiddenMessageSign)
+            let messsge = self.appModel.sendMessage(self.textView.text, conversationID:  self.conversationID!, isCover: self.hiddenMessageSign)
             if messsge.sentDate != nil {
                 messagesDisplay.append(messsge)
             }
@@ -100,8 +100,8 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     var hiddenMessageSign = false
     
     let appModel = AppModel()
-    
-    var conversation: Conversation?
+        
+    var conversationID : String?
     
     var messagesDisplay : [Message] = []
     
@@ -115,14 +115,23 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     var firstTimeViewSecret = 1  // Detect user first tym to see the secret message or not; 1: Yes, 0:No
     
-    var isLocked = 1  // Detect user lock the conversation or not; 1: Yes, 0:No
+    var isLocked = 0  // Detect user lock the conversation or not; 1: Yes, 0:No
+    
+    
+    
+    // Set the number of loading needed for query data from core data
+    // Set the default values needed add for the increasing of number of loading
+    var numberOfLoading = 1
+    let defaultLimit = 20
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         firstTimeViewSecret = 1
         
-        if self.conversation!.isLocked == 1{
+        isLocked = self.appModel.getIsLocked(conversationID!)
+        
+        if isLocked == 1{
             self.authenticateUserForConversation()
         }
         else{
@@ -130,7 +139,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             self.emptyView.removeFromSuperview()
         }
         
-        self.title = conversation?.conversationName!
+        self.title = self.appModel.getConversationName(conversationID!)
         
         self.textView.delegate = self
         self.textView.layer.cornerRadius = 5
@@ -158,7 +167,8 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
         
-        messagesDisplay = self.conversation?.messages?.allObjects as! [Message]
+        messagesDisplay = self.appModel.getMessage(defaultLimit * numberOfLoading, conversationID: conversationID!)
+        numberOfLoading += 1
         
         // TODO:Delete below unwanted part
         let context = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
@@ -323,7 +333,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             let mapPin = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
             
-            let msg = self.appModel.sendMessageMap(mapPin, conversation: self.conversation!, isCover: self.hiddenMessageSign, lat: self.location!.latitude.description, lon: self.location!.longitude.description)
+            let msg = self.appModel.sendMessageMap(mapPin, conversationID: self.conversationID!, isCover: self.hiddenMessageSign, lat: self.location!.latitude.description, lon: self.location!.longitude.description)
             self.messagesDisplay.append(msg)
             self.addRowToTableView()
         }
@@ -335,7 +345,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
   
         if let imgSelected = info[UIImagePickerControllerOriginalImage] as? UIImage{
-            let message = self.appModel.sendMessageImage(imgSelected, conversation: self.conversation!, isCover: self.hiddenMessageSign)
+            let message = self.appModel.sendMessageImage(imgSelected, conversationID: self.conversationID!, isCover: self.hiddenMessageSign)
             self.messagesDisplay.append(message)
             self.dismissViewControllerAnimated(true, completion: nil)
 

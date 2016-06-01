@@ -17,6 +17,11 @@ final class Conversation: NSManagedObject {
 
 }
 
+enum ConversationType: Int {
+    case Personal
+    case Group
+}
+
 extension Conversation{
     func dictionary()-> [String: AnyObject] {
         // FIXME: NSUSERDEFAULT
@@ -32,7 +37,7 @@ extension Conversation{
             "coverCode": coverCode!,
             "isLocked": isLocked!,
             "conversationName": conversationName!,
-            "membersID": membersList
+            "membersID": membersList,
         ]
         
     }
