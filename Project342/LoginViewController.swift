@@ -9,6 +9,7 @@
 import UIKit
 import FBSDKCoreKit
 import FBSDKLoginKit
+import Firebase
 import FirebaseAuth
 
 class LoginViewController: UIViewController {
@@ -17,9 +18,12 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var usernameField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
     
+    var ref: FIRDatabaseReference!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
+        ref = FIRDatabase.database().reference()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -48,11 +52,11 @@ class LoginViewController: UIViewController {
         passwordField.leftViewMode = UITextFieldViewMode.Always
         
         // Add facebook icon to button
-//        let facebookIcon = UIImageView()
-//        let facebook = UIImage(named: "facebook.png")
-//        facebookIcon.image = facebook
-//        facebookIcon.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
-//        facebookButton.addSubview(facebookIcon)
+        let facebookIcon = UIImageView()
+        let facebook = UIImage(named: "facebook.png")
+        facebookIcon.image = facebook
+        facebookIcon.frame = CGRect(x: 22, y: 3, width: 40, height: 40)
+        facebookButton.addSubview(facebookIcon)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -88,9 +92,34 @@ class LoginViewController: UIViewController {
                     } else {
                         print("Signed in firebase")
                         
+                        let storage = FIRStorage.storage()
+                        let storageRef = storage.referenceForURL("gs://fiery-fire-3992.appspot.com")
                         
-                        let nextView = (self.storyboard?.instantiateViewControllerWithIdentifier("TabBarController"))! as! UITabBarController
-                        self.presentViewController(nextView, animated: true, completion: nil)
+                        FBSDKGraphRequest.init(graphPath: "me", parameters: ["fields":"first_name, last_name, picture.type(large)"]).startWithCompletionHandler { (connection, result, error) -> Void in
+                            
+                            let strFirstName: String = (result.objectForKey("first_name") as? String)!
+                            let strLastName: String = (result.objectForKey("last_name") as? String)!
+                            let strPictureURL: String = (result.objectForKey("picture")?.objectForKey("data")?.objectForKey("url") as? String)!
+                            
+                            let data = NSData(contentsOfURL: NSURL(string: strPictureURL)!)
+                            let profilePicRef = storageRef.child("ProfilePic/\((user?.uid)! as String)")
+                            let uploadTask = profilePicRef.putData(data!, metadata: nil)
+                            
+                            uploadTask.observeStatus(.Success) { snapshot in
+                                print("Done")
+                            }
+                            
+                            for profile in user!.providerData {
+                                let providerID = profile.providerID
+                                let uid = profile.uid;  // Provider-specific UID
+                                let email = profile.email
+                                
+                                self.ref.child("users").child(user!.uid).setValue(["facebookid": uid, "provider": providerID, "email": email!, "firstName": strFirstName, "lastName": strLastName])
+                            }
+                        }
+                        
+                        //let nextView = (self.storyboard?.instantiateViewControllerWithIdentifier("TabBarController"))! as! UITabBarController
+                        //self.presentViewController(nextView, animated: true, completion: nil)
                     }
                 })
             }

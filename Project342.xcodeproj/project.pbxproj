@@ -12,7 +12,6 @@
 		960DACB81CFEEC73005038B9 /* UserSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960DACB71CFEEC73005038B9 /* UserSettingsTableViewController.swift */; };
 		9628885C1CF695E700C47387 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9628885B1CF695E700C47387 /* LoginViewController.swift */; };
 		9628885E1CF6960500C47387 /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9628885D1CF6960500C47387 /* SignupViewController.swift */; };
-		96F2EBC41CFA02BF00433176 /* Asset.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96F2EBC31CFA02BF00433176 /* Asset.xcassets */; };
 		A1083D251CEB34C600FFE32A /* ContactListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1083D241CEB34C600FFE32A /* ContactListTableViewCell.swift */; };
 		A1083D271CEB361600FFE32A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1083D261CEB361600FFE32A /* Assets.xcassets */; };
 		A1083D2C1CEC1CFE00FFE32A /* CustomPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1083D2B1CEC1CFE00FFE32A /* CustomPresentationController.swift */; };
@@ -81,7 +80,6 @@
 		960DACB71CFEEC73005038B9 /* UserSettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserSettingsTableViewController.swift; sourceTree = "<group>"; };
 		9628885B1CF695E700C47387 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		9628885D1CF6960500C47387 /* SignupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
-		96F2EBC31CFA02BF00433176 /* Asset.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Asset.xcassets; sourceTree = "<group>"; };
 		A0F73ADE18FAC502123383AC /* Pods_Project342UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Project342UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1083D241CEB34C600FFE32A /* ContactListTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactListTableViewCell.swift; sourceTree = "<group>"; };
 		A1083D261CEB361600FFE32A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -234,7 +232,6 @@
 				A1A4D9C41CE86E74006AA3CF /* AppDelegate.swift */,
 				A1A4D9CA1CE86E74006AA3CF /* Main.storyboard */,
 				A1A4D9CF1CE86E74006AA3CF /* LaunchScreen.storyboard */,
-				96F2EBC31CFA02BF00433176 /* Asset.xcassets */,
 				A1A4D9D21CE86E74006AA3CF /* Info.plist */,
 				A1115A8B1CF95BD200DD2CD1 /* GoogleService-Info.plist */,
 				A1083D261CEB361600FFE32A /* Assets.xcassets */,
@@ -440,7 +437,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96F2EBC41CFA02BF00433176 /* Asset.xcassets in Resources */,
 				A1A4D9D11CE86E74006AA3CF /* LaunchScreen.storyboard in Resources */,
 				A1115A8C1CF95BD200DD2CD1 /* GoogleService-Info.plist in Resources */,
 				A1083D271CEB361600FFE32A /* Assets.xcassets in Resources */,
@@ -771,6 +767,7 @@
 			baseConfigurationReference = AC819E102F18403E9DE93F75 /* Pods-Project342.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -790,6 +787,7 @@
 			baseConfigurationReference = AA9C9396558ADA8F33E1D3DD /* Pods-Project342.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
