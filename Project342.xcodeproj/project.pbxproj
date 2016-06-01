@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		160FD4C2D78454226B6B3F93 /* Pods_Project342Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30B298289EF40F7674660A23 /* Pods_Project342Tests.framework */; };
 		318DC7BD670D22321BC888BB /* Pods_Project342UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F73ADE18FAC502123383AC /* Pods_Project342UITests.framework */; };
+		9628885C1CF695E700C47387 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9628885B1CF695E700C47387 /* LoginViewController.swift */; };
+		9628885E1CF6960500C47387 /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9628885D1CF6960500C47387 /* SignupViewController.swift */; };
+		96F2EBC41CFA02BF00433176 /* Asset.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96F2EBC31CFA02BF00433176 /* Asset.xcassets */; };
 		A1083D251CEB34C600FFE32A /* ContactListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1083D241CEB34C600FFE32A /* ContactListTableViewCell.swift */; };
 		A1083D271CEB361600FFE32A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1083D261CEB361600FFE32A /* Assets.xcassets */; };
 		A1083D2C1CEC1CFE00FFE32A /* CustomPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1083D2B1CEC1CFE00FFE32A /* CustomPresentationController.swift */; };
@@ -16,6 +19,7 @@
 		A1115A8A1CF956C900DD2CD1 /* SearchContactObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1115A891CF956C900DD2CD1 /* SearchContactObserver.swift */; };
 		A1115A8C1CF95BD200DD2CD1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A1115A8B1CF95BD200DD2CD1 /* GoogleService-Info.plist */; };
 		A13723661CED7C97002446F1 /* ContactObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13723651CED7C97002446F1 /* ContactObserver.swift */; };
+		A1423B721CFE9BF000023A17 /* LaunchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1423B711CFE9BF000023A17 /* LaunchViewController.swift */; };
 		A197BF771CF489DA00C7D40D /* UIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A197BF761CF489DA00C7D40D /* UIColorExtensions.swift */; };
 		A197BF791CF48C3300C7D40D /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A197BF781CF48C3300C7D40D /* TabBarController.swift */; };
 		A197BF7D1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A197BF7C1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift */; };
@@ -33,7 +37,6 @@
 		A1A4DA021CE87363006AA3CF /* SecretMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA011CE87363006AA3CF /* SecretMessageViewController.swift */; };
 		A1A4DA041CE87390006AA3CF /* ChatRoomSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA031CE87390006AA3CF /* ChatRoomSettingsViewController.swift */; };
 		A1A4DA061CE873CD006AA3CF /* AddContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA051CE873CD006AA3CF /* AddContactsViewController.swift */; };
-		A1A4DA081CE879A1006AA3CF /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA071CE879A1006AA3CF /* LoginViewController.swift */; };
 		A1A4DA4A1CE97974006AA3CF /* Project342.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA481CE97974006AA3CF /* Project342.xcdatamodeld */; };
 		A1A4DA561CE97AE5006AA3CF /* Contact+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA541CE97AE5006AA3CF /* Contact+CoreDataProperties.swift */; };
 		A1A4DA571CE97AE5006AA3CF /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4DA551CE97AE5006AA3CF /* Contact.swift */; };
@@ -75,6 +78,9 @@
 		30B298289EF40F7674660A23 /* Pods_Project342Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Project342Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BE727CD3B3F5D3CF1E85860 /* Pods_Project342.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Project342.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C5ED0A635A1C317D61FA3B9 /* Pods-Project342UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Project342UITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Project342UITests/Pods-Project342UITests.release.xcconfig"; sourceTree = "<group>"; };
+		9628885B1CF695E700C47387 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		9628885D1CF6960500C47387 /* SignupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
+		96F2EBC31CFA02BF00433176 /* Asset.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Asset.xcassets; sourceTree = "<group>"; };
 		A0F73ADE18FAC502123383AC /* Pods_Project342UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Project342UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1083D241CEB34C600FFE32A /* ContactListTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactListTableViewCell.swift; sourceTree = "<group>"; };
 		A1083D261CEB361600FFE32A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -83,6 +89,7 @@
 		A1115A891CF956C900DD2CD1 /* SearchContactObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchContactObserver.swift; sourceTree = "<group>"; };
 		A1115A8B1CF95BD200DD2CD1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A13723651CED7C97002446F1 /* ContactObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactObserver.swift; sourceTree = "<group>"; };
+		A1423B711CFE9BF000023A17 /* LaunchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchViewController.swift; sourceTree = "<group>"; };
 		A197BF761CF489DA00C7D40D /* UIColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColorExtensions.swift; sourceTree = "<group>"; };
 		A197BF781CF48C3300C7D40D /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		A197BF7C1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactRequestTableViewCell.swift; sourceTree = "<group>"; };
@@ -106,7 +113,6 @@
 		A1A4DA011CE87363006AA3CF /* SecretMessageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecretMessageViewController.swift; sourceTree = "<group>"; };
 		A1A4DA031CE87390006AA3CF /* ChatRoomSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatRoomSettingsViewController.swift; sourceTree = "<group>"; };
 		A1A4DA051CE873CD006AA3CF /* AddContactsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddContactsViewController.swift; sourceTree = "<group>"; };
-		A1A4DA071CE879A1006AA3CF /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		A1A4DA491CE97974006AA3CF /* Project342.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project342.xcdatamodel; sourceTree = "<group>"; };
 		A1A4DA541CE97AE5006AA3CF /* Contact+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Contact+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		A1A4DA551CE97AE5006AA3CF /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
@@ -228,6 +234,7 @@
 				A1A4D9C41CE86E74006AA3CF /* AppDelegate.swift */,
 				A1A4D9CA1CE86E74006AA3CF /* Main.storyboard */,
 				A1A4D9CF1CE86E74006AA3CF /* LaunchScreen.storyboard */,
+				96F2EBC31CFA02BF00433176 /* Asset.xcassets */,
 				A1A4D9D21CE86E74006AA3CF /* Info.plist */,
 				A1115A8B1CF95BD200DD2CD1 /* GoogleService-Info.plist */,
 				A1083D261CEB361600FFE32A /* Assets.xcassets */,
@@ -266,15 +273,17 @@
 			children = (
 				A1A4D9C61CE86E74006AA3CF /* RecentChatViewController.swift */,
 				A1A4D9C81CE86E74006AA3CF /* ContactsViewController.swift */,
-				A1A4DA051CE873CD006AA3CF /* AddContactsViewController.swift */,
 				A1A4D9FB1CE8724E006AA3CF /* UserSettingsViewController.swift */,
 				A1A4D9FD1CE872A4006AA3CF /* ChatRoomViewController.swift */,
 				A1A4D9FF1CE87351006AA3CF /* AttachmentViewerViewController.swift */,
 				A1A4DA011CE87363006AA3CF /* SecretMessageViewController.swift */,
 				A1A4DA031CE87390006AA3CF /* ChatRoomSettingsViewController.swift */,
-				A1A4DA071CE879A1006AA3CF /* LoginViewController.swift */,
 				A197BF781CF48C3300C7D40D /* TabBarController.swift */,
 				A1B03D2C1CFC5CAC00120565 /* TintedAlertViewController.swift */,
+				A1A4DA051CE873CD006AA3CF /* AddContactsViewController.swift */,
+				9628885B1CF695E700C47387 /* LoginViewController.swift */,
+				9628885D1CF6960500C47387 /* SignupViewController.swift */,
+				A1423B711CFE9BF000023A17 /* LaunchViewController.swift */,
 			);
 			name = ViewController;
 			sourceTree = "<group>";
@@ -431,6 +440,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96F2EBC41CFA02BF00433176 /* Asset.xcassets in Resources */,
 				A1A4D9D11CE86E74006AA3CF /* LaunchScreen.storyboard in Resources */,
 				A1115A8C1CF95BD200DD2CD1 /* GoogleService-Info.plist in Resources */,
 				A1083D271CEB361600FFE32A /* Assets.xcassets in Resources */,
@@ -594,6 +604,7 @@
 				A197BF7D1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift in Sources */,
 				A1A4DA631CE98D06006AA3CF /* Message.swift in Sources */,
 				A1115A8A1CF956C900DD2CD1 /* SearchContactObserver.swift in Sources */,
+				9628885C1CF695E700C47387 /* LoginViewController.swift in Sources */,
 				A1A4D9FC1CE8724E006AA3CF /* UserSettingsViewController.swift in Sources */,
 				A1A4D9C91CE86E74006AA3CF /* ContactsViewController.swift in Sources */,
 				A1A4D9FE1CE872A4006AA3CF /* ChatRoomViewController.swift in Sources */,
@@ -607,13 +618,14 @@
 				A1B03D2B1CFACC4100120565 /* Directories.swift in Sources */,
 				A1115A881CF869B300DD2CD1 /* AddContactTableViewCell.swift in Sources */,
 				A197BF791CF48C3300C7D40D /* TabBarController.swift in Sources */,
+				A1423B721CFE9BF000023A17 /* LaunchViewController.swift in Sources */,
 				A1A4DA041CE87390006AA3CF /* ChatRoomSettingsViewController.swift in Sources */,
 				A1B03D2D1CFC5CAC00120565 /* TintedAlertViewController.swift in Sources */,
+				9628885E1CF6960500C47387 /* SignupViewController.swift in Sources */,
 				A1A4DA021CE87363006AA3CF /* SecretMessageViewController.swift in Sources */,
 				A1A4DA621CE98D06006AA3CF /* Message+CoreDataProperties.swift in Sources */,
 				A1A4D9C51CE86E74006AA3CF /* AppDelegate.swift in Sources */,
 				A197BF831CF711AA00C7D40D /* NSDateFormatterExtensions.swift in Sources */,
-				A1A4DA081CE879A1006AA3CF /* LoginViewController.swift in Sources */,
 				A1A4D9C71CE86E74006AA3CF /* RecentChatViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -691,6 +703,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -736,6 +749,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -759,6 +773,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Project342/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = au.edu.uow.Project342;
@@ -774,6 +792,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Project342/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = au.edu.uow.Project342;
