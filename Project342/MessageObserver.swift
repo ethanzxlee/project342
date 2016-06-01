@@ -33,28 +33,14 @@ class MessageObserver {
         // Remove any existing observer
         stopObservingMessageEvents()
         
-        guard let currentUser = FIRAuth.auth()?.currentUser else {
-            print("No logged in user")
-            return
-        }
-        // Get a list of conversation
-        let fetchRequest = NSFetchRequest(entityName: "Conversation")
-        fetchRequest.propertiesToFetch = ["conversationID"]
-        fetchRequest.resultType = NSFetchRequestResultType.DictionaryResultType
-        var conversationIDs: [[String: String]] = []
-        do {
-            conversationIDs = try managedObjectContext.executeFetchRequest(fetchRequest) as! [[String: String]]
-        }
-        catch {
-            print(error)
-        }
-        for eachConversation in conversationIDs
-        {
-            for (key,_) in eachConversation{
-                messageChangedEventHandle = FirebaseRef.msgRef?.child(key).observeEventType(.Value, withBlock: { (conversationSnapshot) in
-                    self.didFirebaseMessageValueChange(conversationSnapshot, conversationID: key)
-                })
-            }
+        let appModel = AppModel()
+        let conversationIDList = appModel.getConversationList(appModel.getConversationMaxRange())
+        
+        for conversation in conversationIDList{
+            let id = conversation["conversationID"] as! String
+            messageChangedEventHandle = FirebaseRef.msgRef?.child(id).observeEventType(.Value, withBlock: { (snapshot) in
+                self.didFirebaseMessageValueChange(snapshot, conversationID: id)
+            })
         }
         
     }
@@ -81,10 +67,13 @@ class MessageObserver {
         for index in 0..<count!{
             let key = "message\(index+1)"
             let message = snapshotValues[key] as? [String: AnyObject]
-            
+            let dateFormatter = NSDateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+
+            let date = dateFormatter.dateFromString(message!["sentDate"] as! String)
             // Check if the message exists
             let fetchRequest = NSFetchRequest(entityName: "Message")
-            fetchRequest.predicate = NSPredicate(format: "conversation.conversationID = %@ AND sentDate = %@", conversationID, (message!["sentDate"] as? String)!)
+            fetchRequest.predicate = NSPredicate(format: "conversation.conversationID = %@ AND sentDate = %@", conversationID, date!)
             
             
             let fetchRequest2 = NSFetchRequest(entityName: "Conversation")
@@ -92,8 +81,8 @@ class MessageObserver {
             var result = 0
             var conversation : Conversation?
             do {
-                result = ((try managedObjectContext.executeFetchRequest(fetchRequest) as? [Conversation])?.count)!
-                conversation = (try managedObjectContext.executeFetchRequest(fetchRequest) as? [Conversation])?.first
+                result = ((try managedObjectContext.executeFetchRequest(fetchRequest) as? [Message])?.count)!
+                conversation = (try managedObjectContext.executeFetchRequest(fetchRequest2) as? [Conversation])?.first
             }
             catch {
                 print(error)
@@ -125,22 +114,26 @@ class MessageObserver {
                     attachment.sentDate = dateFormatter.dateFromString(snapshotValues["sentDate"] as! String)
                     attachment.filePath = imgName
                     msg.attachements = NSSet(array: [attachment])
+                    
+                    msg.senderID = message!["senderID"] as? String
+                    msg.shouldCover = message!["shouldCover"] as? Int
+                    msg.content = message!["content"] as? String
+                    msg.sentDate = date
+                    
+                    memberArray.append(msg)
+                    conversation?.messages = NSSet(array: memberArray)
+                    
+                    // Save it
+                    do {
+                        try self.managedObjectContext.save()
+                    }
+                    catch {
+                        print(error)
+                    }
                 }
-                msg.senderID = snapshotValues["senderID"] as? String
-                msg.shouldCover = snapshotValues["shouldCover"] as? Int
-                
-                memberArray.append(msg)
                 
                 
-                conversation?.messages = NSSet(array: memberArray)
                 
-                // Save it
-                do {
-                    try self.managedObjectContext.save()
-                }
-                catch {
-                    print(error)
-                }
                 
 
             }

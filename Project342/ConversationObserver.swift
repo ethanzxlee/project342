@@ -62,6 +62,10 @@ class ConversationObserver {
             count += 1
             let messageKey = "message\(count)"
             
+            // Update 'lastMessageTimestamp" in conversation
+            FirebaseRef.conversationsRef?.child(conversation.conversationID!).updateChildValues(["lastMessageTimestamp": (message.sentDate?.description)!])
+            
+            // Update message
             FirebaseRef.msgRef?.child(conversation.conversationID!).updateChildValues(["count": count])
             if message.type == MessageType.Image.rawValue {
                 FirebaseRef.msgRef?.child(conversation.conversationID!).updateChildValues([messageKey: message.dictionaryImage()])
@@ -123,9 +127,10 @@ class ConversationObserver {
         FirebaseRef.conversationsRef?.child(conversationID).child("membersID").child(currentUser.uid).removeValue()
     }
     
-    func observeConversationEvents() {
+    // ConversationMember
+    func observeConversationMemberEvents() {
         // Remove any existing observer
-        stopObservingConversationEvents()
+        stopObservingConversationMemberEvents()
         
         guard let currentUser = FIRAuth.auth()?.currentUser else {
             print("No logged in user")
@@ -137,7 +142,7 @@ class ConversationObserver {
         })
     }
     
-    func stopObservingConversationEvents() {
+    func stopObservingConversationMemberEvents() {
         guard
             let conversationChangedEventHandle = conversationChangedEventHandle
             else {
@@ -179,24 +184,31 @@ class ConversationObserver {
                 // Update their statuses
                 conversation?.conversationID = conversationID.0
                 conversation?.conversationName = snapshot.value!["conversationName"] as? String
+                
+                
                 conversation?.coverCode = snapshot.value!["coverCode"] as? String
-                conversation?.isLocked = snapshot.value!["isLocked"] as? Int
+                conversation?.type = snapshot.value!["type"] as? Int
+                conversation?.lastMessageTimestamp = snapshot.value!["lastMessageTimestamp"] as? String
+                
                 let memberList = snapshot.value!["membersID"] as? [String:String]
+
                 var memberArray = [Contact]()
                 for member in memberList!{
                     let fetchRequest = NSFetchRequest(entityName: "Contact")
-                    fetchRequest.predicate = NSPredicate(format: "userID = %@", member.0)
-                    
+                    fetchRequest.predicate = NSPredicate(format: "userId = %@", member.0)
+
                     do {
-                        let contact = (try self.managedObjectContext.executeFetchRequest(fetchRequest) as? [Contact])?.first
-                        memberArray.append(contact!)
+                        if let contact = (try self.managedObjectContext.executeFetchRequest(fetchRequest) as? [Contact])?.first {
+                            memberArray.append(contact)
+                        }
+                        
                     }
                     catch {
                         print(error)
                     }
 
-
                 }
+                conversation?.members = NSSet(array: memberArray)
                 
                 // Save it
                 do {
@@ -210,5 +222,91 @@ class ConversationObserver {
             })
         }
     }
+    
+    // Conversation
+    func observeConversationEvents() {
+        // Remove any existing observer
+        stopObservingConversationEvents()
+
+        let appModel = AppModel()
+        let conversationIDList = appModel.getConversationList(appModel.getConversationMaxRange())
+        
+        for conversation in conversationIDList{
+            let id = conversation["conversationID"] as! String
+            conversationChangedEventHandle = FirebaseRef.conversationsRef?.child(id).observeEventType(.Value, withBlock: { (snapshot) in
+                self.didFirebaseConversationValueChange(snapshot)
+            })
+        }
+        
+       
+    }
+    
+    func stopObservingConversationEvents() {
+        guard
+            let conversationChangedEventHandle = conversationChangedEventHandle
+            else {
+                return
+        }
+        FirebaseRef.conversationMembersRef?.removeObserverWithHandle(conversationChangedEventHandle)
+    }
+    
+    private func didFirebaseConversationValueChange(snapshot: FIRDataSnapshot) {
+            var conversation: Conversation?
+            
+            
+            // Check if the cxonversation exists
+            let fetchRequest = NSFetchRequest(entityName: "Conversation")
+            fetchRequest.predicate = NSPredicate(format: "conversationID = %@", snapshot.key)
+            
+            do {
+                conversation = (try managedObjectContext.executeFetchRequest(fetchRequest) as? [Conversation])?.first
+            }
+            catch {
+                print(error)
+            }
+            
+            // Create a new Conversation in CoreData if it doesn't exists
+            if conversation == nil {
+                return
+            }
+        
+                // Update their statuses
+                conversation?.conversationName = snapshot.value!["conversationName"] as? String
+                
+                
+                conversation?.coverCode = snapshot.value!["coverCode"] as? String
+                conversation?.type = snapshot.value!["type"] as? Int
+                conversation?.lastMessageTimestamp = snapshot.value!["lastMessageTimestamp"] as? String
+                
+                let memberList = snapshot.value!["membersID"] as? [String:String]
+                
+                var memberArray = [Contact]()
+                for member in memberList!{
+                    let fetchRequest = NSFetchRequest(entityName: "Contact")
+                    fetchRequest.predicate = NSPredicate(format: "userId = %@", member.0)
+                    
+                    do {
+                        if let contact = (try self.managedObjectContext.executeFetchRequest(fetchRequest) as? [Contact])?.first {
+                            memberArray.append(contact)
+                        }
+                        
+                    }
+                    catch {
+                        print(error)
+                    }
+                    
+                }
+                conversation?.members = NSSet(array: memberArray)
+        
+                // Save it
+                do {
+                    try self.managedObjectContext.save()
+                }
+                catch {
+                    print(error)
+                }
+        
+    }
+
     
 }

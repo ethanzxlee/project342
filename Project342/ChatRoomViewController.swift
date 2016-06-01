@@ -117,7 +117,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     var isLocked = 0  // Detect user lock the conversation or not; 1: Yes, 0:No
     
-    
+    var refreshControl:UIRefreshControl?
     
     // Set the number of loading needed for query data from core data
     // Set the default values needed add for the increasing of number of loading
@@ -155,6 +155,11 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         self.chatContentTableView.rowHeight = UITableViewAutomaticDimension
         self.chatContentTableView.estimatedRowHeight = 300
         
+        self.refreshControl = UIRefreshControl()
+        self.refreshControl?.attributedTitle = NSAttributedString(string: "Refresh")
+        self.refreshControl?.addTarget(self, action: #selector(ChatRoomViewController.refreshTableView), forControlEvents: .ValueChanged)
+        self.chatContentTableView.addSubview(self.refreshControl!)
+        
         self.imagePicker.delegate = self
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ChatRoomViewController.tapGestureFunc))
@@ -169,47 +174,6 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         
         messagesDisplay = self.appModel.getMessage(defaultLimit * numberOfLoading, conversationID: conversationID!)
         numberOfLoading += 1
-        
-        // TODO:Delete below unwanted part
-        let context = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
-        let message1 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
-        let message2 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
-        
-        message1.content = "hello world. It is so fucking cold a=even though i just open a small gap of my door. The wind still flow from my living room to my bed room. What the fuck. This is so fuck. I just have one day to do 342 project. Tmr i still need to do revision for my quiz meanwhile I have touch my 321 documentation."
-
-        message2.content = "hello world. It is so fucking cold a=even though i just open a small gap of my door. The wind still flow from my living room to my bed room. What the fuck. This is so fuck. I just have one day to do 342 project. Tmr i still need to do revision for my quiz meanwhile I have touch my 321 documentation."
-        message2.shouldCover = 1
-         message1.shouldCover = 0
-        messagesDisplay.append(message1)
-        messagesDisplay.append(message2)
-        message1.senderID="1234"
-        message2.senderID="888"
-        let message3 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
-        let message4 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
-        
-        message3.content = "hello world.\nhello world.\nwhy right s"
-        
-        message4.content = "hello "
-        
-        message3.senderID="888"
-        message4.senderID="888"
-        
-        messagesDisplay.append(message3)
-        messagesDisplay.append(message4)
-        
-        let message5 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
-        let message6 = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as! Message
-        
-        message6.content = "hello world.\nhello world.\nwhy right"
-        
-        message5.content = "ht  "
-        
-        
-        message5.senderID="1234"
-        message6.senderID="888"
-        
-        messagesDisplay.append(message5)
-        messagesDisplay.append(message6)
         
     }
 
@@ -376,6 +340,10 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        if indexPath.row > messagesDisplay.count {
+            return UITableViewCell()
+        }
+        
         let userInfo = NSUserDefaults()
         userInfo.setObject("wko232", forKey: "userID")
         userInfo.setObject("coverCode", forKey: "coverCode")
@@ -507,6 +475,16 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         self.chatContentTableView.endUpdates()
         
         self.chatContentTableView.scrollToRowAtIndexPath(NSIndexPath(forRow: self.messagesDisplay.count-1, inSection:0), atScrollPosition: .Middle, animated: true)
+    }
+    
+    // MARK: Refresh Control
+    func refreshTableView(){
+        self.messagesDisplay = self.appModel.getMessage(defaultLimit*numberOfLoading, conversationID: self.conversationID!)
+        if self.messagesDisplay.count != self.appModel.getConversationMaxRange() {
+            numberOfLoading += 1
+        }
+        
+        self.refreshControl?.endRefreshing()
     }
 
     // MARK: Gesture

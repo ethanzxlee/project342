@@ -35,7 +35,8 @@ extension Conversation{
         
         return [
             "coverCode": coverCode!,
-            "isLocked": isLocked!,
+            "lastMessageTimestamp":lastMessageTimestamp!,
+            "type": type!,
             "conversationName": conversationName!,
             "membersID": membersList,
         ]

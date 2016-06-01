@@ -39,7 +39,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         super.viewDidLoad()
         
         // TODO: MUST DELETE Load inital data for try
-        //willDeleteAfterFinish()
+//        willDeleteAfterFinish()
         
         // Add edit button to navigation bar
         self.navigationItem.leftBarButtonItem = editButtonItem()
@@ -57,7 +57,6 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         
         
         searchBar.delegate = self
-        
         
         refreshControl = UIRefreshControl()
         refreshControl?.attributedTitle = NSAttributedString(string: "Refresh")
@@ -142,7 +141,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         let scale:CGFloat = 0.0
         
         UIGraphicsBeginImageContextWithOptions(size, hasAlpha, scale)
-        image!.drawInRect(CGRect(origin: CGPointZero, size: size))
+        image?.drawInRect(CGRect(origin: CGPointZero, size: size))
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
