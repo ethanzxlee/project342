@@ -265,9 +265,9 @@ class ConversationObserver {
             print(error)
         }
         
-        // Create a new Conversation in CoreData if it doesn't exists
+        // Prevent any empty or meesed data get from Firebase
         if conversation == nil {
-            conversation?.conversationID = snapshot.key
+            return
         }
     
         // Update their statuses

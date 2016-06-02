@@ -588,6 +588,11 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
                             break
                         case LAError.UserCancel.rawValue:
                             print("Authentication was cancelled by user")
+                            dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+                                dispatch_async(dispatch_get_main_queue(), {
+                                    self.showAuthenticationPasswordAlert("Please type the password to access the secret message.")
+                                })
+                            })
                             break
                         case LAError.UserFallback.rawValue:
                             print("User would like to enter the password")
@@ -635,6 +640,11 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
                         break
                     case LAError.UserCancel.rawValue:
                         print("Authentication was cancelled by user")
+                        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+                            dispatch_async(dispatch_get_main_queue(), {
+                                self.showAuthenticationPasswordAlert("Please type the password to access the conversation.")
+                            })
+                        })
                         break
                     case LAError.UserFallback.rawValue:
                         print("User would like to enter the password")
