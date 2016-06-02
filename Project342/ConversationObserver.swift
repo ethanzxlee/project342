@@ -267,7 +267,7 @@ class ConversationObserver {
         
         // Create a new Conversation in CoreData if it doesn't exists
         if conversation == nil {
-            conversation?.conversationName = snapshot.key
+            conversation?.conversationID = snapshot.key
         }
     
         // Update their statuses
