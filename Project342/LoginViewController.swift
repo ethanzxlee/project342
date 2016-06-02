@@ -17,18 +17,22 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var facebookButton: UIButton!
     @IBOutlet weak var usernameField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
+    @IBOutlet weak var loadingView: UIView!
+    @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     
     var ref: FIRDatabaseReference!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Get reference for firebase's database
         ref = FIRDatabase.database().reference()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(false, animated: true)
+        self.loadingView.hidden = true
         
         // Add user icon in username UITextField
         let userIcon = UIImageView()
@@ -39,7 +43,6 @@ class LoginViewController: UIViewController {
         let leftView1 = UIView.init(frame: CGRectMake(0, 0, 35, 30))
         usernameField.leftView = leftView1
         usernameField.leftViewMode = UITextFieldViewMode.Always
-        
         
         // Add lock icon in password UITextField
         let passwordIcon = UIImageView()
@@ -59,9 +62,12 @@ class LoginViewController: UIViewController {
         facebookButton.addSubview(facebookIcon)
     }
     
+    // Hide navigation bar when view is going to disppear
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.navigationBarHidden = true
+        self.activityIndicatorView.stopAnimating()
+        self.loadingView.hidden = true
     }
     
     override func didReceiveMemoryWarning() {
@@ -71,6 +77,7 @@ class LoginViewController: UIViewController {
     
     // MARK: Actions
     
+    // Logging in with facebook
     @IBAction func facebookLogin(sender: AnyObject) {
         let facebookLogin = FBSDKLoginManager()
         
@@ -83,43 +90,64 @@ class LoginViewController: UIViewController {
             } else {
                 print("Logged in)")
                 
+                // Get loading view up
+                self.loadingView.hidden = false
+                self.activityIndicatorView.startAnimating()
+                
+                // Get an access token for signed in user
                 let accessToken = FBSDKAccessToken.currentAccessToken().tokenString
+                
+                // Use the access token to exchange for Firebase credential
                 let credential = FIRFacebookAuthProvider.credentialWithAccessToken(accessToken)
                 
                 FIRAuth.auth()?.signInWithCredential(credential, completion: { (user, error) in
                     if error != nil {
                         print(error)
                     } else {
+                        // Signed in to firebase
                         print("Signed in firebase")
                         
+                        // Create a root reference, using default Firebase App
                         let storage = FIRStorage.storage()
+                        
+                        // Create a storage reference from our storage service
                         let storageRef = storage.referenceForURL("gs://fiery-fire-3992.appspot.com")
                         
+                        // Query first_name, last_name and large profile picture using fbsdk
                         FBSDKGraphRequest.init(graphPath: "me", parameters: ["fields":"first_name, last_name, picture.type(large)"]).startWithCompletionHandler { (connection, result, error) -> Void in
                             
                             let strFirstName: String = (result.objectForKey("first_name") as? String)!
                             let strLastName: String = (result.objectForKey("last_name") as? String)!
                             let strPictureURL: String = (result.objectForKey("picture")?.objectForKey("data")?.objectForKey("url") as? String)!
                             
+                            // Get image as the NSData
                             let data = NSData(contentsOfURL: NSURL(string: strPictureURL)!)
+                            
+                            // Create a reference to file we're going to upload using user's id
                             let profilePicRef = storageRef.child("ProfilePic/\((user?.uid)! as String)")
+                            
+                            // Upload the picture
                             let uploadTask = profilePicRef.putData(data!, metadata: nil)
                             
+                            // Done uploading picture to firebase
                             uploadTask.observeStatus(.Success) { snapshot in
                                 print("Done")
                             }
                             
+                            // Get provider id, facebook's user id and email from FIRUser
                             for profile in user!.providerData {
                                 let providerID = profile.providerID
                                 let uid = profile.uid;  // Provider-specific UID
                                 let email = profile.email
                                 
+                                // Save data to firebase
                                 self.ref.child("users").child(user!.uid).setValue(["facebookid": uid, "provider": providerID, "email": email!, "firstName": strFirstName, "lastName": strLastName])
                             }
+                            
+                            // Move to tab view controller
+                            let nextView = (self.storyboard?.instantiateViewControllerWithIdentifier("TabBarController"))! as! UITabBarController
+                            self.presentViewController(nextView, animated: true, completion: nil)
                         }
-                        
-                        //let nextView = (self.storyboard?.instantiateViewControllerWithIdentifier("TabBarController"))! as! UITabBarController
-                        //self.presentViewController(nextView, animated: true, completion: nil)
                     }
                 })
             }

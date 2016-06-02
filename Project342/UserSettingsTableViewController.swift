@@ -30,41 +30,41 @@ class UserSettingsTableViewController: UITableViewController {
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        return 0
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 1
+        return 0
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("SettingsCell", forIndexPath: indexPath)
-
-        cell.textLabel?.text = "Log out"
-
-        return cell
-    }
- 
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if indexPath.row == 0 {
-            try! FIRAuth.auth()!.signOut()
-            
-            FIRAuth.auth()?.addAuthStateDidChangeListener { auth, user in
-                if let user = user {
-                    // User is signed in.
-                    print("I'm logged in")
-                    
-                } else {
-                    // No user is signed in.
-                    print("Logged out")
-                    let backView = (self.storyboard?.instantiateViewControllerWithIdentifier("LaunchViewController"))! as UIViewController
-                    self.presentViewController(backView, animated: true, completion: nil)
-                }
-            }
-            
-        }
-    }
+//    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCellWithIdentifier("SettingsCell", forIndexPath: indexPath)
+//
+//        cell.textLabel?.text = "Log out"
+//
+//        return cell
+//    }
+// 
+//    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+//        if indexPath.row == 0 {
+//            try! FIRAuth.auth()!.signOut()
+//            
+//            FIRAuth.auth()?.addAuthStateDidChangeListener { auth, user in
+//                if let user = user {
+//                    // User is signed in.
+//                    print("I'm logged in")
+//                    
+//                } else {
+//                    // No user is signed in.
+//                    print("Logged out")
+//                    let backView = (self.storyboard?.instantiateViewControllerWithIdentifier("LaunchViewController"))! as UIViewController
+//                    self.presentViewController(backView, animated: true, completion: nil)
+//                }
+//            }
+//            
+//        }
+//    }
 
     /*
     // Override to support conditional editing of the table view.
