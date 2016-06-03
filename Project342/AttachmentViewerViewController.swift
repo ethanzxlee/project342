@@ -123,6 +123,7 @@ class AttachmentViewerViewController: UIViewController, UIScrollViewDelegate {
         view.layoutIfNeeded()
     }
     
+    // Long Press function for Saved Image
     func longPressFunc(longPressGestureRecognizer: UILongPressGestureRecognizer){
         switch (longPressGestureRecognizer.state) {
         case .Began:

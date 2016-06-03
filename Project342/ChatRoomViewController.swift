@@ -97,7 +97,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     let locationManager = CLLocationManager()
     
-    var hiddenMessageSign = false
+    var hiddenMessageSign = false                           // Indicate the message sent is hidden message or not
     
     let appModel = AppModel()
         
@@ -105,9 +105,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     var messagesDisplay : [Message] = []
     
-    var secretViewer: SecretMessageViewController?
-    
-    var attachmentViewer: AttachmentViewerViewController?
+    var secretViewer: SecretMessageViewController?          // To enable secret message view appear within current view
     
     var constraint = NSLayoutConstraint()
     
@@ -260,6 +258,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         self.shareLocation()
     }
     
+    // Load the location and take a snapshot of image to shown in conversation chat room
     func shareLocation(){
         let newFrame = CGRect(x: 0, y: 0, width: 100, height: 100)
         let map = MKMapView(frame: newFrame)
@@ -467,6 +466,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         }
     }
     
+    // Add new row to table view and scroll to the latest row
     func addRowToTableView(){
         self.chatContentTableView.beginUpdates()
         self.chatContentTableView.insertRowsAtIndexPaths([NSIndexPath(forRow: self.messagesDisplay.count-1, inSection:0)] , withRowAnimation: UITableViewRowAnimation.Automatic)

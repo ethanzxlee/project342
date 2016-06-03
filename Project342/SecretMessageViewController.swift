@@ -31,12 +31,6 @@ class SecretMessageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        //TODO: MUST DELETE
-//        loadInitialDataFortry()
-        
-        // Load the message content into the text view. if it iis empty, hide the view
-        // If gt message MEAN it is not voice message
-
         let type = msg?.type
         print(type)
         if type == MessageType.NormalMessage.rawValue {
@@ -117,85 +111,5 @@ class SecretMessageViewController: UIViewController {
     }
     */
     
-    
-    //TODO: MUST DELETE
-    func loadInitialDataFortry(){
-        if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
-            let context = appDelegate.managedObjectContext
-            
-                
-                if let message = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as? Message {
-                    message.content = "WHaevery isnmdfmnlksjk ns df jsnd fkj sfsjdnfkjnfoijer wernkljsnf9 oisnfinso s9aduf9o d"
-                    
-                    var imgS = [Attachment]()
-                    let attachment = NSEntityDescription.insertNewObjectForEntityForName("Attachment", inManagedObjectContext: context) as? Attachment
-                        attachment!.filePath = "Concentrate and ask again.m4a"
-                        attachment!.message = message
-                        imgS.append(attachment!)
-                    
-//                    let attachment2 = NSEntityDescription.insertNewObjectForEntityForName("Attachment", inManagedObjectContext: context) as? Attachment
-//                        attachment2!.filePath = "pic.png"
-//                        attachment2!.message = message
-//                         imgS.append(attachment2!)
-                    
-                    
-                    print(imgS.count)
-                    message.attachements = NSSet(array: imgS)
-                    // Try to save
-                    do {
-                        try context.save()
-                    }
-                    catch {
-                        
-                    }
-            }
-            
-            let getConversationRequest = NSFetchRequest(entityName: "Message")
-            do{
-                if let getConversationList = try context.executeFetchRequest(getConversationRequest).first as? Message{
-                    self.msg = getConversationList
-                }
-            }catch{}
-            
-        }
-//        func playVoiceMessage(){
-//            
-//            do{
-//                updaterForProgressSlider = CADisplayLink(target: self, selector: #selector(SecretMessageViewController.trackVoiceMessage))
-//                updaterForProgressSlider.frameInterval = 1
-//                updaterForProgressSlider.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSRunLoopCommonModes)
-//                
-//                let path = NSBundle.mainBundle().pathForResource("Concentrate and ask again", ofType: "m4a")
-//                if let path2 = path {
-//                    let url = NSURL.fileURLWithPath(path2)
-//                    try audioPlayer = AVAudioPlayer(contentsOfURL: url)
-//                    audioPlayer?.delegate = self
-//                    audioPlayer?.play()
-//                    
-//                    progressBarSlider.minimumValue = 0
-//                    progressBarSlider.maximumValue = 100 // Percentage
-//                }
-//            }catch{}
-//            
-//        }
-    }
-    
-    //
-    //    func textViewBorder(){
-    //
-    //        let path = UIBezierPath()
-    //
-    //        path.moveToPoint(CGPoint(x: self.secretMessage.frame.minX, y: self.secretMessage.frame.maxY+15))
-    //        path.addLineToPoint(CGPoint(x: self.secretMessage.frame.maxX, y: self.secretMessage.frame.maxY+15))
-    //
-    //        line.path = path.CGPath
-    //        line.strokeColor = UIColor(red: 128/255, green: 128/255, blue: 128/255, alpha: 0.5).CGColor
-    //        self.view.layer.addSublayer(line)
-    //    }
-
-    
-
-    
-
 
 }
