@@ -72,7 +72,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             self.contentView.backgroundColor = UIColor.lightGrayColor()
         }else{
             self.hiddenMessageSign = true
-            self.contentView.backgroundColor = UIColor.blackColor()
+            self.contentView.backgroundColor = UIColor.init(red: 0, green: 9/255, blue: 20/255, alpha: 1)
         }
     }
     
