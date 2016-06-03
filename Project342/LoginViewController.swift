@@ -12,7 +12,7 @@ import FBSDKLoginKit
 import Firebase
 import FirebaseAuth
 
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var facebookButton: UIButton!
     @IBOutlet weak var usernameField: UITextField!
@@ -21,12 +21,17 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     
     var ref: FIRDatabaseReference!
+    var inputemail: String?
+    var inputpwd: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Get reference for firebase's database
         ref = FIRDatabase.database().reference()
+        usernameField.delegate = self
+        passwordField
+            .delegate = self
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -34,12 +39,12 @@ class LoginViewController: UIViewController {
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         self.loadingView.hidden = true
         
-        // Add user icon in username UITextField
-        let userIcon = UIImageView()
-        let user = UIImage(named: "username.png")
-        userIcon.image = user
-        userIcon.frame = CGRect(x: 15, y: 12, width: 18, height: 18)
-        usernameField.addSubview(userIcon)
+        // Add user icon in email UITextField
+        let emailIcon = UIImageView()
+        let email = UIImage(named: "email.png")
+        emailIcon.image = email
+        emailIcon.frame = CGRect(x: 15, y: 12, width: 18, height: 18)
+        usernameField.addSubview(emailIcon)
         let leftView1 = UIView.init(frame: CGRectMake(0, 0, 35, 30))
         usernameField.leftView = leftView1
         usernameField.leftViewMode = UITextFieldViewMode.Always
@@ -75,7 +80,32 @@ class LoginViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    // MARK: Actions
+    // MARK: UITextFieldDelegate
+    func textFieldShouldReturn(textField: UITextField) -> Bool{
+        let nextTag = textField.tag + 1
+        let nextResponder = textField.superview?.viewWithTag(nextTag) as UIResponder!
+        
+        if (nextResponder != nil){
+            nextResponder?.becomeFirstResponder()
+        }else{
+            //Hide the keyboard
+            textField.resignFirstResponder()
+        }
+        
+        return false
+    }
+    func textFieldDidEndEditing(textField: UITextField){
+        switch (textField.tag) {
+        case 1:
+            inputemail = textField.text
+            break
+        case 2:
+            inputpwd = textField.text
+            break
+        default: break
+        }
+        
+    }
     
     // Logging in with facebook
     @IBAction func facebookLogin(sender: AnyObject) {
@@ -167,7 +197,23 @@ class LoginViewController: UIViewController {
             }
         });
     }
+    
+    @IBAction func loginButton(sender: AnyObject) {
+        self.activityIndicatorView.startAnimating()
+        self.loadingView.hidden = false
+        
+        FIRAuth.auth()?.signInWithEmail(self.inputemail!, password: self.inputpwd!) { authData, error in
+            if error == nil{
+                let nextView = (self.storyboard?.instantiateViewControllerWithIdentifier("TabBarController"))! as! UITabBarController
+                self.presentViewController(nextView, animated: true, completion: nil)
+            }else{
+                self.activityIndicatorView.stopAnimating()
+                self.loadingView.hidden = true
+            }
+            
+        }
 
+    }
     
 //    func loginButton(loginButton: FBSDKLoginButton!, didCompleteWithResult result: FBSDKLoginManagerLoginResult!, error: NSError!)
 //    {
