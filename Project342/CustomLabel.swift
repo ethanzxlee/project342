@@ -18,6 +18,7 @@ class CustomLabel: UILabel {
     }
     */
     
+    // Set the text margin among the label border
     override func drawTextInRect(rect: CGRect) {
         
         let inset = UIEdgeInsetsMake(1, 1.5, 1, 1.5)

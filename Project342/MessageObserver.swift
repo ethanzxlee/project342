@@ -29,6 +29,7 @@ class MessageObserver {
         FIRAuth.auth()?.signInWithEmail("9w2owd@gmail.com", password: "password", completion: nil)
     }
     
+    // Observe Message
     func observeMessageEvents() {
         // Remove any existing observer
         stopObservingMessageEvents()
@@ -44,7 +45,7 @@ class MessageObserver {
         }
         
     }
-    
+    // Stop Observe Message
     func stopObservingMessageEvents() {
         guard
             let messageChangedEventHandle = messageChangedEventHandle
@@ -54,6 +55,7 @@ class MessageObserver {
         FirebaseRef.msgRef?.removeObserverWithHandle(messageChangedEventHandle)
     }
     
+    // Update the list of Messages stored in Firebase
     private func didFirebaseMessageValueChange(snapshot: FIRDataSnapshot, conversationID:String) {
         guard
             let snapshotValues = snapshot.value as? [String: AnyObject]

@@ -28,6 +28,8 @@ class ConversationObserver {
         FIRAuth.auth()?.signInWithEmail("9w2owd@gmail.com", password: "password", completion: nil)
     }
     
+    
+    // Create the conversation and store its information in Firebase (conversation)
     func conversationCreate(conversation: Conversation){
         let uniID = FirebaseRef.conversationsRef?.childByAutoId().key
         
@@ -56,6 +58,7 @@ class ConversationObserver {
         FirebaseRef.msgRef?.child(uniID!).setValue(["count" : 0])
     }
     
+    // Store message information in Firebase (message) according to conversationID and increase the count
     func sendMessage(conversation: Conversation, message: Message){
         FirebaseRef.msgRef?.child(conversation.conversationID!).observeSingleEventOfType(.Value, withBlock: { (snapshot) in
             var count = snapshot.value!["count"] as! Int
@@ -127,7 +130,7 @@ class ConversationObserver {
         FirebaseRef.conversationsRef?.child(conversationID).child("membersID").child(currentUser.uid).removeValue()
     }
     
-    // ConversationMember
+    // Observe ConversationMember
     func observeConversationMemberEvents() {
         // Remove any existing observer
         stopObservingConversationMemberEvents()
@@ -142,6 +145,7 @@ class ConversationObserver {
         })
     }
     
+    // Stop Observe ConversationMember
     func stopObservingConversationMemberEvents() {
         guard
             let conversationChangedEventHandle = conversationChangedEventHandle
@@ -151,6 +155,7 @@ class ConversationObserver {
         FirebaseRef.conversationMembersRef?.removeObserverWithHandle(conversationChangedEventHandle)
     }
     
+    // Update any information of conversation list in core data based on the Firebase
     private func didFirebaseConversationMembersValueChange(snapshot: FIRDataSnapshot) {
         guard
             let snapshotValues = snapshot.value as? [String: String]
@@ -223,7 +228,7 @@ class ConversationObserver {
         }
     }
     
-    // Conversation
+    // Observer Conversation
     func observeConversationEvents() {
         // Remove any existing observer
         stopObservingConversationEvents()
@@ -240,7 +245,7 @@ class ConversationObserver {
         
        
     }
-    
+    // Stop Observer Conversation
     func stopObservingConversationEvents() {
         guard
             let conversationChangedEventHandle = conversationChangedEventHandle
@@ -250,6 +255,7 @@ class ConversationObserver {
         FirebaseRef.conversationMembersRef?.removeObserverWithHandle(conversationChangedEventHandle)
     }
     
+    // Update the conversation information based on Firebase
     private func didFirebaseConversationValueChange(snapshot: FIRDataSnapshot) {
         var conversation: Conversation?
         

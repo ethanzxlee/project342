@@ -22,6 +22,7 @@ enum MessageType: Int{
 }
 
 extension Message{
+    // Used for pass data(Normal Message or Share Location) to Firebase
     func dictionaryNormalMessageMap() -> [String : AnyObject] {
         
         let dateformater = NSDateFormatter()
@@ -36,6 +37,7 @@ extension Message{
     }
     
     
+    // Used for pass data(Send Image) to Firebase
     func dictionaryImage() -> [String : AnyObject] {
         
         let dateformater = NSDateFormatter()

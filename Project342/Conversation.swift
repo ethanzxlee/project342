@@ -23,6 +23,8 @@ enum ConversationType: Int {
 }
 
 extension Conversation{
+    
+    // Used for pass data to Firebase
     func dictionary()-> [String: AnyObject] {
         // FIXME: NSUSERDEFAULT
         let membersTempList = members?.allObjects as! [Contact]

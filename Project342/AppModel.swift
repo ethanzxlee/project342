@@ -26,6 +26,10 @@ class AppModel:NSManagedObjectModel{
     
     /**
      Get a list of conversation for display in 'Recently Contact' tab with limit
+     
+     Parameter: The number of conversation would like to get
+     
+     Result: Array of Dictionary consist of conversationID, conversationName, conversationPhotoPath, type
      */
     func getConversationList(limit: Int)->[[String: AnyObject]]{
         
@@ -46,6 +50,11 @@ class AppModel:NSManagedObjectModel{
         return []
     }
     
+    /**
+     Get the conversation based on conversation ID
+     
+     Parameter: conversation ID
+     */
     func getConversation(conversationID: String)->Conversation{
         
         let getConversationRequest = NSFetchRequest(entityName: "Conversation")
@@ -63,6 +72,12 @@ class AppModel:NSManagedObjectModel{
         return result!
     }
     
+    
+    /**
+     Get all list of Conversation stored in Core Data
+     
+     ** Used for Delete All Conversation
+     */
     func getAllConversationList()->[Conversation]{
         
         let getConversationRequest = NSFetchRequest(entityName: "Conversation")
@@ -79,8 +94,10 @@ class AppModel:NSManagedObjectModel{
     
     /**
      Create new conversation
-     Return true: success
-     Return false: fail
+     
+     Paramter: An array of members
+     
+     Return: Conversation type of data
      */
     // FIXME: Upload to Firebase
     func createNewConversation(members:[Contact])->Conversation{
@@ -130,7 +147,13 @@ class AppModel:NSManagedObjectModel{
         return Conversation()
     }
     
-    // Create name of conversation for first tym
+    /**
+     Create name of conversation for first tym
+     
+     Parameter: An array of member in Contact type
+     
+     Return: Name of convesation in String
+     */
     func createConversationName(members: [Contact])->String{
         var name: String = ""
         if members.count > 2 {
@@ -163,6 +186,13 @@ class AppModel:NSManagedObjectModel{
         return name
     }
     
+    /**
+     Get conversation based on conversation ID
+     
+     Parameter: conversation ID
+     
+     Return: String
+     */
     func getConversationName(conversationID: String) -> String{
         
         let fetchRequest = NSFetchRequest(entityName: "Conversation")
@@ -182,7 +212,13 @@ class AppModel:NSManagedObjectModel{
     
     
     
-    // Delete particular conversation
+    /**
+     Delete particular conversation and its conversationID in Firebase (conversationMember)
+     
+     Parameter: conversation ID
+     
+     Return: String
+     */
     func deleteConversation(conversationID: String){
         let getConversationRequest = NSFetchRequest(entityName: "Conversation")
         getConversationRequest.predicate = NSPredicate(format: "conversationID = %@", conversationID)
@@ -201,7 +237,9 @@ class AppModel:NSManagedObjectModel{
         
     }
     
-    // Delete all conversations
+    /**
+      Delete all conversations from Core Data & conversationID from Firebase (conversationMember)
+     */
     func deleteAllConversations(){
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
             dispatch_async(dispatch_get_main_queue()) {
@@ -217,7 +255,13 @@ class AppModel:NSManagedObjectModel{
         }
     }
     
-    // Do predicate search
+    /**
+     Do predicate search for Recently  Chat
+     
+     Parameter: Key word for seaching
+     
+     Return: An array of dictionary consist of conversationID, conversationName, conversationPhotoPath, type
+     */
     func searchResult(str: String)->[[String:AnyObject]]{
         // Change the target and searchTerm to lowercaseString to enable get insensitice result
         // Any used for NSArray or NSSet
@@ -246,6 +290,10 @@ class AppModel:NSManagedObjectModel{
         return []
     }
     
+    
+    /**
+     Store the message to CoreData and Firebase
+     */
     // FIXME: apply to user default
     func sendMessage(msg: String, conversationID: String, isCover: Bool)-> Message{
         
@@ -281,6 +329,10 @@ class AppModel:NSManagedObjectModel{
         }
         return Message()
     }
+    
+    /**
+     Store the message consist of image to CoreData and Firebase
+     */
     // FIXME: apply to user default
     func sendMessageImage(img: UIImage, conversationID: String, isCover: Bool)-> Message{
         
@@ -355,6 +407,10 @@ class AppModel:NSManagedObjectModel{
         }
         return Message()
     }
+    
+    /**
+     Store the message of Share Location to CoreData and Firebase
+     */
     // FIXME: apply to user default
     func sendMessageMap(img: UIImage, conversationID: String, isCover: Bool, lat: String, lon: String)-> Message{
         
@@ -432,6 +488,13 @@ class AppModel:NSManagedObjectModel{
         return Message()
     }
     
+    /**
+     Get the message based on the number of limit
+     
+     Parameter: number of limit of meesage need to query, conversation ID
+     
+     Return: an array of Message
+     */
     func getMessage(limit: Int, conversationID: String)->[Message]{
         let fetchRequest = NSFetchRequest(entityName: "Message")
         fetchRequest.predicate = NSPredicate(format: "conversation.conversationID = %@", conversationID)
@@ -454,6 +517,14 @@ class AppModel:NSManagedObjectModel{
         return []
     }
     
+    
+    /**
+     Get the to know the particular conversation isLocked or not
+     
+     Parameter: conversation ID
+     
+     Return: Int
+     */
     func getIsLocked(conversationID:String)-> Int{
         let fetchRequest = NSFetchRequest(entityName: "Conversation")
         fetchRequest.propertiesToFetch = ["isLocked"]
@@ -472,6 +543,13 @@ class AppModel:NSManagedObjectModel{
 
     }
     
+    /**
+     Get the coverCode of conversation
+     
+     Parameter: conversation ID
+     
+     Return: Int
+     */
     func getCoverCode(conversationID: String)->String{
         let fetchRequest = NSFetchRequest(entityName: "Conversation")
         fetchRequest.propertiesToFetch = ["coverCode"]
@@ -508,6 +586,13 @@ class AppModel:NSManagedObjectModel{
         return []
     }
     
+    /**
+     Search a list of contact
+     
+     Parameter: Key word
+     
+     Return: An array of Contact
+     */
     func searchContactList(str: String)-> [Contact]{
         let predicate = NSPredicate(format:
             "(firstName.lowercaseString CONTAINS %@) OR " +
@@ -527,28 +612,6 @@ class AppModel:NSManagedObjectModel{
         }catch{}
         return []
     }
-    
-    
-    // MARK: - Comparison
-    func sortBasedOnLastMessage(conversation1: Conversation, conversation2: Conversation)-> Bool{
-        let msg1 = ((conversation1.messages?.allObjects) as! [Message])
-        let msg2 = ((conversation2.messages?.allObjects) as! [Message])
-        if msg1.count > 0 && msg2.count > 0{
-            let date1 = msg1[msg1.endIndex-1].sentDate
-            let date2 = msg2[msg2.endIndex-1].sentDate
-            
-            return date1?.compare(date2!) == NSComparisonResult.OrderedDescending
-        }
-        
-        // Mean first conversation gt message
-        // Meanwhile 2nd conversation dont hv message
-        // Thus, first display first
-        if msg1.count > 0 && msg2.count == 0{
-            return true
-        }
-        return false
-    }
-    
     
     
 }
