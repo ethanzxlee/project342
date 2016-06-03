@@ -245,18 +245,18 @@ class ConversationObserver {
     
     // Observer Conversation
     func observeConversationEvents() {
-        // Remove any existing observer
-        stopObservingConversationEvents()
-
-        let appModel = AppModel()
-        let conversationIDList = appModel.getConversationList(appModel.getConversationMaxRange())
-        
-        for conversation in conversationIDList{
-            let id = conversation["conversationID"] as! String
-            conversationChangedEventHandle = FirebaseRef.conversationsRef?.child(id).observeEventType(.Value, withBlock: { (snapshot) in
-                self.didFirebaseConversationValueChange(snapshot)
-            })
-        }
+//        // Remove any existing observer
+//        stopObservingConversationEvents()
+//
+//        let appModel = AppModel()
+//        let conversationIDList = appModel.getConversationList(appModel.getConversationMaxRange())
+//        
+//        for conversation in conversationIDList{
+//            let id = conversation["conversationID"] as! String
+//            conversationChangedEventHandle = FirebaseRef.conversationsRef?.child(id).observeEventType(.Value, withBlock: { (snapshot) in
+//                self.didFirebaseConversationValueChange(snapshot)
+//            })
+//        }
         
        
     }

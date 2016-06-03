@@ -37,6 +37,12 @@ class ContactObserver {
             contactId: The user ID of the contact to be deleted
      */
     func deleteContact(contactId: String) {
+        guard
+            let userId = FIRAuth.auth()?.currentUser?.uid
+            else {
+                return
+        }
+        FirebaseRef.contactsRef?.child(contactId).child(userId).removeValue()
         FirebaseRef.userContactsRef?.child(contactId).removeValue()
     }
     
@@ -118,6 +124,17 @@ class ContactObserver {
         guard
             let contactsSnapshotValues = contactsSnapshot.value as? [String: String]
             else {
+                let fetchContactsRequest = NSFetchRequest(entityName: String(Contact))
+                let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchContactsRequest)
+                
+                do {
+                    try managedObjectContext.executeRequest(deleteRequest)
+                    try managedObjectContext.save()
+                }
+                catch {
+                    print(error)
+                }
+                
                 return
         }
         
@@ -174,6 +191,7 @@ class ContactObserver {
             // Create a new contact in CoreData if it doesn't exists
             if contact == nil {
                 contact = NSEntityDescription.insertNewObjectForEntityForName(String(Contact), inManagedObjectContext: managedObjectContext) as? Contact
+                UILocalNotification.scheduleNewContactNotification()
             }
             
             // Update their statuses
@@ -189,4 +207,5 @@ class ContactObserver {
             }
         }
     }
+    
 }

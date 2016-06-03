@@ -37,6 +37,8 @@
 		A197BF791CF48C3300C7D40D /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A197BF781CF48C3300C7D40D /* TabBarController.swift */; };
 		A197BF7D1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A197BF7C1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift */; };
 		A197BF831CF711AA00C7D40D /* NSDateFormatterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A197BF821CF711AA00C7D40D /* NSDateFormatterExtensions.swift */; };
+		A1A0BD471D01E31E00EB6F2A /* UILocalNotificationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A0BD461D01E31E00EB6F2A /* UILocalNotificationExtensions.swift */; };
+		A1A0BD491D01EB8A00EB6F2A /* AuthenticationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A0BD481D01EB8A00EB6F2A /* AuthenticationObserver.swift */; };
 		A1A4D9C51CE86E74006AA3CF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4D9C41CE86E74006AA3CF /* AppDelegate.swift */; };
 		A1A4D9C71CE86E74006AA3CF /* RecentChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4D9C61CE86E74006AA3CF /* RecentChatViewController.swift */; };
 		A1A4D9C91CE86E74006AA3CF /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A4D9C81CE86E74006AA3CF /* ContactsViewController.swift */; };
@@ -115,6 +117,8 @@
 		A197BF781CF48C3300C7D40D /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		A197BF7C1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactRequestTableViewCell.swift; sourceTree = "<group>"; };
 		A197BF821CF711AA00C7D40D /* NSDateFormatterExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDateFormatterExtensions.swift; sourceTree = "<group>"; };
+		A1A0BD461D01E31E00EB6F2A /* UILocalNotificationExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UILocalNotificationExtensions.swift; sourceTree = "<group>"; };
+		A1A0BD481D01EB8A00EB6F2A /* AuthenticationObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationObserver.swift; sourceTree = "<group>"; };
 		A1A4D9C11CE86E74006AA3CF /* Project342.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Project342.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1A4D9C41CE86E74006AA3CF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1A4D9C61CE86E74006AA3CF /* RecentChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentChatViewController.swift; sourceTree = "<group>"; };
@@ -234,6 +238,7 @@
 			children = (
 				A197BF761CF489DA00C7D40D /* UIColorExtensions.swift */,
 				A197BF821CF711AA00C7D40D /* NSDateFormatterExtensions.swift */,
+				A1A0BD461D01E31E00EB6F2A /* UILocalNotificationExtensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -248,6 +253,7 @@
 				A1B03D261CFAB93800120565 /* ContactUserInfoObserver.swift */,
 				A1115A891CF956C900DD2CD1 /* SearchContactObserver.swift */,
 				A1B03D2E1CFC807F00120565 /* SearchContactObserverDelegate.swift */,
+				A1A0BD481D01EB8A00EB6F2A /* AuthenticationObserver.swift */,
 			);
 			name = FirebaseObserver;
 			sourceTree = "<group>";
@@ -651,6 +657,7 @@
 				A1A4DA5F1CE98D06006AA3CF /* Conversation.swift in Sources */,
 				A1423B7C1D016F7A00023A17 /* LeftChatRoomCustomCell.swift in Sources */,
 				A1A4DA061CE873CD006AA3CF /* AddContactsViewController.swift in Sources */,
+				A1A0BD471D01E31E00EB6F2A /* UILocalNotificationExtensions.swift in Sources */,
 				A1A4DA611CE98D06006AA3CF /* Attachment.swift in Sources */,
 				A197BF7D1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift in Sources */,
 				A1A4DA631CE98D06006AA3CF /* Message.swift in Sources */,
@@ -683,6 +690,7 @@
 				A197BF831CF711AA00C7D40D /* NSDateFormatterExtensions.swift in Sources */,
 				A1A4D9C71CE86E74006AA3CF /* RecentChatViewController.swift in Sources */,
 				A1423B7D1D016F7A00023A17 /* MessageObserver.swift in Sources */,
+				A1A0BD491D01EB8A00EB6F2A /* AuthenticationObserver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

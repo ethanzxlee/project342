@@ -109,7 +109,6 @@ class ContactUserObserver {
             }
             
             let downloadTask = profilePicRef.writeToFile(profilePicDirectory)
-            print(profilePicRef.fullPath)
             downloadTask.observeStatus(.Success, handler: { (profilePicSnapshot) in
                 contact.profilePicStatus = "success"
                 do {

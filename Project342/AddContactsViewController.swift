@@ -119,10 +119,12 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
                         if httpResponse.statusCode == 200 {
                             self.cache?.setObject(data, forKey: url.path!)
                         }
-                        if tableView.cellForRowAtIndexPath(indexPath) == cell {
-                            dispatch_async(dispatch_get_main_queue(), {
-                                cell.contactImageView.image = UIImage(data: data)
-                            })
+                        if let cellAtIndexPath = tableView.cellForRowAtIndexPath(indexPath) as? AddContactTableViewCell {
+                            if cell == cellAtIndexPath && cell.contactNameLabel.text == cellAtIndexPath.contactNameLabel.text {
+                                dispatch_async(dispatch_get_main_queue(), {
+                                    cell.contactImageView.image = UIImage(data: data)
+                                })
+                            }
                         }
                     }
                 })
