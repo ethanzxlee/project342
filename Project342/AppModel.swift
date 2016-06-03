@@ -149,8 +149,7 @@ class AppModel:NSManagedObjectModel{
             conversation.coverCode = ""
             //Default conversation isUnlocked
             conversation.isLocked = 0
-            let dateformater = NSDateFormatter()
-            dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+            let dateformater = NSDateFormatter.ISO8601DateFormatter()
             conversation.lastMessageTimestamp = dateformater.stringFromDate(NSDate())
             
             do{
@@ -325,9 +324,7 @@ class AppModel:NSManagedObjectModel{
             message.senderID = FIRAuth.auth()?.currentUser?.uid
             message.conversation = conversation
             message.sentDate = NSDate()
-            
-            let dateformater = NSDateFormatter()
-            dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+            let dateformater = NSDateFormatter.ISO8601DateFormatter()
             conversation.lastMessageTimestamp = dateformater.stringFromDate(NSDate())
             
             if isCover {
@@ -402,9 +399,7 @@ class AppModel:NSManagedObjectModel{
             message.conversation = conversation
             message.sentDate = NSDate()
             
-            
-            let dateformater = NSDateFormatter()
-            dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+            let dateformater = NSDateFormatter.ISO8601DateFormatter()
             conversation.lastMessageTimestamp = dateformater.stringFromDate(NSDate())
             
             if isCover {
@@ -427,11 +422,10 @@ class AppModel:NSManagedObjectModel{
     /**
      Store the message of Share Location to CoreData and Firebase
      */
-    func sendMessageMap(img: UIImage, conversationID: String, isCover: Bool, lat: String, lon: String)-> Message{
+    func sendMessageMap(img:UIImage, conversationID: String, isCover: Bool, lat: String, lon: String)-> Message{
         
         
         let conversation = self.getConversation(conversationID)
-        
         
         
         // Save the image first
@@ -467,22 +461,18 @@ class AppModel:NSManagedObjectModel{
             print("Failure to save attachment")
             return Message()
         }
-        
+
         // if success
         if let message = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedContext) as? Message{
-            
-            
-            attachment.message = message
+            message.attachements = [attachment]
             message.type = MessageType.Map.rawValue
             message.content = "\(lat), \(lon)"
-            message.attachements = NSSet(array: [attachment])
             message.senderID = FIRAuth.auth()?.currentUser?.uid
             message.conversation = conversation
             message.sentDate = NSDate()
             
             
-            let dateformater = NSDateFormatter()
-            dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+            let dateformater = NSDateFormatter.ISO8601DateFormatter()
             conversation.lastMessageTimestamp = dateformater.stringFromDate(NSDate())
             
             if isCover {
