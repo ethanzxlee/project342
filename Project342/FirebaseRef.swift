@@ -21,6 +21,21 @@ struct FirebaseRef {
     static var contactsRef: FIRDatabaseReference? {
         return FIRDatabase.database().reference().child("contacts")
     }
+
+	/** Points to the node that contains all the conversations */
+    static var conversationsRef: FIRDatabaseReference? {
+        return FIRDatabase.database().reference().child("conversations")
+    }
+    
+    /** Points to the node that contains all the members of conversations */
+    static var conversationMembersRef: FIRDatabaseReference? {
+        return FIRDatabase.database().reference().child("conversationMembers")
+    }
+    
+    /** Points to the node that contains all the messages of conversations */
+    static var msgRef: FIRDatabaseReference? {
+        return FIRDatabase.database().reference().child("messages")
+    }
     
     /** Points to the node that contains the logged in user's contacts */
     static var userContactsRef: FIRDatabaseReference? {

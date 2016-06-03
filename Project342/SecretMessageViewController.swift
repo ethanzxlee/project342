@@ -7,13 +7,92 @@
 //
 
 import UIKit
+import AVFoundation
+import CoreData
+import MapKit
 
 class SecretMessageViewController: UIViewController {
-
+    
+    @IBOutlet weak var textViewHeight: NSLayoutConstraint!
+    
+    @IBOutlet weak var secretMessageTitle: UITextView!
+    
+    @IBOutlet weak var secretImg: UIImageView!
+    
+    @IBOutlet weak var contentView: UIView!
+    
+    var msg: Message?
+    
+    var timer = NSTimer()
+    
+    let line = CAShapeLayer()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        let type = msg?.type
+        print(type)
+        if type == MessageType.NormalMessage.rawValue {
+            self.secretMessageTitle.text = "Secret Message"
+            
+            let content = UILabel()
+            content.text = msg?.content
+            content.font = UIFont(name: "HelveticaNeue", size: 16)
+            content.numberOfLines = 0
+            content.lineBreakMode = .ByWordWrapping
+            content.sizeToFit()
+            
+            content.frame = CGRect(x: 0, y: 0, width: self.view.frame.width-20, height: self.view.frame.height/3)
+            
+            secretImg.addSubview(content)
+        }else if type == MessageType.Image.rawValue{
+            dispatch_async(dispatch_get_main_queue()){()-> Void in
+                
+                let attachments = self.msg!.attachements!.allObjects as! [Attachment]
+                let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+                let documentDirectory = documentPath[0]
+                
+                let img = UIImage(named: "\(documentDirectory)/\(attachments[0].filePath!)")
+                print("img: \(documentDirectory)/\(attachments[0].filePath!)")
+                let imgView = UIImageView(image: img!)
+                let newFrame = CGRect(x: 0, y: 0, width: self.secretImg.frame.size.width, height: self.secretImg.frame.size.height-10)
+                imgView.contentMode = .ScaleAspectFit
+                imgView.frame = newFrame
+                if self.secretImg.subviews.count > 0{
+                    self.secretImg.willRemoveSubview(self.secretImg.subviews[0])
+                }
+                self.secretImg.addSubview(imgView)
+                
+                self.secretMessageTitle.text = "Secret Image"
+            }
+        }else{
+         
+            let coordinates = msg!.content?.componentsSeparatedByString(",")
+            let lat = (coordinates![0] as NSString).doubleValue
+            let lon = (coordinates![1] as NSString).doubleValue
+            
+            let newFrame = CGRect(x: 0, y: 0, width: self.contentView.frame.size.width, height: self.contentView.frame.size.height)
+            let map = MKMapView(frame: newFrame)
+            let location = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+            let regionRadius = 200.0
+            map.setRegion(MKCoordinateRegionMakeWithDistance(location, regionRadius*2 , regionRadius*2) , animated: true)
+            let dropPin = MKPointAnnotation()
+            dropPin.coordinate = location
+            map.addAnnotation(dropPin)
+            
+            self.secretImg.addSubview(map)
+            self.secretMessageTitle.text = "Secret Map"
+        }
+        
+        self.secretMessageTitle.font = UIFont(descriptor: UIFontDescriptor(name: "AmericanTypewriter-Bold", size: 20)  , size: 30)
+        self.secretMessageTitle.textColor = UIColor.whiteColor()
+        self.secretMessageTitle.textAlignment = .Center
+        
+        
+        
+        
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -31,5 +110,6 @@ class SecretMessageViewController: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
+    
 
 }
