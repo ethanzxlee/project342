@@ -341,7 +341,6 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             }
             
             let conversation = chatRoomViewController.appModel.createNewConversation([selectedContact])
-            ConversationObserver.observer.conversationCreate(conversation)
             chatRoomViewController.conversationID = conversation.conversationID
             
         }

@@ -9,7 +9,7 @@
 
 import CoreData
 import Firebase
-
+import MapKit
 
 class MessageObserver {
     
@@ -70,10 +70,9 @@ class MessageObserver {
             if message == nil {
                 return
             }
-            let dateFormatter = NSDateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-
+            let dateFormatter = NSDateFormatter.ISO8601DateFormatter()
             let date = dateFormatter.dateFromString(message!["sentDate"] as! String)
+
             // Check if the message exists
             let fetchRequest = NSFetchRequest(entityName: "Message")
             fetchRequest.predicate = NSPredicate(format: "conversation.conversationID = %@ AND sentDate = %@", conversationID, date!)
@@ -95,29 +94,82 @@ class MessageObserver {
                 var memberArray = conversation?.messages?.allObjects as! [Message]
                 let msg = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedObjectContext) as! Message
                 msg.type = message!["type"] as! Int
-                if msg.type == MessageType.Image.rawValue {
+                if msg.type == MessageType.Image.rawValue || msg.type == MessageType.Map.rawValue {
                     let attachment = NSEntityDescription.insertNewObjectForEntityForName("Attachment", inManagedObjectContext: managedObjectContext) as! Attachment
                     
                     // Create img Path
-                    let dateFormatter = NSDateFormatter()
-                    dateFormatter.dateFormat = "yyyy_MM_ddHHmm"
+                    let dateFormatter = NSDateFormatter.ISO8601DateFormatter()
                     let imgName = "\(dateFormatter.stringFromDate(NSDate())).png"
                     
                     let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
                     let documentDirectory = documentPath[0]
                     let url = NSURL(fileURLWithPath: documentDirectory).URLByAppendingPathComponent(imgName)
                     
-                    let attachmentImg = snapshotValues["attachments"]  as! [String:String]
-                    let firebaseURL = StorageRef.imageSendRef.child(attachmentImg["image"]!)
+                    if msg.type == MessageType.Image.rawValue{
+                        let attachmentImg = snapshotValues["attachments"]  as! [String:String]
+                        let firebaseURL = StorageRef.imageSendRef.child(attachmentImg["image"]!)
+                        
+                        let downloadTask = firebaseURL.writeToFile(url)
+                        
+                        downloadTask.observeStatus(.Success, handler: { (snapshot) in
+                            print("download img success")
+                        })
+                        attachment.sentDate = dateFormatter.dateFromString(snapshotValues["sentDate"] as! String)
+                    }else{
+                        // If it is map, snapshot a picture first
+                        let content = message!["content"] as? String
+                        let coordinates = content?.componentsSeparatedByString(",")
+                        let lat = (coordinates![0] as NSString).doubleValue
+                        let lon = (coordinates![1] as NSString).doubleValue
+                        
+                        let location = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+
+                        
+                        
+                        let newFrame = CGRect(x: 0, y: 0, width: 100, height: 100)
+                        let map = MKMapView(frame: newFrame)
+                        let regionRadius : CLLocationDistance = 200
+                        
+                        let coordinateRegion = MKCoordinateRegionMakeWithDistance(location, regionRadius*2, regionRadius*2)
+                        map.setRegion(coordinateRegion, animated: true)
+                        
+                        let options = MKMapSnapshotOptions()
+                        options.region = map.region
+                        options.size = map.frame.size
+                        options.scale = UIScreen.mainScreen().scale
+                        
+                        let snapshotter = MKMapSnapshotter(options: options)
+                        snapshotter.startWithCompletionHandler { snapshot, error in
+                            guard let snapshot = snapshot else {
+                                print("Snapshot error: \(error)")
+                                return
+                            }
+                            
+                            
+                            let dropPin = MKPinAnnotationView(annotation: nil, reuseIdentifier: nil)
+                            let img = snapshot.image
+                            
+                            UIGraphicsBeginImageContextWithOptions(img.size, true, img.scale)
+                            img.drawAtPoint(CGPoint.zero)
+                            var point = snapshot.pointForCoordinate(location)
+                            
+                            let rect = CGRect(origin: CGPoint.zero, size: img.size)
+                            if rect.contains(point){
+                                
+                                point.x = point.x + dropPin.centerOffset.x - (dropPin.bounds.size.width/2)
+                                point.y = point.y + dropPin.centerOffset.y - (dropPin.bounds.size.height/2)
+                                dropPin.image?.drawAtPoint(point)
+                            }
+                            
+                            let mapPin = UIGraphicsGetImageFromCurrentImageContext()
+                            UIGraphicsEndImageContext()
+                            if let data = UIImagePNGRepresentation(mapPin){
+                                data.writeToURL(url, atomically: true)
+                                print("Success save image to\n\(url)")
+                            }
+                        }
+                    }
                     
-                    let downloadTask = firebaseURL.writeToFile(url)
-                    
-                    downloadTask.observeStatus(.Success, handler: { (snapshot) in
-                        print("download img success")
-                    })
-                    
-                    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-//                    attachment.sentDate = dateFormatter.dateFromString(snapshotValues["sentDate"] as! String)
                     attachment.filePath = imgName
                     msg.attachements = NSSet(array: [attachment])
                 }

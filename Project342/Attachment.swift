@@ -19,8 +19,7 @@ class Attachment: NSManagedObject {
 extension Attachment{
     // Used for pass data to Firebase
     func dictionary()-> [String: AnyObject]{
-        let dateformater = NSDateFormatter()
-        dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        let dateformater = NSDateFormatter.ISO8601DateFormatter()
         
         return [
             "image": "\(filePath!)",
