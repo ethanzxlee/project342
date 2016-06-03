@@ -12,6 +12,7 @@ import FirebaseAuth
 class LaunchViewController: UIViewController {
 
     @IBOutlet weak var launchImage: UIImageView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -21,19 +22,22 @@ class LaunchViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         //try! FIRAuth.auth()!.signOut()
         
-        FIRAuth.auth()?.addAuthStateDidChangeListener { auth, user in
-            if let user = FIRAuth.auth()?.currentUser {
-                // User is logged in.
-            } else {
-                // No user is logged in.
-                self.launchImage.hidden = true
-            }
+        // Show the same launch image if users is logged in
+        // Else for new user, hide launch image and show
+        // the actual view to log in and sign up
+        if FIRAuth.auth()?.currentUser != nil {
+            // User is logged in.
+        } else {
+            // No user is logged in.
+            self.launchImage.hidden = true
         }
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        if let user = FIRAuth.auth()?.currentUser {
+        
+        // Perform segue to tab controller for logged in user
+        if FIRAuth.auth()?.currentUser != nil {
             self.performSegueWithIdentifier("ShowTabBarViewController1", sender: nil)
         }
     }
