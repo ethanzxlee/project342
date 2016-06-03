@@ -20,7 +20,7 @@ class LaunchViewController: UIViewController {
     }
     
     override func viewWillAppear(animated: Bool) {
-        //try! FIRAuth.auth()!.signOut()
+        try! FIRAuth.auth()!.signOut()
         
         // Show the same launch image if users is logged in
         // Else for new user, hide launch image and show
