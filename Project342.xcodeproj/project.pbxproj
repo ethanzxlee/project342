@@ -27,7 +27,6 @@
 		A1423B721CFE9BF000023A17 /* LaunchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1423B711CFE9BF000023A17 /* LaunchViewController.swift */; };
 		A1423B791D016F7A00023A17 /* ConversationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1423B731D016F7A00023A17 /* ConversationObserver.swift */; };
 		A1423B7A1D016F7A00023A17 /* CustomLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1423B741D016F7A00023A17 /* CustomLabel.swift */; };
-		A1423B7B1D016F7A00023A17 /* CustomPresentAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1423B751D016F7A00023A17 /* CustomPresentAnimationController.swift */; };
 		A1423B7C1D016F7A00023A17 /* LeftChatRoomCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1423B761D016F7A00023A17 /* LeftChatRoomCustomCell.swift */; };
 		A1423B7D1D016F7A00023A17 /* MessageObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1423B771D016F7A00023A17 /* MessageObserver.swift */; };
 		A1423B7E1D016F7A00023A17 /* RightChatRoomCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1423B781D016F7A00023A17 /* RightChatRoomCustomCell.swift */; };
@@ -107,7 +106,6 @@
 		A1423B711CFE9BF000023A17 /* LaunchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchViewController.swift; sourceTree = "<group>"; };
 		A1423B731D016F7A00023A17 /* ConversationObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationObserver.swift; sourceTree = "<group>"; };
 		A1423B741D016F7A00023A17 /* CustomLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomLabel.swift; sourceTree = "<group>"; };
-		A1423B751D016F7A00023A17 /* CustomPresentAnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPresentAnimationController.swift; sourceTree = "<group>"; };
 		A1423B761D016F7A00023A17 /* LeftChatRoomCustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeftChatRoomCustomCell.swift; sourceTree = "<group>"; };
 		A1423B771D016F7A00023A17 /* MessageObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageObserver.swift; sourceTree = "<group>"; };
 		A1423B781D016F7A00023A17 /* RightChatRoomCustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RightChatRoomCustomCell.swift; sourceTree = "<group>"; };
@@ -219,6 +217,9 @@
 		A1083D231CEB347F00FFE32A /* View */ = {
 			isa = PBXGroup;
 			children = (
+				A1423B741D016F7A00023A17 /* CustomLabel.swift */,
+				A1423B761D016F7A00023A17 /* LeftChatRoomCustomCell.swift */,
+				A1423B781D016F7A00023A17 /* RightChatRoomCustomCell.swift */,
 				A1083D241CEB34C600FFE32A /* ContactListTableViewCell.swift */,
 				A197BF7C1CF6AA4000C7D40D /* ContactRequestTableViewCell.swift */,
 				A1115A871CF869B300DD2CD1 /* AddContactTableViewCell.swift */,
@@ -238,13 +239,9 @@
 		A197BF841CF7428200C7D40D /* FirebaseObserver */ = {
 			isa = PBXGroup;
 			children = (
-				A1423B731D016F7A00023A17 /* ConversationObserver.swift */,
-				A1423B741D016F7A00023A17 /* CustomLabel.swift */,
-				A1423B751D016F7A00023A17 /* CustomPresentAnimationController.swift */,
-				A1423B761D016F7A00023A17 /* LeftChatRoomCustomCell.swift */,
-				A1423B771D016F7A00023A17 /* MessageObserver.swift */,
-				A1423B781D016F7A00023A17 /* RightChatRoomCustomCell.swift */,
 				A1B03D201CF97DAB00120565 /* FirebaseRef.swift */,
+				A1423B731D016F7A00023A17 /* ConversationObserver.swift */,
+				A1423B771D016F7A00023A17 /* MessageObserver.swift */,
 				A13723651CED7C97002446F1 /* ContactObserver.swift */,
 				A1B03D261CFAB93800120565 /* ContactUserInfoObserver.swift */,
 				A1115A891CF956C900DD2CD1 /* SearchContactObserver.swift */,
@@ -673,7 +670,6 @@
 				A197BF791CF48C3300C7D40D /* TabBarController.swift in Sources */,
 				A1423B721CFE9BF000023A17 /* LaunchViewController.swift in Sources */,
 				A1A4DA041CE87390006AA3CF /* ChatRoomSettingsViewController.swift in Sources */,
-				A1423B7B1D016F7A00023A17 /* CustomPresentAnimationController.swift in Sources */,
 				A1B03D2D1CFC5CAC00120565 /* TintedAlertViewController.swift in Sources */,
 				9628885E1CF6960500C47387 /* SignupViewController.swift in Sources */,
 				A1A4DA021CE87363006AA3CF /* SecretMessageViewController.swift in Sources */,

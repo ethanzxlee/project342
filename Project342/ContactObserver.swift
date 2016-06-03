@@ -20,18 +20,12 @@ class ContactObserver {
     
     static let observer = ContactObserver()
     
-    
     let managedObjectContext: NSManagedObjectContext
-    
-    // MARK: Firebase event handles
-    
     var contactValueChangedEventHandle: FIRDatabaseHandle?
     
     
     private init() {
         managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
-        // TODO: Remove this one the login VC is done
-        FIRAuth.auth()?.signInWithEmail("zxlee618@gmail.com", password: "10Zhexian01", completion: nil)
     }
     
     

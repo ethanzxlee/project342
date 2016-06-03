@@ -47,8 +47,8 @@
                     <navigationItem key="navigationItem" title="Recents" id="H0j-T3-g0U"/>
                     <connections>
                         <outlet property="searchBar" destination="CSf-4n-9Ak" id="4iV-4u-jyA"/>
-                        <segue destination="pJb-uc-Bgd" kind="show" identifier="toChatRoom" id="rzW-Ys-4ft"/>
                         <segue destination="n5I-1s-UFH" kind="show" identifier="goToCreateNewChat" id="GGF-mF-c0w"/>
+                        <segue destination="iAg-cx-Yx1" kind="show" identifier="toChatRoom" id="LQt-aV-XXh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
@@ -157,7 +157,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4oO-br-Iz0" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="wIc-kx-5kF" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2470" y="-1529"/>
+            <point key="canvasLocation" x="3102" y="-2071"/>
         </scene>
         <!--Chat-->
         <scene sceneID="fsV-uO-RTR">
@@ -281,13 +281,7 @@
                             <constraint firstItem="MGw-1A-qup" firstAttribute="centerY" secondItem="2qg-AK-QMB" secondAttribute="centerY" id="xcs-2A-E4I"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Chat" id="J06-Jy-D85">
-                        <barButtonItem key="leftBarButtonItem" tag="1" title="&lt; Chat" id="eaD-bR-Qe5">
-                            <connections>
-                                <segue destination="kGZ-Us-7Ok" kind="unwind" unwindAction="unwindFromChatRoom:" id="RVl-hA-19y"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Chat" id="J06-Jy-D85"/>
                     <connections>
                         <outlet property="chatContentTableView" destination="gR7-b3-wsM" id="kER-mV-fal"/>
                         <outlet property="contentView" destination="dXL-yq-icw" id="dKF-4L-mXh"/>
@@ -304,9 +298,8 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mo6-cf-Wob" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="kGZ-Us-7Ok" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3178" y="-320"/>
+            <point key="canvasLocation" x="3258" y="-320"/>
         </scene>
         <!--Attachment Viewer View Controller-->
         <scene sceneID="Ild-sk-2P0">
@@ -452,7 +445,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="frr-Xx-dtH" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="pUj-Se-nZS" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3178" y="360"/>
+            <point key="canvasLocation" x="3258" y="360"/>
         </scene>
         <!--Secret Message View Controller-->
         <scene sceneID="oy1-ot-1ab">
@@ -618,7 +611,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6XV-27-51V" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4772" y="-376"/>
+            <point key="canvasLocation" x="4080" y="-336"/>
         </scene>
         <!--Contacts-->
         <scene sceneID="wg7-f3-ORb">
@@ -1230,7 +1223,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NAy-mT-U1T" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2470" y="-2489"/>
+            <point key="canvasLocation" x="2996" y="-2771"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="xKy-UB-qyh">
@@ -1250,24 +1243,6 @@
             </objects>
             <point key="canvasLocation" x="3992" y="-1200"/>
         </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="9AU-ea-8xw">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="pJb-uc-Bgd" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Igc-uw-UdU">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="iAg-cx-Yx1" kind="relationship" relationship="rootViewController" id="TYJ-wp-Wpt"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="wKV-AA-IiX" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2366" y="-320"/>
-        </scene>
     </scenes>
     <resources>
         <image name="defaultPicture" width="96" height="96"/>
@@ -1279,7 +1254,7 @@
         <image name="treasure" width="29" height="29"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="TYJ-wp-Wpt"/>
+        <segue reference="LQt-aV-XXh"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.98039215686274506" green="0.52549019607843139" blue="0.16078431372549018" alpha="1" colorSpace="calibratedRGB"/>
 </document>

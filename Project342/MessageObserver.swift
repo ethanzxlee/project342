@@ -25,8 +25,6 @@ class MessageObserver {
     
     private init() {
         managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
-        // TODO: Remove this one the login VC is done
-        FIRAuth.auth()?.signInWithEmail("9w2owd@gmail.com", password: "password", completion: nil)
     }
     
     // Observe Message
@@ -116,7 +114,7 @@ class MessageObserver {
                     
                     
                     dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-                    attachment.sentDate = dateFormatter.dateFromString(snapshotValues["sentDate"] as! String)
+//                    attachment.sentDate = dateFormatter.dateFromString(snapshotValues["sentDate"] as! String)
                     attachment.filePath = imgName
                     msg.attachements = NSSet(array: [attachment])
                 }

@@ -95,10 +95,16 @@ class SearchContactObserver {
             // Obtain the search response endpoint ref
             let responseRef = FirebaseRef.searchResponseRef?.child(requestId)
 
-            // Observe the search response endpoinf to obtain the response
-            responseRef?.observeSingleEventOfType(.Value, withBlock: { (responseSnapshot: FIRDataSnapshot) in
-                self.didSearchResponseValueChange(responseSnapshot)
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), { 
+                NSThread.sleepForTimeInterval(0.5)
+                
+                // Observe the search response endpoint to obtain the response
+                responseRef?.observeSingleEventOfType(.Value, withBlock: { (responseSnapshot: FIRDataSnapshot) in
+                    self.didSearchResponseValueChange(responseSnapshot)
+                })
             })
+            
+           
         }
     }
     

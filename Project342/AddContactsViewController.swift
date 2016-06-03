@@ -17,10 +17,14 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
     var searchResponse: [[String: AnyObject]]?
     var cache: NSCache?
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        cache = NSCache()
         searchContactObserver = SearchContactObserver(withDelegate: self)
+        
+        tableView.tableFooterView = UIView()
         
         // Setup the search bar
         searchController = UISearchController(searchResultsController: nil)
@@ -35,11 +39,10 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
         searchController.dimsBackgroundDuringPresentation = false
         definesPresentationContext = true
         
+        // Display the search bar if user choose normal search
         tableView.tableHeaderView = searchController.searchBar
-        tableView.tableFooterView = UIView()
-        cache = NSCache()
-        
         searchController.active = true
+        
     }
 
     
@@ -84,6 +87,7 @@ class AddContactsViewController: UITableViewController, UISearchResultsUpdating,
         cell.requestSentLabel.alpha = 0
         cell.contactImageView.image = nil
         
+        // Download their profile picture
         StorageRef.profilePicRef.child(userId).downloadURLWithCompletion { (url, error) in
             guard
                 let url = url

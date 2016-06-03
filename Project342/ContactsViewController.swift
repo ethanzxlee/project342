@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import Firebase
 
 class ContactsViewController: UITableViewController, NSFetchedResultsControllerDelegate, UISearchResultsUpdating {
     
@@ -25,7 +26,7 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
             let managedObjectContext = appDelegate.managedObjectContext
             
@@ -76,14 +77,8 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        
-    }
-    
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
-        
         ContactUserObserver.observer.stopObservingAllContactUserInfo()
     }
     
@@ -331,6 +326,25 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         segue.destinationViewController.hidesBottomBarWhenPushed = true
+        
+        if segue.identifier == "ShowChatRoomViewController" {
+            guard
+                let chatRoomViewController = segue.destinationViewController as? ChatRoomViewController,
+                let selectedIndexPath = tableView.indexPathForSelectedRow
+                else {
+                    return
+            }
+            guard
+                let selectedContact = contactFetchedResultController?.objectAtIndexPath(selectedIndexPath) as? Contact
+                else {
+                    return
+            }
+            
+            let conversation = chatRoomViewController.appModel.createNewConversation([selectedContact])
+            ConversationObserver.observer.conversationCreate(conversation)
+            chatRoomViewController.conversationID = conversation.conversationID
+            
+        }
     }
     
     
@@ -344,11 +358,11 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
         setupTableViewData()
     }
     
+    
     @IBAction func didTouchAddContactButton(sender: UIBarButtonItem) {
         // Prepare the action sheet controller
         let actionSheetTitle = NSLocalizedString("Add contact", comment: "Add contact")
         let searchContactActionTitle = NSLocalizedString("From search", comment: "From search")
-        let facebookContactActionTitle = NSLocalizedString("From Facebbok", comment: "From Facebook")
         let cancelActionTitle = NSLocalizedString("Cancel", comment: "Cancel")
         
         let actionSheetController = TintedAlertViewController(title: actionSheetTitle, message: nil, preferredStyle: .ActionSheet)
@@ -357,14 +371,9 @@ class ContactsViewController: UITableViewController, NSFetchedResultsControllerD
             self.performSegueWithIdentifier("ShowAddContactViewController", sender: nil)
         }
         
-        let facebookContactAction = UIAlertAction(title: facebookContactActionTitle, style: .Default) { (_) in
-            // self.performSegueWithIdentifier()
-        }
-        
         let cancelAction = UIAlertAction(title: cancelActionTitle, style: .Cancel, handler: nil)
         
         actionSheetController.addAction(searchContactAction)
-        actionSheetController.addAction(facebookContactAction)
         actionSheetController.addAction(cancelAction)
         actionSheetController.popoverPresentationController?.barButtonItem = sender
         

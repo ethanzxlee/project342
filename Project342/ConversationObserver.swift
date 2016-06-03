@@ -24,8 +24,6 @@ class ConversationObserver {
     
     private init() {
         managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
-        // TODO: Remove this one the login VC is done
-        FIRAuth.auth()?.signInWithEmail("9w2owd@gmail.com", password: "password", completion: nil)
     }
     
     
