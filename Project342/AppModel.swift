@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import Firebase
 
 class AppModel:NSManagedObjectModel{
     let managedContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
@@ -99,10 +100,29 @@ class AppModel:NSManagedObjectModel{
      
      Return: Conversation type of data
      */
-    // FIXME: Upload to Firebase
     func createNewConversation(members:[Contact])->Conversation{
-        if let conversation = NSEntityDescription.insertNewObjectForEntityForName("Conversation", inManagedObjectContext: managedContext)as? Conversation{
+        
+        if members.count == 1 {
+            let getConversationRequest = NSFetchRequest(entityName: "Conversation")
             
+            do{
+                if let getConversationList = try managedContext.executeFetchRequest(getConversationRequest) as? [Conversation]{
+                    for conversation in getConversationList {
+                        if conversation.members?.count == 1 {
+                            
+                            let membersTempList = conversation.members?.allObjects as! [Contact]
+                            if membersTempList[0].userId! == members[0].userId! {
+                                return conversation
+                            }
+                        }
+                    }
+                }
+                
+            }catch{}
+
+        }
+        
+        if let conversation = NSEntityDescription.insertNewObjectForEntityForName("Conversation", inManagedObjectContext: managedContext)as? Conversation{
             /**
              Update the conservation list of each user before add them into a new conversation
              */
@@ -135,8 +155,7 @@ class AppModel:NSManagedObjectModel{
             
             do{
                 try managedContext.save()
-                
-                // TODO: Upload to Firebase with members needed to include current users
+                ConversationObserver.observer.conversationCreate(conversation)
                 
                 return conversation
             }catch{
@@ -294,18 +313,16 @@ class AppModel:NSManagedObjectModel{
     /**
      Store the message to CoreData and Firebase
      */
-    // FIXME: apply to user default
+
     func sendMessage(msg: String, conversationID: String, isCover: Bool)-> Message{
         
         let conversation = self.getConversation(conversationID)
         
-        let userInfo = NSUserDefaults()
-        userInfo.setObject("wko232", forKey: "userID")
         if let message = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedContext) as? Message{
             message.type = MessageType.NormalMessage.rawValue
             message.content = "\(msg)   "
 
-            message.senderID = userInfo.stringForKey("userID")!
+            message.senderID = FIRAuth.auth()?.currentUser?.uid
             message.conversation = conversation
             message.sentDate = NSDate()
             
@@ -333,13 +350,12 @@ class AppModel:NSManagedObjectModel{
     /**
      Store the message consist of image to CoreData and Firebase
      */
-    // FIXME: apply to user default
+
     func sendMessageImage(img: UIImage, conversationID: String, isCover: Bool)-> Message{
         
         let conversation = self.getConversation(conversationID)
         
-        let userInfo = NSUserDefaults()
-        userInfo.setObject("wko232", forKey: "userID")
+        
         
         // Save the image first
         // save img to Document Directory
@@ -382,7 +398,7 @@ class AppModel:NSManagedObjectModel{
             attachment.message = message
             message.type = MessageType.Image.rawValue
             message.attachements = NSSet(array: [attachment])
-            message.senderID = userInfo.stringForKey("userID")!
+            message.senderID = FIRAuth.auth()?.currentUser?.uid
             message.conversation = conversation
             message.sentDate = NSDate()
             
@@ -411,14 +427,12 @@ class AppModel:NSManagedObjectModel{
     /**
      Store the message of Share Location to CoreData and Firebase
      */
-    // FIXME: apply to user default
     func sendMessageMap(img: UIImage, conversationID: String, isCover: Bool, lat: String, lon: String)-> Message{
         
         
         let conversation = self.getConversation(conversationID)
         
-        let userInfo = NSUserDefaults()
-        userInfo.setObject("wko232", forKey: "userID")
+        
         
         // Save the image first
         // save img to Document Directory
@@ -462,7 +476,7 @@ class AppModel:NSManagedObjectModel{
             message.type = MessageType.Map.rawValue
             message.content = "\(lat), \(lon)"
             message.attachements = NSSet(array: [attachment])
-            message.senderID = userInfo.stringForKey("userID")!
+            message.senderID = FIRAuth.auth()?.currentUser?.uid
             message.conversation = conversation
             message.sentDate = NSDate()
             
@@ -578,6 +592,7 @@ class AppModel:NSManagedObjectModel{
         let getContactRequest = NSFetchRequest(entityName: "Contact")
         let firstNameSort = NSSortDescriptor(key: "firstName", ascending: true)
         getContactRequest.sortDescriptors = [firstNameSort]
+        getContactRequest.predicate = NSPredicate(format: "status = %@", ContactStatus.Added.rawValue)
         do{
             if let getContactList = try managedContext.executeFetchRequest(getContactRequest) as? [Contact]{
                 return getContactList

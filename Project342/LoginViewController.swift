@@ -185,6 +185,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                             }
                             
                             dispatch_async(dispatch_get_main_queue(), {
+                                MessageObserver.observer.observeMessageEvents()
+                                ConversationObserver.observer.observeConversationEvents()
+                                ConversationObserver.observer.observeConversationMemberEvents()
+                                ContactObserver.observer.observeContactsEvents()
+                                
                                 // Move to tab view controller
                                 let nextView = (self.storyboard?.instantiateViewControllerWithIdentifier("TabBarController"))! as! UITabBarController
                                 self.presentViewController(nextView, animated: true, completion: nil)

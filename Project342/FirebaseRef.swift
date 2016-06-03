@@ -73,4 +73,9 @@ struct StorageRef {
         return FIRStorage.storage().reference().child("ProfilePic")
     }
     
+    
+    static var imageSendRef: FIRStorageReference {
+        return FIRStorage.storage().reference().child("ImageSend")
+    }
+    
 }

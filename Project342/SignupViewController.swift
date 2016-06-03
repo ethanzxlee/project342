@@ -129,6 +129,11 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                     // Save user information to Firebase data
                     self.ref.child("users").child(authData!.uid).setValue(["provider": "Firebase", "email": self.inputemail!, "firstName": self.inputfname!, "lastName": self.inputlname!, "createdAt": createdAt])
                     
+                    MessageObserver.observer.observeMessageEvents()
+                    ConversationObserver.observer.observeConversationEvents()
+                    ConversationObserver.observer.observeConversationMemberEvents()
+                    ContactObserver.observer.observeContactsEvents()
+                    
                     let nextView = (self.storyboard?.instantiateViewControllerWithIdentifier("TabBarController"))! as! UITabBarController
                     self.presentViewController(nextView, animated: true, completion: nil)
                 }

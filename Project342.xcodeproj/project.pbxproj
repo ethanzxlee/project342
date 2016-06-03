@@ -23,6 +23,7 @@
 		A1083D2C1CEC1CFE00FFE32A /* CustomPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1083D2B1CEC1CFE00FFE32A /* CustomPresentationController.swift */; };
 		A1115A881CF869B300DD2CD1 /* AddContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1115A871CF869B300DD2CD1 /* AddContactTableViewCell.swift */; };
 		A1115A8A1CF956C900DD2CD1 /* SearchContactObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1115A891CF956C900DD2CD1 /* SearchContactObserver.swift */; };
+		A13637F61D01B243008D0360 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13637F51D01B243008D0360 /* SettingsViewController.swift */; };
 		A13723661CED7C97002446F1 /* ContactObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13723651CED7C97002446F1 /* ContactObserver.swift */; };
 		A1423B721CFE9BF000023A17 /* LaunchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1423B711CFE9BF000023A17 /* LaunchViewController.swift */; };
 		A1423B791D016F7A00023A17 /* ConversationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1423B731D016F7A00023A17 /* ConversationObserver.swift */; };
@@ -102,6 +103,7 @@
 		A1115A871CF869B300DD2CD1 /* AddContactTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddContactTableViewCell.swift; sourceTree = "<group>"; };
 		A1115A891CF956C900DD2CD1 /* SearchContactObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchContactObserver.swift; sourceTree = "<group>"; };
 		A1115A8B1CF95BD200DD2CD1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A13637F51D01B243008D0360 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		A13723651CED7C97002446F1 /* ContactObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactObserver.swift; sourceTree = "<group>"; };
 		A1423B711CFE9BF000023A17 /* LaunchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchViewController.swift; sourceTree = "<group>"; };
 		A1423B731D016F7A00023A17 /* ConversationObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationObserver.swift; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 				A1423B711CFE9BF000023A17 /* LaunchViewController.swift */,
 				960DACB71CFEEC73005038B9 /* UserSettingsTableViewController.swift */,
 				090BED021CED454800534DC0 /* CreateNewChatViewController.swift */,
+				A13637F51D01B243008D0360 /* SettingsViewController.swift */,
 			);
 			name = ViewController;
 			sourceTree = "<group>";
@@ -671,6 +674,7 @@
 				A1423B721CFE9BF000023A17 /* LaunchViewController.swift in Sources */,
 				A1A4DA041CE87390006AA3CF /* ChatRoomSettingsViewController.swift in Sources */,
 				A1B03D2D1CFC5CAC00120565 /* TintedAlertViewController.swift in Sources */,
+				A13637F61D01B243008D0360 /* SettingsViewController.swift in Sources */,
 				9628885E1CF6960500C47387 /* SignupViewController.swift in Sources */,
 				A1A4DA021CE87363006AA3CF /* SecretMessageViewController.swift in Sources */,
 				A1A4DA621CE98D06006AA3CF /* Message+CoreDataProperties.swift in Sources */,

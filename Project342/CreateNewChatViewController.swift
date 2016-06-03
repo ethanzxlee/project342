@@ -107,6 +107,7 @@ class CreateNewChatViewController: UIViewController, UITableViewDelegate, UITabl
         
         
         let imgName = contact?.userId
+        print(contact?.firstName)
         let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
         let documentDirectory = documentPath[0]
         let image = UIImage(named: "\(documentDirectory)/\(imgName)")
@@ -142,25 +143,8 @@ class CreateNewChatViewController: UIViewController, UITableViewDelegate, UITabl
         return cell
     }
     
-    // FIXME: sometime deslect dont go in the function if click too fast
+    
     func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
-//        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)){
-//            dispatch_async(dispatch_get_main_queue()){
-//                for index in 0..<self.membersConversation.count{
-//                    if self.contactList[index] == self.contactList[indexPath.row]{
-//                        self.membersConversation.removeAtIndex(index)
-//                    }
-//                }
-//                
-//                if self.membersConversation.count == 0{
-//                    self.createButton.title = "Create"
-//                }else{
-//                    self.createButton.title = "Create (\(self.membersConversation.count))"
-//                }
-//                self.addTextToTextView()
-//
-//            }
-//        }
         
         for index in 0..<self.membersConversation.count{
             if searchActive{

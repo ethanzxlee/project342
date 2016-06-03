@@ -8,7 +8,7 @@
 
 import Foundation
 import CoreData
-
+import Firebase
 
 class Message: NSManagedObject {
 
@@ -42,7 +42,6 @@ extension Message{
         
         let dateformater = NSDateFormatter()
         dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-        
         let attachment = (attachements?.allObjects as! [Attachment])[0]
         return [
             "content": "",

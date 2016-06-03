@@ -341,21 +341,14 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         if indexPath.row > messagesDisplay.count {
             return UITableViewCell()
         }
-        // FIXME: NSUserDefault
-        let userInfo = NSUserDefaults()
-        userInfo.setObject("wko232", forKey: "userID")
-        userInfo.setObject("coverCode", forKey: "coverCode")
-        let userID = userInfo.stringForKey("userID")
-        if messagesDisplay[indexPath.row].senderID != userID! {
-            
+        if messagesDisplay[indexPath.row].senderID != FIRAuth.auth()?.currentUser?.uid {
             
             // MARK: User Receive Message
             let cell = tableView.dequeueReusableCellWithIdentifier("leftChatRoomCell", forIndexPath: indexPath) as! LeftChatRoomCustomCell
             
             // If cover message
-            // FIXME: get cover code from NSUSERdefault??
             if messagesDisplay[indexPath.row].shouldCover == 1{
-                cell.messageContent.text = self.coverCode
+                cell.messageContent.text = "***"
                 cell.messageContent.sizeToFit()
                 return cell
             }
@@ -411,10 +404,8 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             let cell = tableView.dequeueReusableCellWithIdentifier("rightChatRoomCell", forIndexPath: indexPath) as! RightChatRoomCustomCell
             
             
-            // If cover message
-            // FIXME: get cover code from NSUSERdefault??
             if messagesDisplay[indexPath.row].shouldCover == 1{
-                cell.messageContent.text = userInfo.stringForKey("coverCode")
+                cell.messageContent.text = "***"
                 cell.messageContent.sizeToFit()
                 return cell
             }

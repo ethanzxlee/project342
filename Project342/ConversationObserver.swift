@@ -69,7 +69,24 @@ class ConversationObserver {
             // Update message
             FirebaseRef.msgRef?.child(conversation.conversationID!).updateChildValues(["count": count])
             if message.type == MessageType.Image.rawValue {
-                FirebaseRef.msgRef?.child(conversation.conversationID!).updateChildValues([messageKey: message.dictionaryImage()])
+                var dict = message.dictionaryImage()
+                let dateFormatter = NSDateFormatter()
+                dateFormatter.dateFormat = "yyyy_MM_ddHHmm"
+                let imgURL = "\(conversation.conversationID!)\(dateFormatter.stringFromDate(NSDate()))"
+                
+                var attachment = dict["attachments"] as! [String: String]
+                
+                let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+                let directory = documentPath[0]
+                
+                
+                let imagePath = NSURL(fileURLWithPath: directory).URLByAppendingPathComponent(attachment["image"]!)
+
+                attachment["image"] = imgURL
+                dict["attachments"] = attachment
+                StorageRef.imageSendRef.child(imgURL).putFile(imagePath)
+                
+                FirebaseRef.msgRef?.child(conversation.conversationID!).updateChildValues([messageKey: dict])
             }else{
                 
                 FirebaseRef.msgRef?.child(conversation.conversationID!).updateChildValues([messageKey: message.dictionaryNormalMessageMap()])
