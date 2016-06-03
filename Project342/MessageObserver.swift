@@ -71,8 +71,8 @@ class MessageObserver {
                 return
             }
             let dateFormatter = NSDateFormatter.ISO8601DateFormatter()
-
             let date = dateFormatter.dateFromString(message!["sentDate"] as! String)
+
             // Check if the message exists
             let fetchRequest = NSFetchRequest(entityName: "Message")
             fetchRequest.predicate = NSPredicate(format: "conversation.conversationID = %@ AND sentDate = %@", conversationID, date!)

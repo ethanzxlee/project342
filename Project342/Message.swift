@@ -25,8 +25,7 @@ extension Message{
     // Used for pass data(Normal Message or Share Location) to Firebase
     func dictionaryNormalMessageMap() -> [String : AnyObject] {
         
-        let dateformater = NSDateFormatter()
-        dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        let dateformater = NSDateFormatter.ISO8601DateFormatter()
         return [
             "content": content!,
             "senderID": senderID!,
