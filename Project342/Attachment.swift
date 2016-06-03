@@ -8,7 +8,7 @@
 
 import UIKit
 import CoreData
-
+import Firebase
 
 class Attachment: NSManagedObject {
 
@@ -21,13 +21,9 @@ extension Attachment{
     func dictionary()-> [String: AnyObject]{
         let dateformater = NSDateFormatter()
         dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-        let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-        let documentDirectory = documentPath[0]
         
-        let img = UIImage(named: "\(documentDirectory)/\(filePath!)")!
-        let imgData:NSData = UIImagePNGRepresentation(img)!
         return [
-            "image": imgData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength) ,
+            "image": "\(filePath!)",
             "sentDate": dateformater.stringFromDate(self.sentDate!)
         ]
     }

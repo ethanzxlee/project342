@@ -101,8 +101,28 @@ class AppModel:NSManagedObjectModel{
      */
     // FIXME: Upload to Firebase
     func createNewConversation(members:[Contact])->Conversation{
-        if let conversation = NSEntityDescription.insertNewObjectForEntityForName("Conversation", inManagedObjectContext: managedContext)as? Conversation{
+        
+        if members.count == 1 {
+            let getConversationRequest = NSFetchRequest(entityName: "Conversation")
             
+            do{
+                if let getConversationList = try managedContext.executeFetchRequest(getConversationRequest) as? [Conversation]{
+                    for conversation in getConversationList {
+                        if conversation.members?.count == 1 {
+                            
+                            let membersTempList = conversation.members?.allObjects as! [Contact]
+                            if membersTempList[0].userId! == members[0].userId! {
+                                return conversation
+                            }
+                        }
+                    }
+                }
+                
+            }catch{}
+
+        }
+        
+        if let conversation = NSEntityDescription.insertNewObjectForEntityForName("Conversation", inManagedObjectContext: managedContext)as? Conversation{
             /**
              Update the conservation list of each user before add them into a new conversation
              */
@@ -135,8 +155,7 @@ class AppModel:NSManagedObjectModel{
             
             do{
                 try managedContext.save()
-                
-                // TODO: Upload to Firebase with members needed to include current users
+                ConversationObserver.observer.conversationCreate(conversation)
                 
                 return conversation
             }catch{

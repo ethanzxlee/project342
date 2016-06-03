@@ -78,7 +78,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         if contactsForNewConversation?.count > 0 {
             let newConversation = self.appModel.createNewConversation(contactsForNewConversation!)
             
-            ConversationObserver.observer.conversationCreate(newConversation)
+            
             contactsForNewConversation?.removeAll(keepCapacity: false)
             print(contactsForNewConversation?.count)
             self.performSegueWithIdentifier("toChatRoom", sender: newConversation.conversationID)
@@ -292,10 +292,9 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
      // In a storyboard-based application, you will often want to do a little preparation before navigation
      override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "toChatRoom" {
-            if let navigationController = segue.destinationViewController as? UINavigationController{
-                if let destionation = navigationController.topViewController as? ChatRoomViewController{
-                    destionation.conversationID = sender as? String
-                }
+            if let destionation = segue.destinationViewController as? ChatRoomViewController{
+                destionation.conversationID = sender as? String
+                destionation.hidesBottomBarWhenPushed = true
             }
         }
      }

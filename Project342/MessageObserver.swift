@@ -109,11 +109,14 @@ class MessageObserver {
                     let documentDirectory = documentPath[0]
                     let url = NSURL(fileURLWithPath: documentDirectory).URLByAppendingPathComponent(imgName)
                     
-                    if let data = snapshotValues["image"] as? NSData{
-                        data.writeToURL(url, atomically: true)
-                        print("Success save image to\n\(url)")
-                    }
+                    let attachmentImg = snapshotValues["attachments"]  as! [String:String]
+                    let firebaseURL = StorageRef.imageSendRef.child(attachmentImg["image"]!)
                     
+                    let downloadTask = firebaseURL.writeToFile(url)
+                    
+                    downloadTask.observeStatus(.Success, handler: { (snapshot) in
+                        print("download img success")
+                    })
                     
                     dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
                     attachment.sentDate = dateFormatter.dateFromString(snapshotValues["sentDate"] as! String)

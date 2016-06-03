@@ -85,6 +85,9 @@ class CreateNewChatViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if contactList.count == 0 {
+            return 0
+        }
         if searchActive{
             return filteredContactList.count
         }
