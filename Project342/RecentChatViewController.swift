@@ -12,7 +12,7 @@ import CoreData
 import QuartzCore
 
 class RecentChatViewController: UITableViewController, UISearchBarDelegate {
-
+    
     @IBOutlet weak var searchBar: UISearchBar!
     
     // Set the number of loading needed for query data from core data
@@ -41,8 +41,8 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         
         // Add edit button to navigation bar
         self.navigationItem.leftBarButtonItem = editButtonItem()
+        
         let composeButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: #selector(RecentChatViewController.createNewConversation))
-
         self.navigationItem.rightBarButtonItem = composeButton
         
         
@@ -68,36 +68,34 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
          */
         self.tableView.contentOffset = CGPointMake(0.0, self.searchBar.frame.size.height)
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
+    
     
     override func viewDidAppear(animated: Bool) {
-        if contactsForNewConversation?.count > 0 {
-            let newConversation = self.appModel.createNewConversation(contactsForNewConversation!)
-            
-            
-            contactsForNewConversation?.removeAll(keepCapacity: false)
-            print(contactsForNewConversation?.count)
-            self.performSegueWithIdentifier("toChatRoom", sender: newConversation.conversationID)
-        }else{
-            dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
-                dispatch_async(dispatch_get_main_queue(), {
-                    self.conversationListDic = self.appModel.getConversationList(self.numberOfLoading * self.defaultLimit)
-                    self.tableView.reloadData()
-
-                })
-            })
-        }
+        //        if contactsForNewConversation?.count > 0 {
+        //            let newConversation = self.appModel.createNewConversation(contactsForNewConversation!)
+        //
+        //
+        //            contactsForNewConversation?.removeAll(keepCapacity: false)
+        //            print(contactsForNewConversation?.count)
+        //            self.performSegueWithIdentifier("toChatRoom", sender: newConversation.conversationID)
+        //        }else{
+        //            dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+        //                dispatch_async(dispatch_get_main_queue(), {
+        //                    self.conversationListDic = self.appModel.getConversationList(self.numberOfLoading * self.defaultLimit)
+        //                    self.tableView.reloadData()
+        //
+        //                })
+        //            })
+        //        }
     }
+    
     
     // MARK: - Table view data source
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
+    
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if self.searchActive{
@@ -107,7 +105,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     }
     
     
-     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCellWithIdentifier("recentContactReuseCell", forIndexPath: indexPath)
         var conversationDict : [String: AnyObject]?
@@ -116,12 +114,12 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         }else{
             conversationDict = self.conversationListDic[indexPath.row]
         }
-
+        
         /**
          NSHipster.com
          Image Resizing Techniques
          http://nshipster.com/image-resizing/
-        */
+         */
         
         let image : UIImage?
         if conversationDict!["conversationPhotoPath"] as? String == "group.png"{
@@ -132,7 +130,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
             let documentDirectory = documentPath[0]
             image = UIImage(named: "\(documentDirectory)/\(imgName)")
         }
-
+        
         
         let size = CGSize(width: 50, height: 50)
         let hasAlpha = false
@@ -156,18 +154,18 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         cell.imageView?.contentMode = .ScaleAspectFit
         cell.textLabel?.text = conversationDict!["conversationName"] as? String
         return cell
-     }
-
+    }
     
-     // Override to support conditional editing of the table view.
-     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-         return true
-     }
- 
-     // Override to support editing the table view.
-     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    
+    // Override to support conditional editing of the table view.
+    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+    
+    // Override to support editing the table view.
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
-             // Delete the row from the data source
+            // Delete the row from the data source
             let conversationDict = conversationListDic[indexPath.row]
             if conversationDict["type"] as? Int == ConversationType.Group.rawValue{
                 let alertDialog = UIAlertController(title: "Delete Group Message", message: "You will be assume left the group if you delete the group message. Do you would like to continue carry out the deletion process?", preferredStyle: .Alert)
@@ -190,10 +188,10 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
                 tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
             }
             
-         } else if editingStyle == .Insert {
-         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-         }
-     }
+        } else if editingStyle == .Insert {
+            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+        }
+    }
     
     /**
      Beslan Tularov from stakeoverflow.com
@@ -231,7 +229,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     // Thus, acitvity indicator is no needed
     func loadingConservationFromCoreData(){
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
-                dispatch_async(dispatch_get_main_queue()) {
+            dispatch_async(dispatch_get_main_queue()) {
                 
                 self.nextPage = self.conversationListDic.count - 3
                 // this runs on the main queue
@@ -245,7 +243,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
             }
         }
     }
-
+    
     // Change the right bar button when it is in editing mode or normal mode
     override func setEditing(editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
@@ -287,18 +285,18 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
      */
     
     
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    // MARK: - Navigation
+    
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "toChatRoom" {
             if let destination = segue.destinationViewController as? ChatRoomViewController{
                 destination.conversationID = sender as? String
                 destination.hidesBottomBarWhenPushed = true
             }
         }
-     }
- 
+    }
+    
     // MARK: Segue
     @IBAction func getBackFromCreateNewChat(sender: UIStoryboardSegue){}
     
@@ -325,7 +323,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         alertDialog.addAction(yesAction)
         
         self.presentViewController(alertDialog, animated: true, completion: nil)
-
+        
     }
     
     // MARK: - Search Bar

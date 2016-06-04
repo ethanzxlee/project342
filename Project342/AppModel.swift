@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import Firebase
 
-class AppModel:NSManagedObjectModel{
+class AppModel {
     let managedContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
     
     // MARK: -Conversation

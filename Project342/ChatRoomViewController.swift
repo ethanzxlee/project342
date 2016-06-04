@@ -27,12 +27,16 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     @IBOutlet weak var chatContentTableView: UITableView!                       // Table View show conversation
     
-    @IBOutlet weak var contentView: UIView!                                     // Overall View that consist of TableView, TextView for enter message, and so on
+    //@IBOutlet weak var contentView: UIView!                                     // Overall View that consist of TableView, TextView for enter message, and so on
     @IBOutlet weak var emptyView: UIView!
     
-    @IBOutlet weak var messageContentViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var sharePhotoButton: UIButton!
     
-    @IBOutlet weak var messageContentViewHeightConstraint: NSLayoutConstraint!
+    //@IBOutlet weak var messageContentViewBottomConstraint: NSLayoutConstraint!
+    
+   // @IBOutlet weak var messageContentViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var bottomBar: UIView!
+    @IBOutlet weak var bottomBarBottomConstraint: NSLayoutConstraint!
     
     @IBAction func multiSelectionButtonFunc(sender: AnyObject) {
         self.textView.resignFirstResponder()
@@ -45,7 +49,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             self.presentViewController(self.imagePicker, animated: true, completion: nil)
         }
         
-        let choosePhotoAction = UIAlertAction(title: "Choose Photo", style: .Default){(_) in
+        let choosePhotoAction = UIAlertAction(title: "Choose Photo", style: .Default) { (_) in
             self.imagePicker.allowsEditing = false
             self.imagePicker.sourceType = .PhotoLibrary
             self.presentViewController(self.imagePicker, animated: true, completion: nil)
@@ -69,10 +73,10 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     @IBAction func hiddenButtonFunc(sender: AnyObject) {
         if self.hiddenMessageSign {
             self.hiddenMessageSign = false
-            self.contentView.backgroundColor = UIColor.lightGrayColor()
+            //self.contentView.backgroundColor = UIColor.lightGrayColor()
         }else{
             self.hiddenMessageSign = true
-            self.contentView.backgroundColor = UIColor.init(red: 0, green: 9/255, blue: 20/255, alpha: 1)
+            //self.contentView.backgroundColor = UIColor.init(red: 0, green: 9/255, blue: 20/255, alpha: 1)
         }
     }
     
@@ -90,7 +94,6 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         sendButton.hidden = true
         shareLocationButton.hidden = false
         hiddenButton.hidden = false
-        adjustTextViewHeight()
     }
     
     var imagePicker = UIImagePickerController()
@@ -146,12 +149,9 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         self.textView.delegate = self
         self.textView.layer.cornerRadius = 5
         
-        
         self.locationManager.delegate = self
-        
 
         self.chatContentTableView.registerNib(UINib(nibName: "RightChatRoomCustomCell", bundle: nil), forCellReuseIdentifier: "rightChatRoomCell")
-        
         self.chatContentTableView.registerNib(UINib(nibName: "LeftChatRoomCustomCell", bundle: nil), forCellReuseIdentifier: "leftChatRoomCell")
         
         self.chatContentTableView.rowHeight = UITableViewAutomaticDimension
@@ -166,8 +166,10 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ChatRoomViewController.tapGestureFunc))
         self.view.addGestureRecognizer(tapGesture)
+        
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ChatRoomViewController.viewSecretMessage))
         self.chatContentTableView.addGestureRecognizer(longPressGesture)
+        
         let tapGestureCell = UITapGestureRecognizer(target: self, action: #selector(ChatRoomViewController.tapGestureCellFunc))
         self.chatContentTableView.addGestureRecognizer(tapGestureCell)
         
@@ -177,19 +179,16 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         messagesDisplay = self.appModel.getMessage(defaultLimit * numberOfLoading, conversationID: conversationID!)
         numberOfLoading += 1
         
+        // Add a border on top of the bottom bar
+        let upperBorder = CALayer()
+        upperBorder.backgroundColor = UIColor.lightGrayColor().CGColor
+        upperBorder.frame = CGRectMake(0, 0, bottomBar.frame.width , 1 / UIScreen.mainScreen().scale )
+        bottomBar.layer.addSublayer(upperBorder)
     }
-
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
 
     
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "goToAttachmentView"{
             if let goToNavigationController = segue.destinationViewController as? UINavigationController {
@@ -202,54 +201,69 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
 
     // MARK: TextView
+    
     func textViewDidChange(textView: UITextView) {
         if textView.text == "" {
-            sendButton.hidden = true
-            shareLocationButton.hidden = false
-            hiddenButton.hidden = false
-        }else{
-            sendButton.hidden = false
-            shareLocationButton.hidden = true
-            hiddenButton.hidden = true
+            UIView.animateWithDuration(0.2, animations: {
+                self.sendButton.alpha = 0
+                self.shareLocationButton.alpha = 1
+                self.sharePhotoButton.alpha = 1
+            })
+        } else {
+            UIView.animateWithDuration(0.2, animations: {
+                self.sendButton.alpha = 1
+                self.shareLocationButton.alpha = 0
+                self.sharePhotoButton.alpha = 0
+            })
         }
-        adjustTextViewHeight()
-       
     }
     
-    func adjustTextViewHeight(){
-        var adjustment = textView.bounds.size.height - textView.contentSize.height
-        if adjustment < 0 {
-            adjustment = 0
-        }
-        
-        textView.contentOffset = CGPoint(x: 0, y: -adjustment)
-        let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.max))
-        if newSize.height > 30 {
-            messageContentViewHeightConstraint.constant = newSize.height
-        }
-    }
     
     // MARK: Keyboard Notification
     func keyboardWillShow(notification: NSNotification){
-        if let keyboardSize = (notification.userInfo![UIKeyboardFrameBeginUserInfoKey] as? NSValue){
-            let keyboardHeight = keyboardSize.CGRectValue().height
-            
-            messageContentViewBottomConstraint.constant += keyboardHeight
-            
+        guard
+            let userInfo = notification.userInfo
+            else {
+                return
+        }
+        
+        guard
+            let animationDuration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber,
+            let keyboardSize = userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue
+            else {
+                return
+        }
+        
+        let keyboardHeight = keyboardSize.CGRectValue().height
+        
+        bottomBarBottomConstraint.constant = keyboardHeight
+        UIView.animateWithDuration(animationDuration.doubleValue) {
+            self.bottomBar.superview?.layoutIfNeeded()
         }
     }
     
     func keyboardWillHide(notification: NSNotification){
-        if let keyboardSize = (notification.userInfo![UIKeyboardFrameBeginUserInfoKey] as? NSValue){
-            let keyboardHeight = keyboardSize.CGRectValue().height
-            
-            messageContentViewBottomConstraint.constant -= keyboardHeight
-            
+        guard
+            let userInfo = notification.userInfo
+            else {
+                return
         }
+        
+        guard
+            let animationDuration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber
+            else {
+                return
+        }
+        
+        bottomBarBottomConstraint.constant = 0
+        UIView.animateWithDuration(animationDuration.doubleValue) {
+            self.bottomBar.superview?.layoutIfNeeded()
+        }
+
     }
     
     // MARK: Segue
-    @IBAction func backFromAttachmentView(sender: UIStoryboardSegue){}
+   // @IBAction func backFromAttachmentView(sender: UIStoryboardSegue){}
     
     // MARK: Location & Share Location feature
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
