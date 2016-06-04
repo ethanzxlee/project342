@@ -409,15 +409,18 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
                 cell.messageContent.sizeToFit()
                 return cell
             }
-            
+
             // Check for display avatar
             if indexPath.row != 0 {
                 if messagesDisplay[indexPath.row].senderID == messagesDisplay[indexPath.row-1].senderID{
                     cell.profileView.hidden = true
                 }else{
+                    let path = Directories.profilePicDirectory?.URLByAppendingPathComponent((FIRAuth.auth()?.currentUser?.uid)!)
+                    cell.profileView.image = UIImage(named: (path?.path)!)
                     cell.profileView.hidden = false
                 }
             }
+            
             
             let type = messagesDisplay[indexPath.row].type!
             print(type)

@@ -180,6 +180,22 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                                         self.ref.child("users").child(user!.uid).setValue(["facebookid": uid, "provider": providerID, "email": email!, "firstName": strFirstName, "lastName": strLastName])
                                     }
                                 }
+                                
+                                // Download Profile Picture
+                                let profilePicRef = StorageRef.profilePicRef.child(user!.uid)
+                                
+                                guard
+                                    let profilePicDirectory = Directories.profilePicDirectory?.URLByAppendingPathComponent(user!.uid)
+                                    else {
+                                        return
+                                }
+                                
+                                let downloadTask = profilePicRef.writeToFile(profilePicDirectory)
+                                print(profilePicRef.fullPath)
+                                downloadTask.observeStatus(.Success, handler: { (profilePicSnapshot) in
+                                    print("Download Success")
+                                })
+
                             }else{
                                 print("Existing user in our database")
                             }
@@ -209,6 +225,20 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         FIRAuth.auth()?.signInWithEmail(self.inputemail!, password: self.inputpwd!) { authData, error in
             if error == nil{
+                // Download Profile Picture
+                let profilePicRef = StorageRef.profilePicRef.child((authData?.uid)!)
+                
+                guard
+                    let profilePicDirectory = Directories.profilePicDirectory?.URLByAppendingPathComponent((authData?.uid)!)
+                    else {
+                        return
+                }
+                
+                let downloadTask = profilePicRef.writeToFile(profilePicDirectory)
+                print(profilePicRef.fullPath)
+                downloadTask.observeStatus(.Success, handler: { (profilePicSnapshot) in
+                    print("Download Success")
+                })
                 let nextView = (self.storyboard?.instantiateViewControllerWithIdentifier("TabBarController"))! as! UITabBarController
                 self.presentViewController(nextView, animated: true, completion: nil)
             }else{
