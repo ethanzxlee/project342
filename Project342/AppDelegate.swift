@@ -40,19 +40,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func applicationDidEnterBackground(application: UIApplication) {
-//        ContactObserver.observer.stopObservingContactsEvents()
-//        MessageObserver.observer.stopObservingMessageEvents()
-//        ConversationObserver.observer.stopObservingConversationEvents()
-//        ConversationObserver.observer.stopObservingConversationMemberEvents()
+        AuthenticationObserver.observer.stopObservingAuthenticationEvent()
     }
 
 
     func applicationDidBecomeActive(application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-        MessageObserver.observer.observeMessageEvents()
-        ConversationObserver.observer.observeConversationEvents()
-        ConversationObserver.observer.observeConversationMemberEvents()
-        ContactObserver.observer.observeContactsEvents()
+        AuthenticationObserver.observer.observeAuthenticationEvent()
         
         // This function activates Facebook
         FBSDKAppEvents.activateApp()
@@ -61,6 +54,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
         application.applicationIconBadgeNumber = 0
+    }
+    
+    
+    func application(application: UIApplication, performFetchWithCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
+        AuthenticationObserver.observer.observeAuthenticationEvent()
+        completionHandler(.NewData)
     }
 
     // MARK: - Core Data stack

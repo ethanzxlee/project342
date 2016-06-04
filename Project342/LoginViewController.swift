@@ -17,27 +17,33 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var facebookButton: UIButton!
     @IBOutlet weak var usernameField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
-    @IBOutlet weak var loadingView: UIView!
-    @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
+    @IBOutlet weak var loginbutton: UIButton!
+    @IBOutlet weak var facebookButtonTopConstraint: NSLayoutConstraint!
     
     var ref: FIRDatabaseReference!
-    var inputemail: String?
-    var inputpwd: String?
+    var documentDirectory: NSURL?
+    var inputemail: String = ""
+    var inputpwd: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Get reference for firebase's database
         ref = FIRDatabase.database().reference()
+        
+        // Get document directory and assign to the variable
+        guard let documentDirectoryTmp = NSFileManager.defaultManager().URLsForDirectory(NSSearchPathDirectory.DocumentDirectory, inDomains: NSSearchPathDomainMask.UserDomainMask).first else{
+            return
+        }
+        documentDirectory = documentDirectoryTmp
+        
         usernameField.delegate = self
-        passwordField
-            .delegate = self
+        passwordField.delegate = self
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(false, animated: true)
-        self.loadingView.hidden = true
         
         // Add user icon in email UITextField
         let emailIcon = UIImageView()
@@ -65,14 +71,37 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         facebookIcon.image = facebook
         facebookIcon.frame = CGRect(x: 22, y: 3, width: 40, height: 40)
         facebookButton.addSubview(facebookIcon)
+        
+        // Disable login button by default
+        // Button will be enable once user complete the form
+        loginbutton.enabled = false
+        loginbutton.alpha = 0.6
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // Determine iPhone model, iPhone 4s need to adjust view when keyboard is bring up
+        let screenSize: CGRect = UIScreen.mainScreen().bounds
+        let screenHeight = screenSize.height
+        
+        if screenHeight == 480 {
+            registerForKeyboardNotifications()
+        }
     }
     
     // Hide navigation bar when view is going to disppear
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.navigationBarHidden = true
-        self.activityIndicatorView.stopAnimating()
-        self.loadingView.hidden = true
+        
+        // Determine iPhone model, iPhone 4s need to adjust view when keyboard is hide
+        let screenSize: CGRect = UIScreen.mainScreen().bounds
+        let screenHeight = screenSize.height
+        
+        if screenHeight == 480 {
+            deregisterForKeyboardNotification()
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -81,7 +110,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     // MARK: UITextFieldDelegate
+    func textFieldShouldClear(textField: UITextField) -> Bool {
+        loginbutton.enabled = false
+        loginbutton.alpha = 0.6
+        
+        return true
+    }
     func textFieldShouldReturn(textField: UITextField) -> Bool{
+        
         let nextTag = textField.tag + 1
         let nextResponder = textField.superview?.viewWithTag(nextTag) as UIResponder!
         
@@ -90,22 +126,69 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         }else{
             //Hide the keyboard
             textField.resignFirstResponder()
+            
+            // Enable the login button once both textfield is filled
+            // Both must be filled for the button to be enabled
+            if !(self.inputemail.isEmpty) && !(self.inputpwd.isEmpty) {
+                loginbutton.enabled = true
+                loginbutton.alpha = 1.0
+            }
         }
         
         return false
     }
+    func textFieldDidBeginEditing(textField: UITextField) {
+        loginbutton.enabled = false
+        loginbutton.alpha = 0.6
+    }
     func textFieldDidEndEditing(textField: UITextField){
         switch (textField.tag) {
         case 1:
-            inputemail = textField.text
+            inputemail = textField.text!
             break
         case 2:
-            inputpwd = textField.text
+            inputpwd = textField.text!
             break
         default: break
         }
         
     }
+    
+    // MARK: - Keyboard
+    func keyboardWillShow(notification: NSNotification) {
+        
+        // Bring the view above keyboard
+        if facebookButtonTopConstraint.constant == 20 {
+            facebookButtonTopConstraint.constant -= 110
+        }
+        
+        UIView.animateWithDuration(0.5) { () -> Void in
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        
+        // Bring the view back to original when keyboard is hide
+        facebookButtonTopConstraint.constant += 110
+
+        UIView.animateWithDuration(0.5) { () -> Void in
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    // MARK: Keyboard Functions
+    func registerForKeyboardNotifications() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(LoginViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(LoginViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    func deregisterForKeyboardNotification() {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    // MARK: Actions
     
     // Logging in with facebook
     @IBAction func facebookLogin(sender: AnyObject) {
@@ -120,9 +203,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             } else {
                 print("Logged in)")
                 
-                // Get loading view up
-                self.loadingView.hidden = false
-                self.activityIndicatorView.startAnimating()
+                // Show activity indicator to show loading
+                self.progressBarDisplayer("Logging in", true)
                 
                 // Get an access token for signed in user
                 let accessToken = FBSDKAccessToken.currentAccessToken().tokenString
@@ -158,6 +240,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                                     
                                     // Get image as the NSData
                                     let data = NSData(contentsOfURL: NSURL(string: strPictureURL)!)
+                                    
+                                    // Run a new thread and save profile pic locally
+                                    let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
+                                    dispatch_async(dispatch_get_global_queue(priority, 0)) {
+                                        self.saveProfilePicLocal((user?.uid)!, data: data!)
+                                    }
                                     
                                     // Create a reference to file we're going to upload using user's id
                                     let profilePicRef = storageRef.child("ProfilePic/\((user?.uid)! as String)")
@@ -220,10 +308,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func loginButton(sender: AnyObject) {
-        self.activityIndicatorView.startAnimating()
-        self.loadingView.hidden = false
+        // Show activity indicator to show loading
+        self.progressBarDisplayer("Logging in", true)
         
-        FIRAuth.auth()?.signInWithEmail(self.inputemail!, password: self.inputpwd!) { authData, error in
+        // Sign user in with email given
+        FIRAuth.auth()?.signInWithEmail(self.inputemail, password: self.inputpwd) { authData, error in
             if error == nil{
                 // Download Profile Picture
                 let profilePicRef = StorageRef.profilePicRef.child((authData?.uid)!)
@@ -242,12 +331,141 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 let nextView = (self.storyboard?.instantiateViewControllerWithIdentifier("TabBarController"))! as! UITabBarController
                 self.presentViewController(nextView, animated: true, completion: nil)
             }else{
-                self.activityIndicatorView.stopAnimating()
-                self.loadingView.hidden = true
+                print(error?.code)
+                self.progressBarHider()
+                
+                var message = "Unable to login. Some error occured and try again."
+                
+                if error?.code == 17999{
+                    message = "Unable to login. Have you signed up for a Cipher account?"
+                }
+                else if error?.code == 17009 || error?.code == 17011{
+                    message = "Unable to login, either username or password is incorrect."
+                }
+                else if error?.code == 17020{
+                    message = "Could not find available network. Make sure your network connection is working and try again."
+                }
+                
+                let alertController = UIAlertController(title: "Login failed", message: message, preferredStyle: UIAlertControllerStyle.Alert)
+                alertController.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                self.presentViewController(alertController, animated: true, completion: nil)
             }
             
         }
 
     }
+    
+    @IBAction func forgotPassword(sender: AnyObject) {
+        let alertController = UIAlertController(title: "Password reset", message: "Enter your email address. We'll send you an email to reset your password.", preferredStyle: UIAlertControllerStyle.Alert)
+        alertController.addTextFieldWithConfigurationHandler { (textField : UITextField!) -> Void in
+            textField.placeholder = "Enter your email"
+        }
+
+        let submitAction = UIAlertAction(title: "Submit", style: .Default) { [unowned self, alertController] (action: UIAlertAction!) in
+            self.progressBarDisplayer("Working on it", true)
+            
+            let input = alertController.textFields![0]
+            let resetemail = input.text! as String
+            
+            self.requestPasswordReset(resetemail)
+        }
+        
+        alertController.addAction(submitAction)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default,handler: nil))
+        self.presentViewController(alertController, animated: true, completion: nil)
+    }
+    
+    // MARK: Functions
+    // Save profile pic locally
+    func saveProfilePicLocal(uid: String, data: NSData){
+        let imagefilename = "\(uid).jpg"
+        let image = UIImage(data: data)
+        
+        guard let imageUrl = self.documentDirectory?.URLByAppendingPathComponent(imagefilename) else {
+            return
+        }
+        
+        guard let imageJpegRepresentation = UIImageJPEGRepresentation(image!, 0.8) else {
+            return
+        }
+        
+        // Write to disk
+        if (!imageJpegRepresentation.writeToURL(imageUrl, atomically: true)) {
+            return
+        }
+    }
+    
+    // Reset password
+    func requestPasswordReset(email: String){
+        FIRAuth.auth()?.sendPasswordResetWithEmail(email) { error in
+            if error != nil {
+                // An error happened.
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.progressBarHider()
+                    
+                    var message = "Some error occured. Please try again."
+                    
+                    if error?.code == 17008 || error?.code == 17999{
+                        message = "Invalid email. Please enter a valid email."
+                    }
+                    else if error?.code == 17020{
+                        message = "Could not find available network. Make sure your network connection is working and try again."
+                    }
+                    
+                    let alertController = UIAlertController(title: "Reset Failed", message: message, preferredStyle: UIAlertControllerStyle.Alert)
+                    alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default,handler: nil))
+                    self.presentViewController(alertController, animated: true, completion: nil)
+                })
+            } else {
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.progressBarHider()
+                    let alertController = UIAlertController(title: "Email sent", message: "Your password has been reset. Please check your email.", preferredStyle: UIAlertControllerStyle.Alert)
+                    alertController.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                    self.presentViewController(alertController, animated: true, completion: nil)
+
+                })
+            }
+        }
+
+    }
+    
+    var messageFrame = UIView()
+    var activityIndicator = UIActivityIndicatorView()
+    var strLabel = UILabel()
+    
+    // Show a activity indicator view with custom string to act as a loading animation
+    func progressBarDisplayer(msg:String, _ indicator:Bool ) {
+        strLabel = UILabel(frame: CGRect(x: 50, y: 0, width: 200, height: 50))
+        strLabel.text = msg
+        strLabel.textColor = UIColor.whiteColor()
+        messageFrame = UIView(frame: CGRect(x: view.frame.midX - 90, y: view.frame.midY - 25 , width: 180, height: 50))
+        messageFrame.layer.cornerRadius = 15
+        messageFrame.backgroundColor = UIColor(white: 0, alpha: 0.7)
+        if indicator {
+            activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.White)
+            activityIndicator.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+            activityIndicator.color = UIColor.themeColor()
+            activityIndicator.startAnimating()
+            messageFrame.addSubview(activityIndicator)
+        }
+        messageFrame.addSubview(strLabel)
+        view.addSubview(messageFrame)
+    }
+    
+    // Stop the loading animation
+    func progressBarHider(){
+        activityIndicator.stopAnimating()
+        messageFrame.hidden = true
+    }
+
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
+    }
+    */
 
 }

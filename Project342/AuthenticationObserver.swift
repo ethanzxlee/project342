@@ -11,10 +11,35 @@ import Firebase
 
 class AuthenticationObserver {
     
+    static let observer = AuthenticationObserver()
+    
+    var eventHandler: FIRAuthStateDidChangeListenerHandle?
+    
     func observeAuthenticationEvent() {
-        FIRAuth.auth()?.addAuthStateDidChangeListener({ (auth, user) in
-            print(user)
+        eventHandler = FIRAuth.auth()?.addAuthStateDidChangeListener({ (auth, user) in
+            if user != nil {
+                MessageObserver.observer.observeMessageEvents()
+                ConversationObserver.observer.observeConversationEvents()
+                ConversationObserver.observer.observeConversationMemberEvents()
+                ContactObserver.observer.observeContactsEvents()
+            }
         })
+    }
+    
+    func stopObservingAuthenticationEvent() {
+        guard
+            let eventHandler = eventHandler
+            else {
+                return
+        }
+        
+        FIRAuth.auth()?.removeAuthStateDidChangeListener(eventHandler)
+        
+        MessageObserver.observer.stopObservingMessageEvents()
+        ConversationObserver.observer.stopObservingConversationEvents()
+        ConversationObserver.observer.stopObservingConversationEvents()
+        ContactObserver.observer.stopObservingContactsEvents()
+
     }
     
 }

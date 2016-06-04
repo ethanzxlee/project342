@@ -91,6 +91,9 @@ class MessageObserver {
             }
             // FIXME: result always zero although it appear in core data
             if result == 0 {
+                // Local notifications for new messages
+                UILocalNotification.scheduleNewMessageNotification()
+                
                 var memberArray = conversation?.messages?.allObjects as! [Message]
                 let msg = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedObjectContext) as! Message
                 msg.type = message!["type"] as! Int

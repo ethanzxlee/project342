@@ -22,6 +22,9 @@ class LeftChatRoomCustomCell: UITableViewCell {
         messageBackgroundView.layer.cornerRadius = 8
         messageBackgroundView.clipsToBounds = true
 
+        profileView.layer.cornerRadius = 12
+        profileView.clipsToBounds = true
+
     }
 
     override func setSelected(selected: Bool, animated: Bool) {
