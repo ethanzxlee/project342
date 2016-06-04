@@ -71,22 +71,22 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     
     
     override func viewDidAppear(animated: Bool) {
-        //        if contactsForNewConversation?.count > 0 {
-        //            let newConversation = self.appModel.createNewConversation(contactsForNewConversation!)
-        //
-        //
-        //            contactsForNewConversation?.removeAll(keepCapacity: false)
-        //            print(contactsForNewConversation?.count)
-        //            self.performSegueWithIdentifier("toChatRoom", sender: newConversation.conversationID)
-        //        }else{
-        //            dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
-        //                dispatch_async(dispatch_get_main_queue(), {
-        //                    self.conversationListDic = self.appModel.getConversationList(self.numberOfLoading * self.defaultLimit)
-        //                    self.tableView.reloadData()
-        //
-        //                })
-        //            })
-        //        }
+            if contactsForNewConversation?.count > 0 {
+                let newConversation = self.appModel.createNewConversation(contactsForNewConversation!)
+    
+    
+                contactsForNewConversation?.removeAll(keepCapacity: false)
+                print(contactsForNewConversation?.count)
+                self.performSegueWithIdentifier("toChatRoom", sender: newConversation.conversationID)
+            }else{
+                dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.conversationListDic = self.appModel.getConversationList(self.numberOfLoading * self.defaultLimit)
+                        self.tableView.reloadData()
+    
+                    })
+                })
+            }
     }
     
     

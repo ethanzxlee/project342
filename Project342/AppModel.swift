@@ -172,7 +172,15 @@ class AppModel {
      
      Return: Name of convesation in String
      */
-    func createConversationName(members: [Contact])->String{
+    func createConversationName(membersList: [Contact])->String{
+        var members = membersList
+        // Remove current user
+        for index in 0..<members.count {
+            if members[index].userId == FIRAuth.auth()?.currentUser?.uid{
+                members.removeAtIndex(index)
+            }
+        }
+        
         var name: String = ""
         if members.count > 2 {
             // Load first 2 people name, the rest with will be ignore and add number
@@ -284,13 +292,7 @@ class AppModel {
         // Change the target and searchTerm to lowercaseString to enable get insensitice result
         // Any used for NSArray or NSSet
         let predicate = NSPredicate(format:
-            "(conversationName.lowercaseString CONTAINS %@) OR " +      // Get the string contain @ in conversationName
-                "(ANY members.firstName.lowercaseString CONTAINS %@) OR " + // Get the string contain @ in firstName
-                "(ANY members.lastName.lowercaseString CONTAINS %@) OR " +  // Get the string contain @ in lastName
-                "(ANY members.firstName.lowercaseString IN %@) OR " +       // Get the string that members.firstName contain inside the @
-                "(ANY messages.content.lowercaseString CONTAINS %@) OR " +
-            "(ANY messages.content.lowercaseString IN %@)",
-                                    str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString, str.lowercaseString)
+            "(conversationName CONTAINS[c] %@)", str)
         
 
         do{
@@ -565,7 +567,10 @@ class AppModel {
         fetchRequest.predicate = NSPredicate(format: "conversationID = %@", conversationID)
         do{
             if let result = try managedContext.executeFetchRequest(fetchRequest) as? [[String:AnyObject]]{
-                return result[0]["coverCode"] as! String
+                guard let coverCode = result[0]["coverCode"] as? String else {
+                    return ""
+                }
+                return coverCode
             }
         }catch{
             print(error)

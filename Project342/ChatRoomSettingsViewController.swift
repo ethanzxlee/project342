@@ -13,6 +13,7 @@ class ChatRoomSettingsViewController: UITableViewController {
     
     @IBOutlet weak var setPasscodeCell: UITableViewCell!
     @IBOutlet weak var setCoverCodeCell: UITableViewCell!
+    @IBOutlet weak var lockChatCell: UITableViewCell!
     @IBOutlet weak var deleteChatCell: UITableViewCell!
     
     var conversation: Conversation?
@@ -54,7 +55,7 @@ class ChatRoomSettingsViewController: UITableViewController {
         case setPasscodeCell:
             // Prepare alert
             let alertTitle = NSLocalizedString("Set passcode", comment: "Set passcode alert title")
-            let alertBody = NSLocalizedString("Setting a passcode requires you to enter the passcode every time you open this conversation", comment: "Set passcode alert body")
+            let alertBody = NSLocalizedString("", comment: "Set passcode alert body")
             
             let alert = TintedAlertViewController(title: alertTitle, message: alertBody, preferredStyle: .Alert)
             
@@ -161,6 +162,42 @@ class ChatRoomSettingsViewController: UITableViewController {
             
             alert.addAction(deleteAction)
             presentViewController(alert, animated: true, completion: nil)
+
+        case lockChatCell:
+            // Prepare alert
+            let alertTitle = NSLocalizedString("Do you want to lock this chat?", comment: "Delete chat alert title")
+            let alertBody = NSLocalizedString("Locking requires you to enter the passcode every time you open this conversation", comment: "Delete chat alert body")
+            
+            let alert = TintedAlertViewController(title: alertTitle, message: alertBody, preferredStyle: .Alert)
+            
+            // Cancel action
+            let unlockTitle = NSLocalizedString("Unlock", comment: "unlock")
+            let unlockAction = UIAlertAction(title: unlockTitle, style: .Cancel, handler: {(action) -> Void in
+                self.conversation?.isLocked = 0
+                do {
+                    try self.managedObjectContext?.save()
+                }
+                catch {
+                    print(error)
+                }
+            })
+            alert.addAction(unlockAction)
+            
+            // Alert action
+            let lockTitle = NSLocalizedString("Lock", comment: "Lock")
+            let lockAction = UIAlertAction(title: lockTitle, style: .Destructive, handler: {(action) -> Void in
+                self.conversation?.isLocked = 1
+                do {
+                    try self.managedObjectContext?.save()
+                }
+                catch {
+                    print(error)
+                }
+            })
+            
+            alert.addAction(lockAction)
+            presentViewController(alert, animated: true, completion: nil)
+            
 
             
         default:

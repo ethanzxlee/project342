@@ -301,7 +301,6 @@ class ConversationObserver {
         }
     
         // Update their statuses
-        conversation?.conversationName = snapshot.value!["conversationName"] as? String
         
         conversation?.type = snapshot.value!["type"] as? Int
         conversation?.lastMessageTimestamp = snapshot.value!["lastMessageTimestamp"] as? String
@@ -344,6 +343,9 @@ class ConversationObserver {
         if conversation?.type == ConversationType.Personal.rawValue{
             conversation?.conversationPhotoPath = memberArray[0].userId
         }
+        let appModel = AppModel()
+        conversation?.conversationName = appModel.createConversationName(memberArray)
+        
         // Save it
         do {
             try self.managedObjectContext.save()
