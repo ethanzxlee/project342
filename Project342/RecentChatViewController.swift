@@ -122,9 +122,16 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
          */
         
         let image : UIImage?
+        print("Photo: \(conversationDict!["conversationPhotoPath"] as? String)" )
         if conversationDict!["conversationPhotoPath"] as? String == "group.png"{
             image = UIImage(named: "group.png")!
+        }else if conversationDict!["type"]as? Int == ConversationType.Personal.rawValue {
+            let documentPath = Directories.profilePicDirectory
+            let url = documentPath?.URLByAppendingPathComponent((conversationDict!["conversationPhotoPath"] as? String)!)
+            image = UIImage(contentsOfFile: url!.path!)
         }else{
+            
+            
             let imgName = conversationDict!["conversationPhotoPath"] as? String
             let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
             let documentDirectory = documentPath[0]
@@ -149,8 +156,8 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
          https://medium.com/@adinugroho/circular-uiimageview-in-uitableview-cell-e1a7e1b6fe63#.2g5l01siu
          Used for: Solve the problem of round image delay
          */
-        cell.imageView?.layer.cornerRadius = scaledImage.size.width/2
-        cell.imageView?.layer.masksToBounds = true
+        cell.imageView?.layer.cornerRadius = 22
+        cell.imageView?.clipsToBounds = true
         cell.imageView?.contentMode = .ScaleAspectFit
         cell.textLabel?.text = conversationDict!["conversationName"] as? String
         return cell

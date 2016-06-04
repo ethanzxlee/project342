@@ -73,10 +73,14 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     @IBAction func hiddenButtonFunc(sender: AnyObject) {
         if self.hiddenMessageSign {
             self.hiddenMessageSign = false
-            //self.contentView.backgroundColor = UIColor.lightGrayColor()
+            self.bottomBar.backgroundColor = UIColor.whiteColor()
+            bottomBar.tintColor = UIColor.themeColor()
+            hiddenButton.backgroundColor = UIColor.clearColor()
         }else{
             self.hiddenMessageSign = true
-            //self.contentView.backgroundColor = UIColor.init(red: 0, green: 9/255, blue: 20/255, alpha: 1)
+            self.bottomBar.backgroundColor = UIColor.darkGrayColor()
+            self.bottomBar.tintColor = UIColor.whiteColor()
+            hiddenButton.backgroundColor = UIColor.themeColor()
         }
     }
     
@@ -89,11 +93,14 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             self.textView.text = ""
 
             self.addRowToTableView()
-            self.textView.resignFirstResponder()
+//            self.textView.resignFirstResponder()
         }
-        sendButton.hidden = true
-        shareLocationButton.hidden = false
-        hiddenButton.hidden = false
+        
+        UIView.animateWithDuration(0.2, animations: {
+            self.sendButton.alpha = 0
+            self.shareLocationButton.alpha = 1
+            self.sharePhotoButton.alpha = 1
+        })
     }
     
     var imagePicker = UIImagePickerController()
@@ -164,9 +171,6 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         
         self.imagePicker.delegate = self
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ChatRoomViewController.tapGestureFunc))
-        self.view.addGestureRecognizer(tapGesture)
-        
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ChatRoomViewController.viewSecretMessage))
         self.chatContentTableView.addGestureRecognizer(longPressGesture)
         
@@ -184,8 +188,32 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         upperBorder.backgroundColor = UIColor.lightGrayColor().CGColor
         upperBorder.frame = CGRectMake(0, 0, bottomBar.frame.width , 1 / UIScreen.mainScreen().scale )
         bottomBar.layer.addSublayer(upperBorder)
+        
+        // Hidden button corner radius
+        hiddenButton.layer.cornerRadius = 4
+        hiddenButton.clipsToBounds = true
     }
 
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        scrollToLastMessage(animated: false)
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        scrollToLastMessage(animated: true)
+    }
+    
+    
+    func scrollToLastMessage(animated animated: Bool) {
+        let rowCount = chatContentTableView.numberOfRowsInSection(0)
+        if rowCount > 0 {
+            let lastRowIndexPath = NSIndexPath(forRow: rowCount - 1, inSection: 0)
+            chatContentTableView.scrollToRowAtIndexPath(lastRowIndexPath, atScrollPosition: .Middle, animated: animated)
+        }
+    }
     
     // MARK: - Navigation
 
@@ -237,8 +265,12 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         let keyboardHeight = keyboardSize.CGRectValue().height
         
         bottomBarBottomConstraint.constant = keyboardHeight
-        UIView.animateWithDuration(animationDuration.doubleValue) {
+        UIView.animateWithDuration(animationDuration.doubleValue, animations: { 
             self.bottomBar.superview?.layoutIfNeeded()
+            }) { (complete) in
+                if complete {
+                    self.scrollToLastMessage(animated: true)
+                }
         }
     }
     
@@ -434,11 +466,12 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             }
             
             let type = messagesDisplay[indexPath.row].type!
-            print(type)
+            
             if type == MessageType.NormalMessage.rawValue {
                 cell.imageView!.image = nil
                 cell.messageContent.text = self.messagesDisplay[indexPath.row].content
                 cell.messageContent.sizeToFit()
+                cell.messageBackgoundView.superview?.layoutIfNeeded()
             }else if type == MessageType.Image.rawValue || type == MessageType.Map.rawValue{
                 let attachments = self.messagesDisplay[indexPath.row].attachements!.allObjects as! [Attachment]
                 let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
@@ -462,6 +495,8 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
                 attributedString.replaceCharactersInRange(NSMakeRange(8, 1), withAttributedString: stringWithImg)
                 
                 cell.messageContent.attributedText = attributedString
+                cell.messageContent.sizeToFit()
+                cell.layoutIfNeeded()
 
             }else{
                 print("Error Message of Attachments/Messages from core data")
@@ -492,9 +527,6 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     }
 
     // MARK: Gesture
-    func tapGestureFunc(){
-        self.textView.resignFirstResponder()
-    }
     
     func tapGestureCellFunc(gesture: UITapGestureRecognizer){
         let locationInView = gesture.locationInView(self.chatContentTableView)

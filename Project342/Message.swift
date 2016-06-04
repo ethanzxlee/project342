@@ -39,8 +39,7 @@ extension Message{
     // Used for pass data(Send Image) to Firebase
     func dictionaryImage() -> [String : AnyObject] {
         
-        let dateformater = NSDateFormatter()
-        dateformater.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        let dateformater = NSDateFormatter.ISO8601DateFormatter()
         let attachment = (attachements?.allObjects as! [Attachment])[0]
         return [
             "content": "",

@@ -171,7 +171,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="gR7-b3-wsM">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="gR7-b3-wsM">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="552"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -193,7 +193,7 @@
                                 <rect key="frame" x="0.0" y="552" width="600" height="48"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oj7-Lg-iZr">
-                                        <rect key="frame" x="0.0" y="4" width="40" height="40"/>
+                                        <rect key="frame" x="4" y="4" width="40" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="40" id="Ud6-4c-xCR"/>
                                             <constraint firstAttribute="height" constant="40" id="yI9-Vs-Nz0"/>
@@ -230,8 +230,7 @@
                                         </connections>
                                     </button>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="xCP-Tv-fHP">
-                                        <rect key="frame" x="40" y="7" width="480" height="35"/>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <rect key="frame" x="44" y="7" width="476" height="35"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="35" id="PD4-Jd-BvZ"/>
                                         </constraints>
@@ -262,7 +261,7 @@
                                     <constraint firstItem="z3T-Cp-XXV" firstAttribute="centerY" secondItem="eL0-dD-Pcn" secondAttribute="centerY" id="fT6-Ab-f3H"/>
                                     <constraint firstItem="z3T-Cp-XXV" firstAttribute="leading" secondItem="xCP-Tv-fHP" secondAttribute="trailing" id="gUN-D6-KvB"/>
                                     <constraint firstItem="55P-1z-AZB" firstAttribute="leading" secondItem="xCP-Tv-fHP" secondAttribute="trailing" id="k3Q-4Z-fHK"/>
-                                    <constraint firstItem="Oj7-Lg-iZr" firstAttribute="leading" secondItem="eL0-dD-Pcn" secondAttribute="leading" id="oMa-86-hTU"/>
+                                    <constraint firstItem="Oj7-Lg-iZr" firstAttribute="leading" secondItem="eL0-dD-Pcn" secondAttribute="leading" constant="4" id="oMa-86-hTU"/>
                                     <constraint firstItem="Oj7-Lg-iZr" firstAttribute="centerY" secondItem="eL0-dD-Pcn" secondAttribute="centerY" id="pYI-Z1-uaF"/>
                                     <constraint firstAttribute="trailing" secondItem="z3T-Cp-XXV" secondAttribute="trailing" id="tgZ-UY-6cb"/>
                                 </constraints>
