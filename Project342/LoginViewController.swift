@@ -151,18 +151,21 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Keyboard
     func keyboardWillShow(notification: NSNotification) {
         
-        facebookButtonTopConstraint.constant -= 120
-        //stackViewBottomConstraint.constant -= 80
-        //stackViewTopConstraint.constant -= 90
+        // Bring the view above keyboard
+        if facebookButtonTopConstraint.constant == 20 {
+            facebookButtonTopConstraint.constant -= 110
+        }
+        
         UIView.animateWithDuration(0.5) { () -> Void in
             self.view.layoutIfNeeded()
         }
     }
     
     func keyboardWillHide(notification: NSNotification) {
+        
+        // Bring the view back to original when keyboard is hide
         facebookButtonTopConstraint.constant += 120
-//        stackViewBottomConstraint.constant = 15
-//        stackViewTopConstraint.constant = 20
+
         UIView.animateWithDuration(0.5) { () -> Void in
             self.view.layoutIfNeeded()
         }
