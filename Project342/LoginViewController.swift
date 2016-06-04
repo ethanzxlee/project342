@@ -346,7 +346,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     // MARK: Functions
-    // Reset password
+    // Save profile pic locally
     func saveProfilePicLocal(uid: String, data: NSData){
         let imagefilename = "\(uid).jpg"
         let image = UIImage(data: data)
@@ -365,6 +365,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
+    // Reset password
     func requestPasswordReset(email: String){
         FIRAuth.auth()?.sendPasswordResetWithEmail(email) { error in
             if error != nil {

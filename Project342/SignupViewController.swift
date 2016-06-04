@@ -32,13 +32,21 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     var invalidpwd: Bool = false
     
     var ref: FIRDatabaseReference!
+    var documentDirectory: NSURL?
     var screenHeight: CGFloat?
     var tag = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        // Get reference for firebase's database
         ref = FIRDatabase.database().reference()
+        
+        // Get document directory and assign to the variable
+        guard let documentDirectoryTmp = NSFileManager.defaultManager().URLsForDirectory(NSSearchPathDirectory.DocumentDirectory, inDomains: NSSearchPathDomainMask.UserDomainMask).first else{
+            return
+        }
+        documentDirectory = documentDirectoryTmp
         
         // Determine iPhone model based on screen size
         let screenSize: CGRect = UIScreen.mainScreen().bounds
@@ -385,6 +393,12 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                                     // Get image as the NSData
                                     let data = NSData(contentsOfURL: NSURL(string: strPictureURL)!)
                                     
+                                    // Run a new thread and save profile pic locally
+                                    let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
+                                    dispatch_async(dispatch_get_global_queue(priority, 0)) {
+                                        self.saveProfilePicLocal((user?.uid)!, data: data!)
+                                    }
+                                    
                                     // Create a reference to file we're going to upload using user's id
                                     let profilePicRef = storageRef.child("ProfilePic/\((user?.uid)! as String)")
                                     
@@ -494,6 +508,25 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     var strLabel = UILabel()
     
     // MARK: Functions
+    // Save profile pic locally
+    func saveProfilePicLocal(uid: String, data: NSData){
+        let imagefilename = "\(uid).jpg"
+        let image = UIImage(data: data)
+        
+        guard let imageUrl = self.documentDirectory?.URLByAppendingPathComponent(imagefilename) else {
+            return
+        }
+        
+        guard let imageJpegRepresentation = UIImageJPEGRepresentation(image!, 0.8) else {
+            return
+        }
+        
+        // Write to disk
+        if (!imageJpegRepresentation.writeToURL(imageUrl, atomically: true)) {
+            return
+        }
+    }
+    
     // Show a activity indicator view with custom string to act as a loading animation
     func progressBarDisplayer(msg:String, _ indicator:Bool ) {
         strLabel = UILabel(frame: CGRect(x: 50, y: 0, width: 200, height: 50))
