@@ -163,6 +163,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
 
             let fetchMessageRequest = NSFetchRequest(entityName: "Message")
             fetchMessageRequest.sortDescriptors = [NSSortDescriptor(key: "sentDate", ascending: true)]
+            fetchMessageRequest.predicate = NSPredicate(format: "conversation.conversationID", self.conversationID!)
             messageFetchController = NSFetchedResultsController(fetchRequest: fetchMessageRequest, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         }
         messageFetchController?.delegate = self
