@@ -124,6 +124,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         */
         
         let image : UIImage?
+        print("Photo: \(conversationDict!["conversationPhotoPath"] as? String)" )
         if conversationDict!["conversationPhotoPath"] as? String == "group.png"{
             image = UIImage(named: "group.png")!
         }else if conversationDict!["type"]as? Int == ConversationType.Personal.rawValue {

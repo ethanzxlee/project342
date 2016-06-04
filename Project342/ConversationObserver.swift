@@ -35,8 +35,16 @@ class ConversationObserver {
             print("No logged in user")
             return
         }
+        let conversationDict = conversation.dictionary()
+        if conversationDict["type"]as? Int == ConversationType.Group.rawValue {
+            if conversationDict["conversationPhotoPath"] as? String != "group.png"{
+                let groupProfileURL = Directories.profilePicDirectory?.URLByAppendingPathComponent(conversationDict["conversationPhotoPath"] as! String )
+                StorageRef.profilePicRef.child(conversationDict["conversationPhotoPath"] as! String).putFile(groupProfileURL!)
+            }
+        }
         
-        FirebaseRef.conversationsRef?.child(uniID!).setValue(conversation.dictionary())
+        
+        FirebaseRef.conversationsRef?.child(uniID!).setValue(conversationDict)
         
         conversation.conversationID = uniID
         do{
@@ -297,7 +305,7 @@ class ConversationObserver {
         conversation?.coverCode = snapshot.value!["coverCode"] as? String
         conversation?.type = snapshot.value!["type"] as? Int
         conversation?.lastMessageTimestamp = snapshot.value!["lastMessageTimestamp"] as? String
-
+        conversation?.conversationPhotoPath = snapshot.value!["conversationPhotoPath"]as? String
 
         let memberList = snapshot.value!["membersID"] as? [String:String]
         
@@ -319,30 +327,23 @@ class ConversationObserver {
         }
         conversation?.members = NSSet(array: memberArray)
         
-        
-        if conversation?.type == ConversationType.Personal.rawValue{
-                conversation?.conversationPhotoPath = memberArray[0].userId
-        }else{
-            if snapshot.value!["conversationPhotoPath"] as? String == "" {
-                conversation?.conversationPhotoPath = "group.png"
-            }else{
-                // Create img Path
-                let dateFormatter = NSDateFormatter()
-                dateFormatter.dateFormat = "yyyy_MM_ddHHmm"
-                let imgName = "\(dateFormatter.stringFromDate(NSDate())).png"
-                
-                let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-                let documentDirectory = documentPath[0]
-                let url = NSURL(fileURLWithPath: documentDirectory).URLByAppendingPathComponent(imgName)
-                
-                if let data = snapshot.value!["conversationPhotoPath"] as? NSData{
-                    data.writeToURL(url, atomically: true)
-                    print("Success save image to\n\(url)")
-                }
-                 conversation?.conversationPhotoPath = imgName
-            }
+        // Group Photo
+        if conversation?.type == ConversationType.Group.rawValue && conversation?.conversationPhotoPath != "group.png"{
+            let fileStoreURL = Directories.profilePicDirectory?.URLByAppendingPathComponent(conversation!.conversationPhotoPath!)
+            
+            let firebaseURL = StorageRef.profilePicRef.child(conversation!.conversationPhotoPath!)
+            
+            let downloadTask = firebaseURL.writeToFile(fileStoreURL!)
+            
+            downloadTask.observeStatus(.Success, handler: { (snapshot) in
+                print("download img success")
+            })
+            
         }
-
+        // Personal
+        if conversation?.type == ConversationType.Personal.rawValue{
+            conversation?.conversationPhotoPath = memberArray[0].userId
+        }
         // Save it
         do {
             try self.managedObjectContext.save()
