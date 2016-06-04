@@ -21,6 +21,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var facebookButtonTopConstraint: NSLayoutConstraint!
     
     var ref: FIRDatabaseReference!
+    var documentDirectory: NSURL?
     var inputemail: String = ""
     var inputpwd: String = ""
     
@@ -29,9 +30,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         // Get reference for firebase's database
         ref = FIRDatabase.database().reference()
+        
+        // Get document directory and assign to the variable
+        guard let documentDirectoryTmp = NSFileManager.defaultManager().URLsForDirectory(NSSearchPathDirectory.DocumentDirectory, inDomains: NSSearchPathDomainMask.UserDomainMask).first else{
+            return
+        }
+        documentDirectory = documentDirectoryTmp
+        
         usernameField.delegate = self
         passwordField.delegate = self
-        
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -234,6 +241,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                                     // Get image as the NSData
                                     let data = NSData(contentsOfURL: NSURL(string: strPictureURL)!)
                                     
+                                    // Run a new thread and save profile pic locally
+                                    let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
+                                    dispatch_async(dispatch_get_global_queue(priority, 0)) {
+                                        self.saveProfilePicLocal((user?.uid)!, data: data!)
+                                    }
+                                    
                                     // Create a reference to file we're going to upload using user's id
                                     let profilePicRef = storageRef.child("ProfilePic/\((user?.uid)! as String)")
                                     
@@ -334,6 +347,24 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: Functions
     // Reset password
+    func saveProfilePicLocal(uid: String, data: NSData){
+        let imagefilename = "\(uid).jpg"
+        let image = UIImage(data: data)
+        
+        guard let imageUrl = self.documentDirectory?.URLByAppendingPathComponent(imagefilename) else {
+            return
+        }
+        
+        guard let imageJpegRepresentation = UIImageJPEGRepresentation(image!, 0.8) else {
+            return
+        }
+        
+        // Write to disk
+        if (!imageJpegRepresentation.writeToURL(imageUrl, atomically: true)) {
+            return
+        }
+    }
+    
     func requestPasswordReset(email: String){
         FIRAuth.auth()?.sendPasswordResetWithEmail(email) { error in
             if error != nil {
