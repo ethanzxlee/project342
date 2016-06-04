@@ -23,8 +23,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var stackViewBottomConstraint: NSLayoutConstraint!
     
     var ref: FIRDatabaseReference!
-    var inputemail: String?
-    var inputpwd: String?
+    var inputemail: String = ""
+    var inputpwd: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -123,7 +123,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             
             // Enable the login button once both textfield is filled
             // Both must be filled for the button to be enabled
-            if !(self.inputemail?.isEmpty)! && !(self.inputpwd?.isEmpty)! {
+            if !(self.inputemail.isEmpty) && !(self.inputpwd.isEmpty) {
                 loginbutton.enabled = true
                 loginbutton.alpha = 1.0
             }
@@ -138,10 +138,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     func textFieldDidEndEditing(textField: UITextField){
         switch (textField.tag) {
         case 1:
-            inputemail = textField.text
+            inputemail = textField.text!
             break
         case 2:
-            inputpwd = textField.text
+            inputpwd = textField.text!
             break
         default: break
         }
@@ -279,7 +279,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         self.progressBarDisplayer("Logging in", true)
         
         // Sign user in with email given
-        FIRAuth.auth()?.signInWithEmail(self.inputemail!, password: self.inputpwd!) { authData, error in
+        FIRAuth.auth()?.signInWithEmail(self.inputemail, password: self.inputpwd) { authData, error in
             if error == nil{
                 let nextView = (self.storyboard?.instantiateViewControllerWithIdentifier("TabBarController"))! as! UITabBarController
                 self.presentViewController(nextView, animated: true, completion: nil)
@@ -328,10 +328,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         self.presentViewController(alertController, animated: true, completion: nil)
     }
     
-    var messageFrame = UIView()
-    var activityIndicator = UIActivityIndicatorView()
-    var strLabel = UILabel()
-    
     // MARK: Functions
     // Reset password
     func requestPasswordReset(email: String){
@@ -366,6 +362,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         }
 
     }
+    
+    var messageFrame = UIView()
+    var activityIndicator = UIActivityIndicatorView()
+    var strLabel = UILabel()
     
     // Show a activity indicator view with custom string to act as a loading animation
     func progressBarDisplayer(msg:String, _ indicator:Bool ) {
