@@ -55,25 +55,26 @@ class SecretMessageViewController: UIViewController {
             
             secretImg.addSubview(content)
         }else if type == MessageType.Image.rawValue{
-            dispatch_async(dispatch_get_main_queue()){()-> Void in
-                
+//            dispatch_async(dispatch_get_main_queue()){()-> Void in
+            
                 let attachments = self.msg!.attachements!.allObjects as! [Attachment]
                 let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
                 let documentDirectory = documentPath[0]
                 
                 let img = UIImage(named: "\(documentDirectory)/\(attachments[0].filePath!)")
-                print("img: \(documentDirectory)/\(attachments[0].filePath!)")
-                let imgView = UIImageView(image: img!)
-                let newFrame = CGRect(x: 0, y: 0, width: self.secretImg.frame.size.width, height: self.secretImg.frame.size.height-10)
-                imgView.contentMode = .ScaleAspectFit
-                imgView.frame = newFrame
-                if self.secretImg.subviews.count > 0{
-                    self.secretImg.willRemoveSubview(self.secretImg.subviews[0])
-                }
-                self.secretImg.addSubview(imgView)
+//                print("img: \(documentDirectory)/\(attachments[0].filePath!)")
+//                let imgView = UIImageView(image: img!)
+//                //let newFrame = CGRect(x: 0, y: 0, width: self.secretImg.frame.size.width, height: self.secretImg.frame.size.height-10)
+//                imgView.contentMode = .ScaleAspectFit
+////                imgView.frame = newFrame
+//                if self.secretImg.subviews.count > 0{
+//                    self.secretImg.willRemoveSubview(self.secretImg.subviews[0])
+//                }
+                self.secretImg.image = img
+            self.secretImg.contentMode = .ScaleAspectFit
                 
                 self.secretMessageTitle.text = "Secret Image"
-            }
+//            }
         }else{
          
             let coordinates = msg!.content?.componentsSeparatedByString(",")

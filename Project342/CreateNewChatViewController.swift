@@ -131,7 +131,12 @@ class CreateNewChatViewController: UIViewController, UITableViewDelegate, UITabl
         cell.imageView?.layer.cornerRadius = scaledImage.size.width/2
         cell.imageView?.layer.masksToBounds = true
         cell.contentMode = .ScaleAspectFit
-        cell.textLabel?.text = "\(contact!.firstName!) \(contact!.lastName!)"
+        guard let firstName = contact?.firstName,
+                    lastName = contact?.lastName else{
+            return UITableViewCell()
+        }
+        
+        cell.textLabel?.text = "\(firstName) \(lastName)"
         
         for eachMember in membersConversation{
             if eachMember == contactList[indexPath.row]{
