@@ -185,7 +185,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                                 let profilePicRef = StorageRef.profilePicRef.child(user!.uid)
                                 
                                 guard
-                                    let profilePicDirectory = Directories.profilePicDirectory?.URLByAppendingPathComponent(user!.uid)
+                                    let profilePicDirectory = Directories.profilePicDirectory?.URLByAppendingPathComponent("\(user!.uid)!.jpg)")
                                     else {
                                         return
                                 }
@@ -229,7 +229,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 let profilePicRef = StorageRef.profilePicRef.child((authData?.uid)!)
                 
                 guard
-                    let profilePicDirectory = Directories.profilePicDirectory?.URLByAppendingPathComponent((authData?.uid)!)
+                    let profilePicDirectory = Directories.profilePicDirectory?.URLByAppendingPathComponent("\(authData?.uid)!.jpg)")
                     else {
                         return
                 }
