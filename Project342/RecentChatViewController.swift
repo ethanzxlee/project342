@@ -126,7 +126,13 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
         let image : UIImage?
         if conversationDict!["conversationPhotoPath"] as? String == "group.png"{
             image = UIImage(named: "group.png")!
+        }else if conversationDict!["type"]as? Int == ConversationType.Personal.rawValue {
+            let documentPath = Directories.profilePicDirectory
+            let url = documentPath?.URLByAppendingPathComponent((conversationDict!["conversationPhotoPath"] as? String)!)
+            image = UIImage(contentsOfFile: url!.path!)
         }else{
+            
+            
             let imgName = conversationDict!["conversationPhotoPath"] as? String
             let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
             let documentDirectory = documentPath[0]

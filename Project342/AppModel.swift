@@ -321,12 +321,13 @@ class AppModel:NSManagedObjectModel{
             message.type = MessageType.NormalMessage.rawValue
             message.content = "\(msg)   "
             
-            let dateFormatter = NSDateFormatter.ISO8601DateFormatter()
-            
             message.senderID = FIRAuth.auth()?.currentUser?.uid
             message.conversation = conversation
+            
             //Revert the format same as the format will send to Firebase
+            let dateFormatter = NSDateFormatter.ISO8601DateFormatter()
             message.sentDate = dateFormatter.dateFromString( dateFormatter.stringFromDate( NSDate()) )
+            
             let dateformater = NSDateFormatter.ISO8601DateFormatter()
             conversation.lastMessageTimestamp = dateformater.stringFromDate(NSDate())
             
@@ -359,7 +360,7 @@ class AppModel:NSManagedObjectModel{
         
         // Save the image first
         // save img to Document Directory
-        let dateFormatter = NSDateFormatter()
+        var dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy_MM_ddHHmm"
         let imgName = "\(dateFormatter.stringFromDate(NSDate())).png"
         
@@ -373,7 +374,8 @@ class AppModel:NSManagedObjectModel{
 
         let attachment = NSEntityDescription.insertNewObjectForEntityForName("Attachment", inManagedObjectContext: managedContext) as! Attachment
         
-        attachment.sentDate = NSDate()
+        dateFormatter = NSDateFormatter.ISO8601DateFormatter()
+        attachment.sentDate = dateFormatter.dateFromString( dateFormatter.stringFromDate( NSDate()) )
         attachment.filePath = imgName
         
         do {
@@ -400,10 +402,9 @@ class AppModel:NSManagedObjectModel{
             message.attachements = NSSet(array: [attachment])
             message.senderID = FIRAuth.auth()?.currentUser?.uid
             message.conversation = conversation
-            message.sentDate = NSDate()
+            message.sentDate = dateFormatter.dateFromString( dateFormatter.stringFromDate( NSDate()) )
             
-            let dateformater = NSDateFormatter.ISO8601DateFormatter()
-            conversation.lastMessageTimestamp = dateformater.stringFromDate(NSDate())
+            conversation.lastMessageTimestamp = dateFormatter.stringFromDate(NSDate())
             
             if isCover {
                 message.shouldCover = 1
@@ -433,7 +434,7 @@ class AppModel:NSManagedObjectModel{
         
         // Save the image first
         // save img to Document Directory
-        let dateFormatter = NSDateFormatter()
+        var dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy_MM_ddHHmm"
         let imgName = "\(dateFormatter.stringFromDate(NSDate())).png"
         
@@ -447,7 +448,8 @@ class AppModel:NSManagedObjectModel{
         
         let attachment = NSEntityDescription.insertNewObjectForEntityForName("Attachment", inManagedObjectContext: managedContext) as! Attachment
         
-        attachment.sentDate = NSDate()
+        dateFormatter = NSDateFormatter.ISO8601DateFormatter()
+        attachment.sentDate = dateFormatter.dateFromString( dateFormatter.stringFromDate( NSDate()) )
         attachment.filePath = imgName
         
         do {
@@ -472,11 +474,9 @@ class AppModel:NSManagedObjectModel{
             message.content = "\(lat), \(lon)"
             message.senderID = FIRAuth.auth()?.currentUser?.uid
             message.conversation = conversation
-            message.sentDate = NSDate()
+            message.sentDate = dateFormatter.dateFromString( dateFormatter.stringFromDate( NSDate()) )
             
-            
-            let dateformater = NSDateFormatter.ISO8601DateFormatter()
-            conversation.lastMessageTimestamp = dateformater.stringFromDate(NSDate())
+            conversation.lastMessageTimestamp = dateFormatter.stringFromDate(NSDate())
             
             if isCover {
                 message.shouldCover = 1

@@ -73,9 +73,6 @@ class MessageObserver {
             let dateFormatter = NSDateFormatter.ISO8601DateFormatter()
             let date = dateFormatter.dateFromString(message!["sentDate"] as! String)
             
-            print(message)
-            print(conversationID)
-            print(date)
             // Check if the message exists
             let fetchRequest = NSFetchRequest(entityName: "Message")
             fetchRequest.predicate = NSPredicate(format: "conversation.conversationID = %@ AND sentDate = %@", conversationID, date!)
@@ -109,7 +106,8 @@ class MessageObserver {
                     let url = NSURL(fileURLWithPath: documentDirectory).URLByAppendingPathComponent(imgName)
                     
                     if msg.type == MessageType.Image.rawValue{
-                        let attachmentImg = snapshotValues["attachments"]  as! [String:String]
+                        print(snapshotValues["attachments"])
+                        let attachmentImg = message!["attachments"]  as! [String:String]
                         let firebaseURL = StorageRef.imageSendRef.child(attachmentImg["image"]!)
                         
                         let downloadTask = firebaseURL.writeToFile(url)
@@ -117,7 +115,7 @@ class MessageObserver {
                         downloadTask.observeStatus(.Success, handler: { (snapshot) in
                             print("download img success")
                         })
-                        attachment.sentDate = dateFormatter.dateFromString(snapshotValues["sentDate"] as! String)
+                        attachment.sentDate = dateFormatter.dateFromString(message!["sentDate"] as! String)
                     }else{
                         // If it is map, snapshot a picture first
                         let content = message!["content"] as? String
