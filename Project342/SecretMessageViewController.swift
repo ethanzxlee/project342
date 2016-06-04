@@ -21,6 +21,9 @@ class SecretMessageViewController: UIViewController {
     
     @IBOutlet weak var contentView: UIView!
     
+    @IBOutlet weak var content: UILabel!
+    @IBOutlet weak var visualEffectView: UIVisualEffectView!
+    
     var msg: Message?
     
     var timer = NSTimer()
@@ -31,19 +34,24 @@ class SecretMessageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        visualEffectView.layer.cornerRadius = 8
+        visualEffectView.clipsToBounds = true
+        
         let type = msg?.type
         print(type)
         if type == MessageType.NormalMessage.rawValue {
-            self.secretMessageTitle.text = "Secret Message"
+            self.secretMessageTitle.text = "Message"
             
-            let content = UILabel()
+//            let content = UILabel()
             content.text = msg?.content
-            content.font = UIFont(name: "HelveticaNeue", size: 16)
             content.numberOfLines = 0
             content.lineBreakMode = .ByWordWrapping
             content.sizeToFit()
+            content.translatesAutoresizingMaskIntoConstraints = false
             
-            content.frame = CGRect(x: 0, y: 0, width: self.view.frame.width-20, height: self.view.frame.height/3)
+            
+            
+//            content.frame = CGRect(x: 0, y: 0, width: self.view.frame.width-20, height: self.view.frame.height/3)
             
             secretImg.addSubview(content)
         }else if type == MessageType.Image.rawValue{
@@ -85,7 +93,7 @@ class SecretMessageViewController: UIViewController {
             self.secretMessageTitle.text = "Secret Map"
         }
         
-        self.secretMessageTitle.font = UIFont(descriptor: UIFontDescriptor(name: "AmericanTypewriter-Bold", size: 20)  , size: 30)
+        self.secretMessageTitle.font = UIFont.systemFontOfSize(30)
         self.secretMessageTitle.textColor = UIColor.whiteColor()
         self.secretMessageTitle.textAlignment = .Center
         

@@ -15,7 +15,7 @@ import AVFoundation
 import MapKit
 import LocalAuthentication
 
-class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate, UITableViewDataSource, UITableViewDelegate, MKMapViewDelegate{
+class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate, UITableViewDataSource, UITableViewDelegate, MKMapViewDelegate, NSFetchedResultsControllerDelegate{
         
     @IBOutlet weak var shareLocationButton: UIButton!                           // For Share Location
     
@@ -88,21 +88,20 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     @IBAction func sendButtonFunc(sender: AnyObject) {
         if self.textView.text != "" {
-            let messsge = self.appModel.sendMessage(self.textView.text, conversationID:  self.conversationID!, isCover: self.hiddenMessageSign)
-            if messsge.sentDate != nil {
-                messagesDisplay.append(messsge)
-            }
-            self.textView.text = ""
-
-            self.addRowToTableView()
-//            self.textView.resignFirstResponder()
+            self.appModel.sendMessage(self.textView.text, conversationID:  self.conversationID!, isCover: self.hiddenMessageSign)
+        
         }
         
-        UIView.animateWithDuration(0.2, animations: {
+        self.textView.text = ""
+        
+        UIView.animateWithDuration(0.4, animations: {
             self.sendButton.alpha = 0
             self.shareLocationButton.alpha = 1
             self.sharePhotoButton.alpha = 1
+            }, completion: { (complete) in
+                self.scrollToLastMessage(animated: true)
         })
+
     }
     
     var imagePicker = UIImagePickerController()
@@ -115,8 +114,6 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         
     var conversationID : String?
     
-    var messagesDisplay : [Message] = []
-    
     var secretViewer: SecretMessageViewController?          // To enable secret message view appear within current view
     
     var constraint = NSLayoutConstraint()
@@ -127,14 +124,9 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     
     var isLocked = 0  // Detect user lock the conversation or not; 1: Yes, 0:No
     
-    var refreshControl:UIRefreshControl?
-    
     var coverCode = ""
     
-    // Set the number of loading needed for query data from core data
-    // Set the default values needed add for the increasing of number of loading
-    var numberOfLoading = 1
-    let defaultLimit = 20
+    var messageFetchController: NSFetchedResultsController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -166,11 +158,6 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         self.chatContentTableView.rowHeight = UITableViewAutomaticDimension
         self.chatContentTableView.estimatedRowHeight = 300
         
-        self.refreshControl = UIRefreshControl()
-        self.refreshControl?.attributedTitle = NSAttributedString(string: "Refresh")
-        self.refreshControl?.addTarget(self, action: #selector(ChatRoomViewController.refreshTableView), forControlEvents: .ValueChanged)
-        self.chatContentTableView.addSubview(self.refreshControl!)
-        
         self.imagePicker.delegate = self
         
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ChatRoomViewController.viewSecretMessage))
@@ -182,8 +169,24 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatRoomViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
         
-        messagesDisplay = self.appModel.getMessage(defaultLimit * numberOfLoading, conversationID: conversationID!)
-        numberOfLoading += 1
+        if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
+            let managedObjectContext = appDelegate.managedObjectContext
+
+            let fetchMessageRequest = NSFetchRequest(entityName: "Message")
+            fetchMessageRequest.sortDescriptors = [NSSortDescriptor(key: "sentDate", ascending: true)]
+            fetchMessageRequest.predicate = NSPredicate(format: "conversation.conversationID = %@", self.conversationID!)
+            messageFetchController = NSFetchedResultsController(fetchRequest: fetchMessageRequest, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        }
+        messageFetchController?.delegate = self
+        
+        do {
+            try messageFetchController?.performFetch()
+        }
+        catch {
+            print(error)
+        }
+
+        
         
         // Add a border on top of the bottom bar
         let upperBorder = CALayer()
@@ -366,8 +369,6 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             UIGraphicsEndImageContext()
             
             let msg = self.appModel.sendMessageMap(mapPin, conversationID: self.conversationID!, isCover: self.hiddenMessageSign, lat: self.location!.latitude.description, lon: self.location!.longitude.description)
-            self.messagesDisplay.append(msg)
-            self.addRowToTableView()
         }
 
     }
@@ -378,10 +379,8 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
   
         if let imgSelected = info[UIImagePickerControllerOriginalImage] as? UIImage{
             let message = self.appModel.sendMessageImage(imgSelected, conversationID: self.conversationID!, isCover: self.hiddenMessageSign)
-            self.messagesDisplay.append(message)
             self.dismissViewControllerAnimated(true, completion: nil)
 
-            self.addRowToTableView()
             
             
             
@@ -394,7 +393,13 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return messagesDisplay.count
+        guard let sections = messageFetchController?.sections else {
+            return 0
+        }
+        
+        let sectionInfo = sections[0]
+        
+        return sectionInfo.numberOfObjects
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -402,39 +407,48 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        if indexPath.row > messagesDisplay.count {
+        guard let message = messageFetchController?.objectAtIndexPath(indexPath) as? Message else {
             return UITableViewCell()
         }
-        if messagesDisplay[indexPath.row].senderID != FIRAuth.auth()?.currentUser?.uid {
-            
+        var message2: Message?
+        if indexPath.row != 0 {
+            if let message = messageFetchController?.objectAtIndexPath(NSIndexPath(forRow: indexPath.row-1, inSection: 0)) as? Message {
+                message2 = message
+            }
+        }
+        
+        if message.senderID != FIRAuth.auth()?.currentUser?.uid {
             // MARK: User Receive Message
             let cell = tableView.dequeueReusableCellWithIdentifier("leftChatRoomCell", forIndexPath: indexPath) as! LeftChatRoomCustomCell
             
             // If cover message
-            if messagesDisplay[indexPath.row].shouldCover == 1{
+            if message.shouldCover == 1{
                 cell.messageContent.text = self.appModel.getCoverCode(self.conversationID!)
                 cell.messageContent.sizeToFit()
                 return cell
             }
             
+            let path = Directories.profilePicDirectory?.URLByAppendingPathComponent("\(FIRAuth.auth()?.currentUser?.uid).jpg")
+            
+            cell.profileView.image = UIImage(contentsOfFile: (path?.path)!)
             
             // Check for display avatar
             if indexPath.row != 0 {
-                if messagesDisplay[indexPath.row].senderID == messagesDisplay[indexPath.row-1].senderID{
+                if message.senderID == message2!.senderID{
                     cell.profileView.hidden = true
                 }else{
                     cell.profileView.hidden = false
                 }
             }
             
-            let type = messagesDisplay[indexPath.row].type!
+            let type = message.type!
             print(type)
             if type == MessageType.NormalMessage.rawValue {
                 cell.imageView!.image = nil
-                cell.messageContent.text = self.messagesDisplay[indexPath.row].content
+                cell.messageContent.text = message.content
                 cell.messageContent.sizeToFit()
             }else if type == MessageType.Image.rawValue || type == MessageType.Map.rawValue{
-                let attachments = self.messagesDisplay[indexPath.row].attachements!.allObjects as! [Attachment]
+                let attachments = message.attachements!.allObjects as! [Attachment]
                 let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
                 let documentDirectory = documentPath[0]
                 
@@ -467,33 +481,34 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             // MARK: User Send Message
             let cell = tableView.dequeueReusableCellWithIdentifier("rightChatRoomCell", forIndexPath: indexPath) as! RightChatRoomCustomCell
             
-            
-            if messagesDisplay[indexPath.row].shouldCover == 1{
+            // If cover message
+            if message.shouldCover == 1{
                 cell.messageContent.text = self.appModel.getCoverCode(self.conversationID!)
                 cell.messageContent.sizeToFit()
                 return cell
             }
-
+            
+            let path = Directories.profilePicDirectory?.URLByAppendingPathComponent("\(FIRAuth.auth()?.currentUser?.uid)")
+            
+            cell.profileView.image = UIImage(contentsOfFile: (path?.path)!)
+            
             // Check for display avatar
             if indexPath.row != 0 {
-                if messagesDisplay[indexPath.row].senderID == messagesDisplay[indexPath.row-1].senderID{
+                if message.senderID == message2!.senderID{
                     cell.profileView.hidden = true
                 }else{
-                    let path = Directories.profilePicDirectory?.URLByAppendingPathComponent((FIRAuth.auth()?.currentUser?.uid)!)
-                    cell.profileView.image = UIImage(named: (path?.path)!)
                     cell.profileView.hidden = false
                 }
             }
             
-            
-            let type = messagesDisplay[indexPath.row].type!
-            
+            let type = message.type!
+
             if type == MessageType.NormalMessage.rawValue {
                 cell.imageView!.image = nil
-                cell.messageContent.text = self.messagesDisplay[indexPath.row].content
+                cell.messageContent.text = message.content
                 cell.messageContent.sizeToFit()
             }else if type == MessageType.Image.rawValue || type == MessageType.Map.rawValue{
-                let attachments = self.messagesDisplay[indexPath.row].attachements!.allObjects as! [Attachment]
+                let attachments = message.attachements!.allObjects as! [Attachment]
                 let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
                 let documentDirectory = documentPath[0]
                 
@@ -519,29 +534,10 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             }else{
                 print("Error Message of Attachments/Messages from core data")
             }
-
+            
             
             return cell
         }
-    }
-    
-    // Add new row to table view and scroll to the latest row
-    func addRowToTableView(){
-        self.chatContentTableView.beginUpdates()
-        self.chatContentTableView.insertRowsAtIndexPaths([NSIndexPath(forRow: self.messagesDisplay.count-1, inSection:0)] , withRowAnimation: UITableViewRowAnimation.Automatic)
-        self.chatContentTableView.endUpdates()
-        
-        self.chatContentTableView.scrollToRowAtIndexPath(NSIndexPath(forRow: self.messagesDisplay.count-1, inSection:0), atScrollPosition: .Middle, animated: true)
-    }
-    
-    // MARK: Refresh Control
-    func refreshTableView(){
-        self.messagesDisplay = self.appModel.getMessage(defaultLimit*numberOfLoading, conversationID: self.conversationID!)
-        if self.messagesDisplay.count != self.appModel.getConversationMaxRange() {
-            numberOfLoading += 1
-        }
-        
-        self.refreshControl?.endRefreshing()
     }
 
     // MARK: Gesture
@@ -552,9 +548,11 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         guard let _indexPath = indexPath else{
             return
         }
-        
-        if messagesDisplay[_indexPath.row].shouldCover == 0{
-            self.performSegueWithIdentifier("goToAttachmentView", sender: messagesDisplay[_indexPath.row])
+        guard let message = messageFetchController?.objectAtIndexPath(_indexPath) as? Message else {
+            return
+        }
+        if message.shouldCover == 0{
+            self.performSegueWithIdentifier("goToAttachmentView", sender: message)
         }
     }
     
@@ -569,7 +567,11 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         case .Began:
             print("Began")
                 secretViewer = self.storyboard?.instantiateViewControllerWithIdentifier("SecretMessageViewController")as? SecretMessageViewController
-                secretViewer?.msg = messagesDisplay[_indexPath.row]
+            
+                guard let message = messageFetchController?.objectAtIndexPath(_indexPath) as? Message else {
+                    return
+                }
+                secretViewer?.msg = message
                 
                 guard let _secretViewer = secretViewer else{
                     return
@@ -614,7 +616,11 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         guard let _indexPath = indexPath else{
             return
         }
-        let msgIsCover = messagesDisplay[_indexPath.row].shouldCover
+        
+        guard let message = messageFetchController?.objectAtIndexPath(_indexPath) as? Message else {
+            return
+        }
+        let msgIsCover = message.shouldCover
         if msgIsCover == 0{
             return
         }
@@ -730,10 +736,9 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
         
         let loginAction = UIAlertAction(title: "Login", style: .Default) { (_) in
-            let user = NSUserDefaults()
-            user.setObject("123456", forKey: "password")
+            let user = NSUserDefaults.standardUserDefaults()
             let password = (alertPassword.textFields![0] as UITextField).text
-            if password == user.stringForKey("password"){
+            if password == user.stringForKey(self.conversationID!){
                 if self.isLocked == 0{
                     self.firstTimeViewSecret = 0
                     dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
@@ -755,6 +760,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         
         alertPassword.addTextFieldWithConfigurationHandler { (passwordField) in
             passwordField.placeholder = "Login Password"
+            passwordField.secureTextEntry = true
             
             NSNotificationCenter.defaultCenter().addObserverForName(UITextFieldTextDidChangeNotification, object: passwordField, queue: NSOperationQueue.mainQueue(), usingBlock: { (notification) in
                 loginAction.enabled = passwordField.text != ""
@@ -770,10 +776,38 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     func successAlert(msg: String){
         
         let informAlert = UIAlertController(title: "Information", message: msg, preferredStyle: .Alert)
-        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "Dismiss", style: .Cancel, handler: nil)
         informAlert.addAction(cancelAction)
         self.presentViewController(informAlert, animated: true, completion: nil)
     }
     
+    // MARK: - NSFetchedResultControllerDelegate
+    
+    func controllerWillChangeContent(controller: NSFetchedResultsController) {
+        self.chatContentTableView.beginUpdates()
+    }
+    
+    
+    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        self.chatContentTableView.endUpdates()
+    }
+    
+    
+    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+        switch type {
+        case .Insert:
+            self.chatContentTableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
+
+        case .Update:
+            self.chatContentTableView.reloadRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
+
+        case .Move:
+            self.chatContentTableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
+            self.chatContentTableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
+        default:
+            break
+        }
+    }
+
     
 }

@@ -36,7 +36,6 @@ extension Conversation{
         membersList[currentUser!.uid] = currentUser!.uid
         
         return [
-            "coverCode": coverCode!,
             "lastMessageTimestamp":lastMessageTimestamp!,
             "type": type!,
             "conversationName": conversationName!,

@@ -215,7 +215,7 @@ class ConversationObserver {
                 conversation?.conversationName = snapshot.value!["conversationName"] as? String
                 
                 
-                conversation?.coverCode = snapshot.value!["coverCode"] as? String
+                
                 conversation?.type = snapshot.value!["type"] as? Int
                 conversation?.lastMessageTimestamp = snapshot.value!["lastMessageTimestamp"] as? String
                 
@@ -302,7 +302,7 @@ class ConversationObserver {
     
         // Update their statuses
         conversation?.conversationName = snapshot.value!["conversationName"] as? String
-        conversation?.coverCode = snapshot.value!["coverCode"] as? String
+        
         conversation?.type = snapshot.value!["type"] as? Int
         conversation?.lastMessageTimestamp = snapshot.value!["lastMessageTimestamp"] as? String
         conversation?.conversationPhotoPath = snapshot.value!["conversationPhotoPath"]as? String
