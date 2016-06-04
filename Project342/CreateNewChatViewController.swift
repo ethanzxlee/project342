@@ -104,13 +104,11 @@ class CreateNewChatViewController: UIViewController, UITableViewDelegate, UITabl
         }else{
             contact = contactList[indexPath.row]
         }
-        
-        
-        let imgName = contact?.userId
+                
         print(contact?.firstName)
-        let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-        let documentDirectory = documentPath[0]
-        let image = UIImage(named: "\(documentDirectory)/\(imgName)")
+        let documentPath = Directories.profilePicDirectory
+        let url = documentPath?.URLByAppendingPathComponent(contact!.userId!)
+        let image = UIImage(contentsOfFile: url!.path!)
         
         let size = CGSize(width: 50, height: 50)
         let hasAlpha = false

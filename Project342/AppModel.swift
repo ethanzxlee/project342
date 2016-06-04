@@ -320,10 +320,13 @@ class AppModel:NSManagedObjectModel{
         if let message = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedContext) as? Message{
             message.type = MessageType.NormalMessage.rawValue
             message.content = "\(msg)   "
-
+            
+            let dateFormatter = NSDateFormatter.ISO8601DateFormatter()
+            
             message.senderID = FIRAuth.auth()?.currentUser?.uid
             message.conversation = conversation
-            message.sentDate = NSDate()
+            //Revert the format same as the format will send to Firebase
+            message.sentDate = dateFormatter.dateFromString( dateFormatter.stringFromDate( NSDate()) )
             let dateformater = NSDateFormatter.ISO8601DateFormatter()
             conversation.lastMessageTimestamp = dateformater.stringFromDate(NSDate())
             

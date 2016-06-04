@@ -91,6 +91,7 @@ class ConversationObserver {
                 
                 FirebaseRef.msgRef?.child(conversation.conversationID!).updateChildValues([messageKey: message.dictionaryNormalMessageMap()])
             }
+            
         })
         
         // Update the members from Firebase

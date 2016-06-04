@@ -72,7 +72,10 @@ class MessageObserver {
             }
             let dateFormatter = NSDateFormatter.ISO8601DateFormatter()
             let date = dateFormatter.dateFromString(message!["sentDate"] as! String)
-
+            
+            print(message)
+            print(conversationID)
+            print(date)
             // Check if the message exists
             let fetchRequest = NSFetchRequest(entityName: "Message")
             fetchRequest.predicate = NSPredicate(format: "conversation.conversationID = %@ AND sentDate = %@", conversationID, date!)
@@ -83,14 +86,14 @@ class MessageObserver {
             var result = 0
             var conversation : Conversation?
             do {
-                result = ((try managedObjectContext.executeFetchRequest(fetchRequest) as? [Message])?.count)!
+                result = try managedObjectContext.executeFetchRequest(fetchRequest).count
                 conversation = (try managedObjectContext.executeFetchRequest(fetchRequest2) as? [Conversation])?.first
             }
             catch {
                 print(error)
             }
-            
-            if result <= 0 {
+            // FIXME: result always zero although it appear in core data
+            if result == 0 {
                 var memberArray = conversation?.messages?.allObjects as! [Message]
                 let msg = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedObjectContext) as! Message
                 msg.type = message!["type"] as! Int
