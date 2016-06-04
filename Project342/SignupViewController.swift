@@ -22,6 +22,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var lastname: UITextField!
     @IBOutlet weak var signupBtn: UIButton!
     @IBOutlet weak var facebookBtn: UIButton!
+    @IBOutlet weak var facebookButtonTopConstraint: NSLayoutConstraint!
     
     var inputemail: String = ""
     var inputpwd: String = ""
@@ -31,11 +32,17 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     var invalidpwd: Bool = false
     
     var ref: FIRDatabaseReference!
+    var screenHeight: CGFloat?
+    var tag = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         ref = FIRDatabase.database().reference()
+        
+        // Determine iPhone model based on screen size
+        let screenSize: CGRect = UIScreen.mainScreen().bounds
+        screenHeight = screenSize.height
         
         email.delegate = self
         password.delegate = self
@@ -44,14 +51,14 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     }
 
     override func viewWillAppear(animated: Bool) {
-        super.viewDidAppear(animated)
+        super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
         // Add facebook icon to button
         let facebookIcon = UIImageView()
         let facebook = UIImage(named: "facebook.png")
         facebookIcon.image = facebook
-        facebookIcon.frame = CGRect(x: 22, y: 3, width: 40, height: 40)
+        facebookIcon.frame = CGRect(x: 8, y: 3, width: 40, height: 40)
         facebookBtn.addSubview(facebookIcon)
         
         // Add email icon in email UITextField
@@ -101,10 +108,22 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
 
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        print(screenHeight)
+        if screenHeight == 480 || screenHeight == 568{
+            registerForKeyboardNotifications()
+        }
+    }
+
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.navigationBarHidden = true
+        
+        if screenHeight == 480 || screenHeight == 568{
+            deregisterForKeyboardNotification()
+        }
     }
     
     // MARK: UITextFieldDelegate
@@ -143,6 +162,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         return false
     }
     func textFieldDidBeginEditing(textField: UITextField) {
+        tag = textField.tag
         signupBtn.enabled = false
         signupBtn.alpha = 0.6
         
@@ -164,13 +184,12 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     func textFieldDidEndEditing(textField: UITextField){
         switch (textField.tag) {
         case 1:
+            tag = textField.tag
             inputemail = textField.text!
             
             // Run checking and setting animation in background thread
             let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
             dispatch_async(dispatch_get_global_queue(priority, 0)) {
-                // Delay the background to run, to make the UI look more smooth
-                sleep(1)
                 
                 // Check for valid email, if is invalid run follows
                 if !(self.isValidEmail(self.inputemail)){
@@ -206,13 +225,12 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
             }
             break
         case 2:
+            tag = textField.tag
             inputpwd = textField.text!
         
             // Run checking and setting animation in background thread
             let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
             dispatch_async(dispatch_get_global_queue(priority, 0)) {
-                // Delay the background to run, to make the UI look more smooth
-                sleep(1)
                 
                 // Cheak if password length is 6 or more character
                 // Firebase password minimum requirement is 6
@@ -250,15 +268,69 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
             
             break
         case 3:
+            tag = textField.tag
             inputfname = textField.text!
             break
         case 4:
+            tag = textField.tag
             inputlname = textField.text!
-            print(textField.tag)
             break
         default: break
         }
         
+    }
+    
+    // MARK: - Keyboard
+    func keyboardWillShow(notification: NSNotification) {
+        
+        // Bring the view above keyboard
+        if screenHeight == 480 {
+            if tag == 1 || tag == 2 || tag == 3{
+                facebookButtonTopConstraint.constant = -100
+            }
+            if tag == 4{
+                facebookButtonTopConstraint.constant = -140
+            }
+        }else{
+            facebookButtonTopConstraint.constant = -100
+        }
+       
+        
+        UIView.animateWithDuration(0.5) { () -> Void in
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        
+        // Bring the view back to original when keyboard is hide
+        facebookButtonTopConstraint.constant = 20
+        
+        UIView.animateWithDuration(0.5) { () -> Void in
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    func keyboardShown(notification: NSNotification) {
+        let info  = notification.userInfo!
+        let value: AnyObject = info[UIKeyboardFrameEndUserInfoKey]!
+        
+        let rawFrame = value.CGRectValue
+        let keyboardFrame = view.convertRect(rawFrame, fromView: nil)
+        
+        print("keyboardFrame: \(keyboardFrame)")
+    }
+    
+    // MARK: Keyboard Functions
+    func registerForKeyboardNotifications() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SignupViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SignupViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SignupViewController.keyboardShown(_:)), name: UIKeyboardDidShowNotification, object: nil)
+    }
+    
+    func deregisterForKeyboardNotification() {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
     
     // MARK: Actions

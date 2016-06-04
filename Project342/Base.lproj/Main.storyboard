@@ -901,8 +901,6 @@
                         <outlet property="facebookButtonTopConstraint" destination="mB3-QQ-076" id="fyW-U2-XsG"/>
                         <outlet property="loginbutton" destination="tOe-lD-KaA" id="XKm-tg-vcF"/>
                         <outlet property="passwordField" destination="EEw-SH-DbY" id="UxC-TC-EhC"/>
-                        <outlet property="stackViewBottomConstraint" destination="pKO-hE-dR6" id="3Bx-Mh-uFf"/>
-                        <outlet property="stackViewTopConstraint" destination="Qbh-q8-FVD" id="qrz-gi-dke"/>
                         <outlet property="usernameField" destination="ORk-bh-CaN" id="aLe-8N-k1r"/>
                     </connections>
                 </viewController>
@@ -923,7 +921,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fhp-Oe-JVP">
-                                <rect key="frame" x="40" y="74" width="520" height="50"/>
+                                <rect key="frame" x="40" y="84" width="520" height="50"/>
                                 <color key="backgroundColor" red="0.23137254900000001" green="0.34901960780000002" blue="0.59607843140000005" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="gR9-ft-iIr"/>
@@ -938,13 +936,13 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="or" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i2S-2D-mYA">
-                                <rect key="frame" x="292" y="144" width="16" height="20"/>
+                                <rect key="frame" x="292" y="154" width="16" height="20"/>
                                 <fontDescription key="fontDescription" type="italicSystem" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="aME-ry-IHX">
-                                <rect key="frame" x="40" y="184" width="520" height="195"/>
+                                <rect key="frame" x="40" y="194" width="520" height="195"/>
                                 <subviews>
                                     <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="gdb-4l-pux">
                                         <rect key="frame" x="0.0" y="0.0" width="520" height="45"/>
@@ -981,7 +979,7 @@
                                 </subviews>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e4A-U7-dqi">
-                                <rect key="frame" x="40" y="399" width="520" height="50"/>
+                                <rect key="frame" x="40" y="409" width="520" height="50"/>
                                 <color key="backgroundColor" red="0.98039215690000003" green="0.52549019610000003" blue="0.16078431369999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="3SF-Xe-6ab"/>
@@ -996,7 +994,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="fhp-Oe-JVP" secondAttribute="trailing" constant="20" id="FMZ-zc-Qa0"/>
-                            <constraint firstItem="fhp-Oe-JVP" firstAttribute="top" secondItem="cSN-62-ikT" secondAttribute="bottom" constant="10" id="P3T-eh-ANc"/>
+                            <constraint firstItem="fhp-Oe-JVP" firstAttribute="top" secondItem="cSN-62-ikT" secondAttribute="bottom" constant="20" id="P3T-eh-ANc"/>
                             <constraint firstItem="e4A-U7-dqi" firstAttribute="top" secondItem="aME-ry-IHX" secondAttribute="bottom" constant="20" id="SSd-TP-QAY"/>
                             <constraint firstAttribute="trailingMargin" secondItem="e4A-U7-dqi" secondAttribute="trailing" constant="20" id="Tp8-sh-3aL"/>
                             <constraint firstItem="aME-ry-IHX" firstAttribute="top" secondItem="i2S-2D-mYA" secondAttribute="bottom" constant="20" id="YeM-oq-THf"/>
@@ -1012,6 +1010,7 @@
                     <connections>
                         <outlet property="email" destination="gdb-4l-pux" id="AqM-x4-OSH"/>
                         <outlet property="facebookBtn" destination="fhp-Oe-JVP" id="efE-Pb-Jop"/>
+                        <outlet property="facebookButtonTopConstraint" destination="P3T-eh-ANc" id="AI3-Bd-rlr"/>
                         <outlet property="firstname" destination="MP2-IV-t5H" id="xee-tt-BZE"/>
                         <outlet property="lastname" destination="ice-IA-tdz" id="R5E-wW-bWg"/>
                         <outlet property="password" destination="Elv-Dt-xlZ" id="51e-Ui-TLF"/>

@@ -19,8 +19,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var passwordField: UITextField!
     @IBOutlet weak var loginbutton: UIButton!
     @IBOutlet weak var facebookButtonTopConstraint: NSLayoutConstraint!
-    @IBOutlet weak var stackViewTopConstraint: NSLayoutConstraint!
-    @IBOutlet weak var stackViewBottomConstraint: NSLayoutConstraint!
     
     var ref: FIRDatabaseReference!
     var inputemail: String = ""
@@ -90,7 +88,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         super.viewWillDisappear(animated)
         self.navigationController?.navigationBarHidden = true
         
-        // Determine iPhone model, iPhone 4s need to adjust view when keyboard is bring up
+        // Determine iPhone model, iPhone 4s need to adjust view when keyboard is hide
         let screenSize: CGRect = UIScreen.mainScreen().bounds
         let screenHeight = screenSize.height
         
@@ -112,6 +110,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         return true
     }
     func textFieldShouldReturn(textField: UITextField) -> Bool{
+        
         let nextTag = textField.tag + 1
         let nextResponder = textField.superview?.viewWithTag(nextTag) as UIResponder!
         
@@ -173,14 +172,16 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: Keyboard Functions
     func registerForKeyboardNotifications() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(LoginViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(LoginViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
     }
     
     func deregisterForKeyboardNotification() {
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
+    
+    // MARK: Actions
     
     // Logging in with facebook
     @IBAction func facebookLogin(sender: AnyObject) {
