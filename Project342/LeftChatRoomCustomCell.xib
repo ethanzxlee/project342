@@ -16,30 +16,40 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="defaultPicture" translatesAutoresizingMaskIntoConstraints="NO" id="hlp-IL-nkf">
-                        <rect key="frame" x="13" y="8" width="24" height="24"/>
+                        <rect key="frame" x="5" y="2" width="24" height="24"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="24" id="BF8-fv-8kG"/>
                             <constraint firstAttribute="width" constant="24" id="r5f-1T-jkP"/>
                         </constraints>
                     </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="751" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000000000000004" translatesAutoresizingMaskIntoConstraints="NO" id="bxD-SA-gRi" customClass="CustomLabel" customModule="Project342" customModuleProvider="target">
-                        <rect key="frame" x="48" y="10" width="42" height="24"/>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yiU-eE-5Ow">
+                        <rect key="frame" x="36" y="2" width="50" height="39"/>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="751" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000000000000004" translatesAutoresizingMaskIntoConstraints="NO" id="bxD-SA-gRi">
+                        <rect key="frame" x="40" y="6" width="42" height="31"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="bottomMargin" secondItem="bxD-SA-gRi" secondAttribute="bottom" constant="2" id="7n2-jF-8Cw"/>
-                    <constraint firstItem="bxD-SA-gRi" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="2" id="GTI-MM-Bnj"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="bxD-SA-gRi" secondAttribute="bottom" constant="4" id="7n2-jF-8Cw"/>
+                    <constraint firstItem="bxD-SA-gRi" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="4" id="GTI-MM-Bnj"/>
+                    <constraint firstItem="yiU-eE-5Ow" firstAttribute="centerY" secondItem="bxD-SA-gRi" secondAttribute="centerY" id="KBm-79-BTx"/>
+                    <constraint firstItem="yiU-eE-5Ow" firstAttribute="centerX" secondItem="bxD-SA-gRi" secondAttribute="centerX" id="S0c-ih-GeU"/>
+                    <constraint firstItem="yiU-eE-5Ow" firstAttribute="height" secondItem="bxD-SA-gRi" secondAttribute="height" constant="8" id="Tw3-tT-Gn0"/>
                     <constraint firstItem="bxD-SA-gRi" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="40" id="VGD-8f-Pz2"/>
                     <constraint firstAttribute="trailingMargin" secondItem="bxD-SA-gRi" secondAttribute="trailing" priority="750" constant="40" id="WM7-tl-xBw"/>
                     <constraint firstItem="hlp-IL-nkf" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="5" id="tTu-Xu-Sj0"/>
+                    <constraint firstItem="yiU-eE-5Ow" firstAttribute="width" secondItem="bxD-SA-gRi" secondAttribute="width" constant="8" id="txo-aC-WbW"/>
                     <constraint firstItem="hlp-IL-nkf" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="v1f-rK-dZD"/>
                 </constraints>
+                <edgeInsets key="layoutMargins" top="2" left="0.0" bottom="2" right="0.0"/>
             </tableViewCellContentView>
             <connections>
                 <outlet property="contentViewCell" destination="H2p-sc-9uM" id="uO3-qB-o07"/>
+                <outlet property="messageBackgroundView" destination="yiU-eE-5Ow" id="Pqq-nR-mCh"/>
                 <outlet property="messageContent" destination="bxD-SA-gRi" id="Pcr-dM-LRn"/>
                 <outlet property="profileView" destination="hlp-IL-nkf" id="t12-RN-E51"/>
             </connections>

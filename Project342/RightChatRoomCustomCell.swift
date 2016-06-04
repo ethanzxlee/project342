@@ -10,15 +10,17 @@ import UIKit
 
 class RightChatRoomCustomCell: UITableViewCell {
     
-    @IBOutlet weak var messageContent: CustomLabel!
+    @IBOutlet weak var messageContent: UILabel!
     @IBOutlet weak var profileView: UIImageView!
     @IBOutlet weak var contentViewCell: UIView!
+    @IBOutlet weak var messageBackgroundView: UIView!
     
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        messageContent.backgroundColor = UIColor.init(red: 51/255, green: 1, blue: 153/255, alpha: 1.0)
+        messageBackgroundView.layer.cornerRadius = 8
+        messageBackgroundView.clipsToBounds = true
         
         profileView.layer.cornerRadius = 12
         profileView.clipsToBounds = true

@@ -309,6 +309,7 @@ class RecentChatViewController: UITableViewController, UISearchBarDelegate {
     
     @IBAction func unwindFromChatRoom(sender: UIStoryboardSegue){}
     
+    @IBAction func unwindFromConversationSetting(sender: UIStoryboardSegue){}
     
     // MARK: - Bar Button Functions
     func createNewConversation(){

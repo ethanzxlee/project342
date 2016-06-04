@@ -146,7 +146,7 @@ class AppModel {
              */
             conversation.members = NSSet(array: members)
             conversation.conversationName = self.createConversationName(members)
-            conversation.coverCode = ""
+            conversation.coverCode = "***"
             //Default conversation isUnlocked
             conversation.isLocked = 0
             let dateformater = NSDateFormatter.ISO8601DateFormatter()
@@ -555,7 +555,7 @@ class AppModel {
      
      Parameter: conversation ID
      
-     Return: Int
+     Return: String
      */
     func getCoverCode(conversationID: String)->String{
         let fetchRequest = NSFetchRequest(entityName: "Conversation")

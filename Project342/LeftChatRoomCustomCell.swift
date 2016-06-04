@@ -10,17 +10,17 @@ import UIKit
 
 class LeftChatRoomCustomCell: UITableViewCell {
     
-    @IBOutlet weak var messageContent: CustomLabel!
+    @IBOutlet weak var messageContent: UILabel!
     @IBOutlet weak var profileView: UIImageView!
     @IBOutlet weak var contentViewCell: UIView!
+    @IBOutlet weak var messageBackgroundView: UIView!
     
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
-        messageContent.backgroundColor = UIColor.init(red: 102/255, green: 1, blue: 1, alpha: 1.0)
-        profileView.layer.cornerRadius = 12
-        profileView.clipsToBounds = true
+        
+        messageBackgroundView.layer.cornerRadius = 8
+        messageBackgroundView.clipsToBounds = true
 
     }
 

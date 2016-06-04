@@ -76,11 +76,13 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             self.bottomBar.backgroundColor = UIColor.whiteColor()
             bottomBar.tintColor = UIColor.themeColor()
             hiddenButton.backgroundColor = UIColor.clearColor()
+            textView.textColor = UIColor.blackColor()
         }else{
             self.hiddenMessageSign = true
             self.bottomBar.backgroundColor = UIColor.darkGrayColor()
             self.bottomBar.tintColor = UIColor.whiteColor()
             hiddenButton.backgroundColor = UIColor.themeColor()
+            textView.textColor = UIColor.whiteColor()
         }
     }
     
@@ -192,6 +194,18 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
         // Hidden button corner radius
         hiddenButton.layer.cornerRadius = 4
         hiddenButton.clipsToBounds = true
+        
+        // Navigation Item
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: #selector(self.didChatSettingButtonPress))
+        
+        
+        // Table View appearance
+        chatContentTableView.tableFooterView = UIView()
+    }
+    
+    
+    func didChatSettingButtonPress() {
+        performSegueWithIdentifier("goToChatRoomSettings", sender: nil)
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -218,11 +232,15 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
     // MARK: - Navigation
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "goToAttachmentView"{
-            if let goToNavigationController = segue.destinationViewController as? UINavigationController {
-                if let destination = goToNavigationController.topViewController as? AttachmentViewerViewController{
-                    destination.message = sender as? Message
-                }
+        if segue.identifier == "goToAttachmentView" {
+            if let destination = segue.destinationViewController as? AttachmentViewerViewController{
+                destination.message = sender as? Message
+            }
+        }
+        else if segue.identifier == "goToChatRoomSettings" {
+            if let destination = segue.destinationViewController as? ChatRoomSettingsViewController {
+                destination.conversationID = conversationID
+                destination.appModel = appModel
             }
         }
     }
@@ -394,7 +412,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             
             // If cover message
             if messagesDisplay[indexPath.row].shouldCover == 1{
-                cell.messageContent.text = "***"
+                cell.messageContent.text = self.appModel.getCoverCode(self.conversationID!)
                 cell.messageContent.sizeToFit()
                 return cell
             }
@@ -451,19 +469,22 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             
             
             if messagesDisplay[indexPath.row].shouldCover == 1{
-                cell.messageContent.text = "***"
+                cell.messageContent.text = self.appModel.getCoverCode(self.conversationID!)
                 cell.messageContent.sizeToFit()
                 return cell
             }
-            
+
             // Check for display avatar
             if indexPath.row != 0 {
                 if messagesDisplay[indexPath.row].senderID == messagesDisplay[indexPath.row-1].senderID{
                     cell.profileView.hidden = true
                 }else{
+                    let path = Directories.profilePicDirectory?.URLByAppendingPathComponent((FIRAuth.auth()?.currentUser?.uid)!)
+                    cell.profileView.image = UIImage(named: (path?.path)!)
                     cell.profileView.hidden = false
                 }
             }
+            
             
             let type = messagesDisplay[indexPath.row].type!
             
@@ -471,7 +492,6 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
                 cell.imageView!.image = nil
                 cell.messageContent.text = self.messagesDisplay[indexPath.row].content
                 cell.messageContent.sizeToFit()
-                cell.messageBackgoundView.superview?.layoutIfNeeded()
             }else if type == MessageType.Image.rawValue || type == MessageType.Map.rawValue{
                 let attachments = self.messagesDisplay[indexPath.row].attachements!.allObjects as! [Attachment]
                 let documentPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
@@ -496,8 +516,6 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
                 
                 cell.messageContent.attributedText = attributedString
                 cell.messageContent.sizeToFit()
-                cell.layoutIfNeeded()
-
             }else{
                 print("Error Message of Attachments/Messages from core data")
             }
