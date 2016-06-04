@@ -348,7 +348,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             
             // If cover message
             if messagesDisplay[indexPath.row].shouldCover == 1{
-                cell.messageContent.text = "***"
+                cell.messageContent.text = self.appModel.getCoverCode(self.conversationID!)
                 cell.messageContent.sizeToFit()
                 return cell
             }
@@ -405,7 +405,7 @@ class ChatRoomViewController: UIViewController, UITextViewDelegate, UIImagePicke
             
             
             if messagesDisplay[indexPath.row].shouldCover == 1{
-                cell.messageContent.text = "***"
+                cell.messageContent.text = self.appModel.getCoverCode(self.conversationID!)
                 cell.messageContent.sizeToFit()
                 return cell
             }
