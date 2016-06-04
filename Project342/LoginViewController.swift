@@ -163,7 +163,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     func keyboardWillHide(notification: NSNotification) {
         
         // Bring the view back to original when keyboard is hide
-        facebookButtonTopConstraint.constant += 120
+        facebookButtonTopConstraint.constant += 110
 
         UIView.animateWithDuration(0.5) { () -> Void in
             self.view.layoutIfNeeded()
